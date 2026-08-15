@@ -5,10 +5,10 @@ name: Build documentation
 concurrency:
   group: "pages"
   cancel-in-progress: false
-# Docs stack is PDM-era. Rebuild it on main only so PRs are not red
-# on a lock that does not match pyproject.toml.
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
 jobs:
   build_docs:
@@ -22,20 +22,13 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      - uses: mamba-org/setup-micromamba@v1
+      - uses: actions/setup-python@v5
         with:
-          environment-file: conda-lock.yml
-          environment-name: pyseamsdev
-          init-shell: >-
-            bash
-          cache-environment: true
-          post-cleanup: 'all'
+          python-version: "3.12"
       - name: Generate Docs
-        shell: bash -el {0}
         run: |
-          # Will also install the package
-          pipx run pdm sync -v
-          pipx run pdm run sphinx-build -b html docs/source html
+          pip install '.[docs]'
+          sphinx-build -b html docs/source html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

@@ -11,7 +11,18 @@ compatibility aliases of ``yoda``.
 ```
 
 ```{eval-rst}
+.. automodule:: pydseams
+   :members:
+   :undoc-members:
+   :imported-members:
+
+.. automodule:: pydseams.frame
+   :members:
+   :undoc-members:
+
 .. automodule:: pydseams.yoda
+   :members:
+   :undoc-members:
 ```
 
 <!-- ```{autodoc2-summary}

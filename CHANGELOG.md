@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.3
+
+Docs are orgmode plus Shibuya. Autodoc covers `Frame` and `yoda`.
+
 ## 2.2.2
 
 The compiled extension is `pydseams.yoda`. `_core` and `cyoda` remain

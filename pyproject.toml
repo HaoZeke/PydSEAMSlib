@@ -26,6 +26,15 @@ Engine = "https://github.com/d-SEAMS/seams-core"
 test = ["pytest>=8.0", "hypothesis>=6.0"]
 ase = ["ase>=3.23"]
 solvis = ["ase>=3.23", "solvis-tools>=0.1"]
+docs = [
+  "sphinx>=8",
+  "shibuya",
+  "myst-parser",
+  "sphinx-copybutton",
+  "sphinx-design",
+  "sphinxcontrib-bibtex",
+  "sphinx-contributors",
+]
 
 [tool.meson-python]
 limited-api = true

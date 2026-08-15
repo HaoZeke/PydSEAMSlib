@@ -3,11 +3,17 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath("../../src"))
+autodoc_mock_imports = ["pydseams.yoda"]
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "PydSEAMSlib"
-release = "2.2.0"
+project = "pydseams"
+release = "2.2.2"
 copyright = "2023--present, d-SEAMS developers"
 author = "Ruhila S"
 
@@ -44,17 +50,28 @@ master_doc = "index"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "sphinx_book_theme"
-html_title = "PydSEAMSlib"
+html_theme = "shibuya"
+html_title = "pydseams"
 html_static_path = ["_static"]
 
 html_theme_options = {
-    "repository_url": "https://github.com/d-SEAMS/PydSEAMSlib",
-    "use_repository_button": True,
-    "logo": {
-        "image_light": "_static/logo/pydseams_logo_light.png",
-        "image_dark": "_static/logo/pydseams_logo_dark.png",
-    },
+    "github_url": "https://github.com/d-SEAMS/PydSEAMSlib",
+    "accent_color": "teal",
+    "dark_code": True,
+    "light_logo": "_static/logo/pydseams_logo_light.png",
+    "dark_logo": "_static/logo/pydseams_logo_dark.png",
+    "nav_links": [
+        {
+            "title": "Engine",
+            "url": "https://docs.dseams.info",
+            "external": True,
+        },
+        {
+            "title": "Lua",
+            "url": "https://github.com/d-SEAMS/yodaStruct",
+            "external": True,
+        },
+    ],
 }
 # --- Plugin options
 
@@ -65,6 +82,7 @@ myst_enable_extensions = [
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
+    "dseams": ("https://docs.dseams.info", None),
 }
 
 bibtex_bibfiles = ["bibtex/pyseamsDocs.bib"]
