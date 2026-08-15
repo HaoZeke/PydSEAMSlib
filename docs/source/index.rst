@@ -1,8 +1,3 @@
-#+TITLE: ~pydseams~
-#+AUTHOR: [[https://rgoswami.me][Rohit Goswami]]
-#+OPTIONS: toc:nil todo:nil num:nil author:nil title:nil ^:nil
-
-#+begin_export rst
 ========
 pydseams
 ========
@@ -39,35 +34,35 @@ pydseams
 
       Round-trip ASE ``Atoms``. Optional solvis view of the same
       cloud.
-#+end_export
 
-* About
+About
+=====
 
-~pydseams~ is the Python package for the d-SEAMS engine. The compiled
-module is ~yoda~. Helpers (~Frame~, ~read~, ASE, solvis) sit on that
-surface. ~import pydseamslib~ still works.
+``pydseams`` is the Python package for the d-SEAMS engine. The compiled
+module is ``yoda``. Helpers (``Frame``, ``read``, ASE, solvis) sit on
+that surface. ``import pydseamslib`` still works.
 
-The engine and the ~seams~ CLI live in
-[[https://github.com/d-SEAMS/seams-core][seams-core]]. Lua is
-~dseams~ in [[https://github.com/d-SEAMS/yodaStruct][yodaStruct]].
-This site documents the Python ~Frame~ API. The header *Ecosystem*
+The engine and the ``seams`` CLI live in
+`seams-core <https://github.com/d-SEAMS/seams-core>`_. Lua is
+``dseams`` in `yodaStruct <https://github.com/d-SEAMS/yodaStruct>`_.
+This site documents the Python ``Frame`` API. The header *Ecosystem*
 menu jumps to the engine docs and the Lua front end.
 
-#+begin_src python
-import pydseams as ds
+.. code-block:: python
 
-frame = ds.read("water.lammpstrj")
-print(frame.chill_plus())
-print(frame.cages())
-#+end_src
+   import pydseams as ds
 
-* Suite stack
+   frame = ds.read("water.lammpstrj")
+   print(frame.chill_plus())
+   print(frame.cages())
 
-Python helpers sit on the compiled ~yoda~ module. The same
-~libyodaLib~ engine backs the ~seams~ CLI and the Lua ~dseams~
+Suite stack
+===========
+
+Python helpers sit on the compiled ``yoda`` module. The same
+``libyodaLib`` engine backs the ``seams`` CLI and the Lua ``dseams``
 module.
 
-#+begin_export rst
 .. mermaid::
 
    flowchart TB
@@ -94,14 +89,13 @@ module.
      YODA --> FRAME
      FRAME --> ASE
      FRAME --> SOL
-#+end_export
 
-* Documentation structure
+Documentation structure
+=======================
 
-This documentation follows the [[https://diataxis.fr/][Diataxis]]
+This documentation follows the `Diataxis <https://diataxis.fr/>`_
 framework.
 
-#+begin_export rst
 .. toctree::
    :maxdepth: 2
    :caption: Getting Started
@@ -148,26 +142,25 @@ framework.
    :caption: Development
 
    history
-#+end_export
 
-* Related projects
+Related projects
+================
 
-- [[https://github.com/d-SEAMS/seams-core][seams-core]] :: ~libyodaLib~ and the ~seams~ CLI
-- [[https://github.com/d-SEAMS/yodaStruct][yodaStruct]] :: Lua / Fennel ~require("dseams")~
-- [[https://docs.dseams.info][d-SEAMS engine docs]] :: C++ API and theory
-- [[https://dseams.info][dseams.info]] :: project site
+- `seams-core <https://github.com/d-SEAMS/seams-core>`_ :: ``libyodaLib`` and the ``seams`` CLI
+- `yodaStruct <https://github.com/d-SEAMS/yodaStruct>`_ :: Lua / Fennel ``require("dseams")``
+- `d-SEAMS engine docs <https://docs.dseams.info>`_ :: C++ API and theory
+- `dseams.info <https://dseams.info>`_ :: project site
 
-* License
+License
+=======
 
 MIT. Cite the 2020 d-SEAMS paper (DOI
-[[https://doi.org/10.1021/acs.jcim.0c00031][10.1021/acs.jcim.0c00031]]).
-See [[file:explanation/citation.org][How to cite]].
+`10.1021/acs.jcim.0c00031 <https://doi.org/10.1021/acs.jcim.0c00031>`_).
+See :doc:`explanation/citation`.
 
-#+begin_export rst
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-#+end_export

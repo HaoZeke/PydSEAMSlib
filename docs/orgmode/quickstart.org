@@ -1,4 +1,5 @@
 #+TITLE: Quickstart
+#+AUTHOR: [[https://rgoswami.me][Rohit Goswami]]
 #+OPTIONS: toc:nil num:nil
 
 * Install
@@ -9,9 +10,21 @@ pip install 'pydseams[ase]'
 pip install 'pydseams[solvis]'
 #+end_src
 
-~pydseams~ is the package. The ~[ase]~ extra pulls ASE for ~from_ase~ /
-~to_ase~. The ~[solvis]~ extra pulls ASE plus solvis-tools for
+~pydseams~ is the package. The ~[ase]~ extra pulls ASE for ~from_ase~
+/ ~to_ase~. The ~[solvis]~ extra pulls ASE plus solvis-tools for
 ~to_solvis~.
+
+With pixi, add the PyPI package:
+
+#+begin_src bash
+pixi add --pypi pydseams
+#+end_src
+
+Requires Python 3.12+. Wheels are the CPython 3.12 limited ABI (one
+~abi3~ wheel per platform). A wheel already links the engine; do not
+compile ~yoda~ to use the package.
+
+~import pydseamslib~ is a compatibility alias of ~pydseams~.
 
 From a PydSEAMSlib checkout:
 
@@ -23,10 +36,8 @@ nix develop
 ~nix build~ produces the ~pydseams~ package. ~nix develop~ is the
 dev shell (pytest, hypothesis).
 
-Requires Python 3.12+. Wheels are the CPython 3.12 limited ABI (one
-~abi3~ wheel per platform).
-
-~import pydseamslib~ is a compatibility alias of ~pydseams~.
+The full extra table is in the [[file:howto/install.org][install
+how-to]].
 
 * Classify a frame
 
@@ -39,9 +50,11 @@ print(frame.cages())
 #+end_src
 
 ~ds.read~ picks the engine reader from the suffix and returns a
-~Frame~. Classification does not write files.
+~Frame~. ~chill_plus~ and ~cages~ do not write files.
 
 ~yoda~ is the compiled module. ~_core~ and ~cyoda~ are aliases of
 ~yoda~. Helpers (~Frame~, ~read~, ASE, solvis) stay in Python.
 
-ASE ~Atoms~: ~ds.from_ase(atoms)~. See the ASE how-to.
+ASE ~Atoms~: ~ds.from_ase(atoms)~. See the [[file:howto/ase.org][ASE
+how-to]]. A worked mixed ice-water dump is the
+[[file:tutorials/classify-ice.org][classify-ice tutorial]].

@@ -1,8 +1,9 @@
 #+TITLE: The yoda surface
+#+AUTHOR: [[https://rgoswami.me][Rohit Goswami]]
 #+OPTIONS: toc:nil num:nil
 
-The package is ~pydseams~. The compiled extension inside it is ~yoda~.
-That split is deliberate.
+The package is ~pydseams~. The compiled extension inside it is
+~yoda~. That split is deliberate.
 
 * The 2020 name
 
@@ -19,9 +20,9 @@ surface name: ~NB_MODULE(yoda, ...)~ and Meson's
 ~pydseams.yoda~ is the same object the C++ engine always was.
 
 The Python *package* is ~pydseams~, not ~yoda~. ~yoda~ is the
-extension, the way ~libyodaLib~ is the engine and ~dseams~ is the Lua
-module. ~import pydseamslib~ still works; that is the 2.0 / repository
-name, re-exported from ~pydseams~.
+extension, the way ~libyodaLib~ is the engine and ~dseams~ is the
+Lua module. ~import pydseamslib~ still works; that is the 2.0 /
+repository name, re-exported from ~pydseams~.
 
 * Why helpers stay in Python
 
@@ -39,6 +40,11 @@ C++ module.
 ~ds.read~ looks at the suffix and calls the matching constructor.
 ~yoda.readLammpsTrjreduced~ and friends stay available for callers
 that want the raw cloud.
+
+The trade-off is a thin compiled surface and a small Python
+adapter layer. Application code imports ~pydseams~ and uses
+~Frame~. The ~seams~ CLI and Lua ~dseams~ stay in their own
+repositories and share ~libyodaLib~.
 
 * Aliases of the same module
 
@@ -59,4 +65,5 @@ assert ds.cyoda is ds.yoda
 
 ~_core~ is the private-looking name used when the helpers first sat
 on the compiled surface. ~cyoda~ is the older import kept so
-~from pydseams import cyoda~ still resolves. New code imports ~yoda~.
+~from pydseams import cyoda~ still resolves. New code imports
+~yoda~.

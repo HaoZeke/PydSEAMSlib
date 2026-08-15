@@ -1,0 +1,62 @@
+==========
+Quickstart
+==========
+
+Install
+=======
+
+.. code-block:: bash
+
+   pip install pydseams
+   pip install 'pydseams[ase]'
+   pip install 'pydseams[solvis]'
+
+``pydseams`` is the package. The ``[ase]`` extra pulls ASE for
+``from_ase`` / ``to_ase``. The ``[solvis]`` extra pulls ASE plus
+solvis-tools for ``to_solvis``.
+
+With pixi, add the PyPI package:
+
+.. code-block:: bash
+
+   pixi add --pypi pydseams
+
+Requires Python 3.12+. Wheels are the CPython 3.12 limited ABI (one
+``abi3`` wheel per platform). A wheel already links the engine; do
+not compile ``yoda`` to use the package.
+
+``import pydseamslib`` is a compatibility alias of ``pydseams``.
+
+From a PydSEAMSlib checkout:
+
+.. code-block:: bash
+
+   nix build
+   nix develop
+
+``nix build`` produces the ``pydseams`` package. ``nix develop`` is
+the dev shell (pytest, hypothesis).
+
+The full extra table is in the :doc:`howto/install` how-to.
+
+Classify a frame
+================
+
+.. code-block:: python
+
+   import pydseams as ds
+
+   frame = ds.read("water.lammpstrj")   # also .xyz, .pdb, .gro, .dcd, .con
+   print(frame.chill_plus())
+   print(frame.cages())
+
+``ds.read`` picks the engine reader from the suffix and returns a
+``Frame``. ``chill_plus`` and ``cages`` do not write files.
+
+``yoda`` is the compiled module. ``_core`` and ``cyoda`` are aliases
+of ``yoda``. Helpers (``Frame``, ``read``, ASE, solvis) stay in
+Python.
+
+ASE ``Atoms``: ``ds.from_ase(atoms)``. See the :doc:`howto/ase`
+how-to. A worked mixed ice-water dump is the
+:doc:`tutorials/classify-ice` tutorial.
