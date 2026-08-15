@@ -10,19 +10,24 @@ not grow a second engine here.
 
 ```bash
 pip install pydseamslib
-pip install 'pydseamslib[ase]'   # optional ASE
+pip install 'pydseamslib[ase]'      # ASE Atoms
+pip install 'pydseamslib[solvis]'   # solvis / PyVista
 ```
 
 ```python
 import pydseamslib as ds
 
-frame = ds.read("water.lammpstrj")
+frame = ds.read("water.lammpstrj")   # also .xyz, .pdb, .gro, .dcd, .con
 print(frame.chill_plus())
 print(frame.cages())
 
 frame = ds.from_ase(atoms)
 atoms = frame.to_ase()
+system = frame.to_solvis()           # optional extra
 ```
+
+`ds.read` picks the engine reader from the suffix. `_core` is the compiled
+surface. Helpers (`Frame`, `io`, ASE, solvis) stay in Python.
 
 Primary author: Ruhila S. The project started as PSF GSoC 2023 (`pyseams`).
 

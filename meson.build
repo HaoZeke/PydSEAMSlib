@@ -1,7 +1,7 @@
 project(
   'PydSEAMSlib',
   'cpp',
-  version: '2.0.1',
+  version: '2.1.0',
   default_options: ['warning_level=1', 'cpp_std=c++20'],
   meson_version: '>=1.3.0',
 )
@@ -42,6 +42,8 @@ py.install_sources(
     'src/pydseamslib/__init__.py',
     'src/pydseamslib/frame.py',
     'src/pydseamslib/aseio.py',
+    'src/pydseamslib/io.py',
+    'src/pydseamslib/solvis.py',
   ],
   pure: false,
   subdir: 'pydseamslib',

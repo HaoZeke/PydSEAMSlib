@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.0
+
+Python helpers sit on `_core` the way metatomic sits on its C surface.
+`ds.read` dispatches by suffix (LAMMPS, XYZ, chemfiles PDB/GRO/DCD,
+readcon `.con`). `from_chemfiles`, `from_con`, `from_xyz`, and
+`to_solvis` (`pydseamslib[solvis]`) are first-class.
+
 ## 2.0.1
 
 - README documents `pip install` and `frame.to_ase()`.

@@ -52,6 +52,30 @@ def test_from_arrays_roundtrip_positions():
     assert frame.positions[0] == src.positions[0]
 
 
+def test_available_readers():
+    from pydseamslib import available_readers
+
+    readers = available_readers()
+    assert readers["lammps"] is True
+    assert "xyz" in readers
+
+
+def test_read_xyz(tmp_path):
+    xyz = tmp_path / "pair.xyz"
+    xyz.write_text("2\n\nO 0.0 0.0 0.0\nO 1.0 0.0 0.0\n")
+    frame = read(xyz)
+    assert frame.n_atoms == 2
+
+
+def test_to_solvis_optional():
+    pytest.importorskip("solvis")
+    from pydseamslib import to_solvis
+
+    frame = read(TRAJ, bonded="cutoff")
+    system = to_solvis(frame)
+    assert len(system.atoms) == frame.n_atoms
+
+
 def test_from_ase_optional():
     ase = pytest.importorskip("ase")
     from ase import Atoms

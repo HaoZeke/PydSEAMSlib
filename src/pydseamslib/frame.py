@@ -237,6 +237,65 @@ class Frame:
         )
 
     @classmethod
+    def from_xyz(cls, filename, cutoff=3.5, bonded="cutoff", atom_type=None):
+        """Load an XYZ file through the engine reader."""
+        if not hasattr(_core, "readXYZ"):
+            raise RuntimeError("this build has no readXYZ")
+        cloud = _core.readXYZ(str(filename))
+        typ = atom_type
+        if typ is None and cloud.nop > 0:
+            typ = int(cloud.pts[0].c_type)
+        return cls(
+            filename=str(Path(filename).resolve()),
+            atom_type=typ or 1,
+            cutoff=cutoff,
+            bonded=bonded,
+            cloud=cloud,
+        )
+
+    @classmethod
+    def from_chemfiles(cls, filename, frame=1, type_filter=-1, cutoff=3.5,
+                       bonded="cutoff", atom_type=None):
+        """Load PDB/GRO/DCD (or any chemfiles format) when chemfiles is linked."""
+        if not hasattr(_core, "readChemfiles"):
+            raise RuntimeError(
+                "chemfiles is not linked in this build of seams-core"
+            )
+        cloud = _core.readChemfiles(str(filename), int(frame), int(type_filter))
+        typ = atom_type
+        if typ is None and cloud.nop > 0:
+            typ = int(cloud.pts[0].c_type)
+        return cls(
+            filename=str(Path(filename).resolve()),
+            frame=frame,
+            atom_type=typ or 1,
+            cutoff=cutoff,
+            bonded=bonded,
+            cloud=cloud,
+        )
+
+    @classmethod
+    def from_con(cls, filename, frame=1, cutoff=3.5, bonded="cutoff",
+                 atom_type=None):
+        """Load an eOn .con file when readcon-core is linked."""
+        if not hasattr(_core, "readCon"):
+            raise RuntimeError(
+                "readcon-core is not linked in this build of seams-core"
+            )
+        cloud = _core.readCon(str(filename), int(frame))
+        typ = atom_type
+        if typ is None and cloud.nop > 0:
+            typ = int(cloud.pts[0].c_type)
+        return cls(
+            filename=str(Path(filename).resolve()),
+            frame=frame,
+            atom_type=typ or 1,
+            cutoff=cutoff,
+            bonded=bonded,
+            cloud=cloud,
+        )
+
+    @classmethod
     def from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
         """Load an ASE Atoms. select is a symbol, atomic number, or None."""
         from .aseio import frame_from_ase
@@ -249,6 +308,12 @@ class Frame:
         from .aseio import frame_to_ase
 
         return frame_to_ase(self)
+
+    def to_solvis(self, expand_box=True):
+        """solvis.System for this frame. Optional: pip install 'pydseamslib[solvis]'."""
+        from .solvis import to_solvis
+
+        return to_solvis(self, expand_box=expand_box)
 
     @property
     def n_atoms(self):
@@ -521,5 +586,7 @@ class Frame:
 
 
 def read(filename, **kwargs):
-    """Load a LAMMPS dump. See Frame.from_file."""
-    return Frame.from_file(filename, **kwargs)
+    """Load a trajectory. Format follows the suffix. See pydseamslib.io.read."""
+    from .io import read as _read
+
+    return _read(filename, **kwargs)
