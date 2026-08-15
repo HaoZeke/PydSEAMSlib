@@ -45,6 +45,10 @@ Classify first if you want ice labels on the exported ``Atoms``:
 ``arrays["hc"]`` / ``arrays["ddc"]`` after ``cages()``. solvis sees
 those arrays on the wrapped ``Atoms``.
 
+This is the visualization path. Interactive plots and screenshots
+follow the `solvis examples <https://github.com/amritagos/solvis>`_
+(PyVista; press ``q`` to close the window). OVITO is not required.
+
 See also
 ========
 

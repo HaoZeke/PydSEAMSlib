@@ -78,6 +78,13 @@ How do I keep every atom, not just oxygen?
 Default ``select="O"``. A symbol or an atomic number keeps that
 species.
 
+How do I view a classified frame?
+---------------------------------
+
+solvis. ``pip install 'pydseams[solvis]'``, then
+``frame.to_solvis()``. That is the visualization path. See
+:doc:`solvis`. OVITO is not required.
+
 How do I cite this?
 -------------------
 

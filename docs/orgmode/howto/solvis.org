@@ -41,6 +41,10 @@ system = frame.to_solvis()
 ~arrays["hc"]~ / ~arrays["ddc"]~ after ~cages()~. solvis sees
 those arrays on the wrapped ~Atoms~.
 
+This is the visualization path. Interactive plots and screenshots
+follow the [[https://github.com/amritagos/solvis][solvis examples]]
+(PyVista; press =q= to close the window). OVITO is not required.
+
 * See also
 
 - [[file:ase.org][Classify ASE Atoms]] :: ~from_ase~ / ~to_ase~

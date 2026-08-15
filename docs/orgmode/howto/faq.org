@@ -65,6 +65,12 @@ frame = ds.from_ase(atoms, select=None)
 Default ~select="O"~. A symbol or an atomic number keeps that
 species.
 
+** How do I view a classified frame?
+
+solvis. ~pip install 'pydseams[solvis]'~, then ~frame.to_solvis()~.
+That is the visualization path. See
+[[file:solvis.org][View a frame in solvis]]. OVITO is not required.
+
 ** How do I cite this?
 
 Cite the 2020 d-SEAMS paper. See
