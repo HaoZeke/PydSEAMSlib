@@ -1,7 +1,7 @@
 project(
   'PydSEAMSlib',
   'cpp',
-  version: '2.0.0',
+  version: '2.0.1',
   default_options: ['warning_level=1', 'cpp_std=c++20'],
   meson_version: '>=1.3.0',
 )

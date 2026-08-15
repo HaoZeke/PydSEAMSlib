@@ -27,6 +27,10 @@ def _mask(atoms, select):
 
 def _cell_lengths(atoms):
     cell = atoms.get_cell()
+    if hasattr(cell, "orthorhombic") and not cell.orthorhombic:
+        raise ValueError(
+            "from_ase needs an orthorhombic cell; got a general cell"
+        )
     return [float(cell[0, 0]), float(cell[1, 1]), float(cell[2, 2])]
 
 
@@ -99,6 +103,9 @@ def frame_to_ase(frame):
     ice = [pt.iceType.name for pt in frame.cloud.pts]
     if any(name != "unclassified" for name in ice):
         atoms.arrays["ice_type"] = ice
-    atoms.arrays["hc"] = [False] * n
+    score = getattr(frame, "_cages", None)
+    if score is not None:
+        atoms.arrays["hc"] = list(score.hc)
+        atoms.arrays["ddc"] = list(score.ddc)
     atoms.info["dseams_n_atoms"] = n
     return atoms

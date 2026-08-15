@@ -1,7 +1,8 @@
-# ``cyoda`` Documentation
+# ``pydseamslib`` API
 
-This section of the documentation describes the bindings made with ``Pybind11``.
-The internal module is called ``cyoda``.
+The public surface is ``Frame`` / ``read`` / ``from_ase``. The compiled
+extension is nanobind ``pydseamslib._core``. ``cyoda`` is a compatibility
+alias of ``_core``.
 
 ```{toctree}
 :maxdepth: 2

@@ -7,9 +7,9 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "PydSEAMSlib"
-release = "0.0.2"
-copyright = "2024, d-SEAMS developers"
-author = "Ruhila"
+release = "2.0.1"
+copyright = "2023--present, d-SEAMS developers"
+author = "Ruhila S"
 
 
 # -- General configuration ---------------------------------------------------

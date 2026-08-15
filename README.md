@@ -8,6 +8,11 @@ This repository is the Python package. The C++ library lives in
 CLI lives in [`yodaStruct`](https://github.com/d-SEAMS/yodaStruct). Do
 not grow a second engine here.
 
+```bash
+pip install pydseamslib
+pip install 'pydseamslib[ase]'   # optional ASE
+```
+
 ```python
 import pydseamslib as ds
 
@@ -15,7 +20,8 @@ frame = ds.read("water.lammpstrj")
 print(frame.chill_plus())
 print(frame.cages())
 
-frame = ds.from_ase(atoms)   # pip install 'pydseamslib[ase]'
+frame = ds.from_ase(atoms)
+atoms = frame.to_ase()
 ```
 
 Primary author: Ruhila S. The project started as PSF GSoC 2023 (`pyseams`).
