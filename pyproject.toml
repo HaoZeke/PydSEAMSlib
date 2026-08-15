@@ -1,5 +1,5 @@
 [build-system]
-requires = ["meson-python>=0.16", "nanobind>=2.0", "numpy"]
+requires = ["meson-python>=0.17", "numpy"]
 build-backend = "mesonpy"
 
 [project]
@@ -35,4 +35,5 @@ install = ["--skip-subprojects"]
 
 [tool.cibuildwheel]
 # One CPython 3.12 host per platform; meson limited_api tags the wheel abi3.
-skip = ["pp*", "*musllinux*", "*i686*", "*t"]
+build = "cp312-*"
+skip = ["pp*", "*musllinux*", "*i686*", "cp3??t-*"]
