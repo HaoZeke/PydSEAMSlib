@@ -3,19 +3,19 @@
 Python bindings for the [d-SEAMS](https://dseams.info) C++ engine
 ([`seams-core`](https://github.com/d-SEAMS/seams-core)).
 
-This repository is the Python package. The C++ library lives in
-[`seams-core`](https://github.com/d-SEAMS/seams-core). The Lua and Fennel
-CLI lives in [`yodaStruct`](https://github.com/d-SEAMS/yodaStruct). Do
-not grow a second engine here.
+This repository is the Python package `pydseams`. The C++ engine and
+`seams` CLI live in [`seams-core`](https://github.com/d-SEAMS/seams-core).
+Lua/Fennel is `dseams` in [`yodaStruct`](https://github.com/d-SEAMS/yodaStruct).
+Do not grow a second engine here. `import pydseamslib` still works.
 
 ```bash
-pip install pydseamslib
-pip install 'pydseamslib[ase]'      # ASE Atoms
-pip install 'pydseamslib[solvis]'   # solvis / PyVista
+pip install pydseams
+pip install 'pydseams[ase]'      # ASE Atoms
+pip install 'pydseams[solvis]'   # solvis / PyVista
 ```
 
 ```python
-import pydseamslib as ds
+import pydseams as ds
 
 frame = ds.read("water.lammpstrj")   # also .xyz, .pdb, .gro, .dcd, .con
 print(frame.chill_plus())

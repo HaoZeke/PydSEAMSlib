@@ -6,7 +6,7 @@ SOAP spectra, and a linear classifier on Voronoi q4/q6/q8.
 
 from math import isfinite, sqrt
 
-from pydseamslib import _core
+from pydseams import _core
 
 
 def _lattice_cloud(basis, reps, lattice):

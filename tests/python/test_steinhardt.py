@@ -6,7 +6,7 @@ atom an identical local environment, so the neighbour-averaged qlBar
 must coincide with the local ql.
 """
 
-from pydseamslib import _core
+from pydseams import _core
 
 
 def _fcc_cloud(reps, lattice):

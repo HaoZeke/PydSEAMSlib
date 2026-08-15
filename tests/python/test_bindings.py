@@ -1,12 +1,12 @@
-"""Basic sanity checks for pydseamslib bindings."""
+"""Basic sanity checks for pydseams bindings."""
 
-import pydseamslib
-from pydseamslib import _core
+import pydseams
+from pydseams import _core
 
 
 def test_version():
-    assert hasattr(pydseamslib, "__version__")
-    assert pydseamslib.__version__ == "2.1.0"
+    assert hasattr(pydseams, "__version__")
+    assert pydseams.__version__ == "2.2.0"
 
 
 def test_import_core():

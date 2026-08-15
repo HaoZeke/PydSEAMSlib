@@ -13,7 +13,7 @@ def _require_solvis():
     except ImportError as exc:
         raise ImportError(
             "solvis interop needs solvis-tools. "
-            "Install it with: pip install 'pydseamslib[solvis]'"
+            "Install it with: pip install 'pydseams[solvis]'"
         ) from exc
     return System
 

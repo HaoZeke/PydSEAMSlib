@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from pydseamslib import CageScore, Frame, IceCounts, Trajectory, from_arrays, read
+from pydseams import CageScore, Frame, IceCounts, Trajectory, from_arrays, read
 
 TRAJ = Path(__file__).resolve().parents[1] / "data" / "exampleTraj.lammpstrj"
 
@@ -53,7 +53,7 @@ def test_from_arrays_roundtrip_positions():
 
 
 def test_available_readers():
-    from pydseamslib import available_readers
+    from pydseams import available_readers
 
     readers = available_readers()
     assert readers["lammps"] is True
@@ -69,7 +69,7 @@ def test_read_xyz(tmp_path):
 
 def test_to_solvis_optional():
     pytest.importorskip("solvis")
-    from pydseamslib import to_solvis
+    from pydseams import to_solvis
 
     frame = read(TRAJ, bonded="cutoff")
     system = to_solvis(frame)
@@ -79,7 +79,7 @@ def test_to_solvis_optional():
 def test_from_ase_optional():
     ase = pytest.importorskip("ase")
     from ase import Atoms
-    from pydseamslib import from_ase
+    from pydseams import from_ase
 
     src = read(TRAJ)
     atoms = Atoms(

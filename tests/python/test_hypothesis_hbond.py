@@ -6,7 +6,7 @@ structural invariants of the H-bond network.
 
 from pathlib import Path
 
-from pydseamslib import _core
+from pydseams import _core
 
 TRAJ = Path(__file__).resolve().parents[1] / "data" / "exampleTraj.lammpstrj"
 

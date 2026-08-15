@@ -6,7 +6,7 @@ known properties of the test systems.
 """
 
 from pathlib import Path
-from pydseamslib import _core, Trajectory
+from pydseams import _core, Trajectory
 
 # Test trajectory (relative to repo root)
 TRAJ = Path(__file__).resolve().parents[1] / "data" / "exampleTraj.lammpstrj"
