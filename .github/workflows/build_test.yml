@@ -1,4 +1,4 @@
-name: "Build pyseams and test"
+name: "Build pydseamslib and test"
 on:
   push:
     branches:
@@ -12,30 +12,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # TODO(ruhila): Fix windows-2022, see gh-14
-        os: [ubuntu-24.04, macos-13, macos-14]
+        os: [ubuntu-24.04, macos-latest]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: mamba-org/setup-micromamba@v1
+      - uses: mamba-org/setup-micromamba@v2
         with:
           environment-file: environment.yml
 
-      - name: Build pyseams (dev)
-        shell: bash -l {0}
+      - name: Install and test
+        shell: bash -el {0}
         run: |
-          micromamba activate pyseamsdev
-          meson setup bbdir
-          meson compile -C bbdir
-
-      - name: Run an import test (dev)
-        shell: bash -l {0}
-        run: |
-          python -c 'import bbdir.cyoda'
-
-
-      - name: Run standard tests
-        shell: bash -l {0}
-        run: |
-          pip install -v .[testing,adapters]
-          python -m pytest -vvv tests  --approvaltests-add-reporter='PythonNativeReporter'
+          pip install -v '.[test,ase]'
+          python -c 'import pydseamslib as ds; print(ds.__version__); print(ds.cyoda)'
+          python -m pytest -vvv tests

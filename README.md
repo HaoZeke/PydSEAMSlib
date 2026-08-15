@@ -1,15 +1,29 @@
-# `PydSEAMSlib`
+# PydSEAMSlib
 
-Python bindings to the [C++ engine](https://github.com/d-SEAMS/seams-core) (`seams-core`) of the [d-SEAMS](https://dseams.info) (Deferred Structural Elucidation Analysis for Molecular Simulations) project.
+Python bindings for the [d-SEAMS](https://dseams.info) C++ engine
+([`seams-core`](https://github.com/d-SEAMS/seams-core)).
 
-# Contributions
+This repository is the Python package. The C++ library lives in
+[`seams-core`](https://github.com/d-SEAMS/seams-core). The Lua and Fennel
+CLI lives in [`yodaStruct`](https://github.com/d-SEAMS/yodaStruct). Do
+not grow a second engine here.
 
-All contributions are welcome, this includes code and documentation
-contributions but also questions or other clarifications. Note that we expect
-all contributors to follow our [Code of Conduct](https://github.com/d-SEAMS/PydSEAMSlib/blob/main/CODE_OF_CONDUCT.md).
+```python
+import pydseamslib as ds
 
-# Acknowledgments
-This project was conceived as part of d-SEAM’s participation under the Python Software Foundation (PSF) in the [2023 iteration of the Google Summer of Code programme](https://summerofcode.withgoogle.com/programs/2023/projects/WAft7HXq). At that point it was called `pyseams`.
+frame = ds.read("water.lammpstrj")
+print(frame.chill_plus())
+print(frame.cages())
+
+frame = ds.from_ase(atoms)   # pip install 'pydseamslib[ase]'
+```
+
+Primary author: Ruhila S. The project started as PSF GSoC 2023 (`pyseams`).
+
+Requires Python 3.12+. Wheels are built against the CPython 3.12 stable
+ABI (one `abi3` wheel per platform). Free-threaded CPython has no
+limited ABI and is not a target.
 
 # License
-[MIT](https://github.com/d-SEAMS/PydSEAMSlib/blob/main/LICENSE).
+
+[MIT](LICENSE).
