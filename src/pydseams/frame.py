@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections import Counter
 from pathlib import Path
 
-from . import _core
+from . import yoda
 
 
 class IceCounts(dict):
@@ -55,7 +55,7 @@ def _cloud_from_positions(positions, cell, numbers, box_low=None):
         raise ValueError("no atoms to load")
     if len(cell) != 3:
         raise ValueError("cell must be three box lengths [lx, ly, lz]")
-    cloud = _core.PointCloudDouble()
+    cloud = yoda.PointCloudDouble()
     cloud.nop = n
     cloud.currentFrame = 1
     cloud.box = [float(cell[0]), float(cell[1]), float(cell[2])]
@@ -66,7 +66,7 @@ def _cloud_from_positions(positions, cell, numbers, box_low=None):
     pts = []
     id_map = {}
     for i, xyz in enumerate(positions):
-        pt = _core.PointDouble()
+        pt = yoda.PointDouble()
         pt.x = float(xyz[0])
         pt.y = float(xyz[1])
         pt.z = float(xyz[2])
@@ -86,7 +86,7 @@ def _guess_lammps_type(filename, frame, region):
     sliced = region is not None
     last = None
     for type_i in (2, 1):
-        cloud = _core.readLammpsTrjreduced(
+        cloud = yoda.readLammpsTrjreduced(
             filename=filename,
             targetFrame=frame,
             typeI=type_i,
@@ -151,7 +151,7 @@ class Frame:
         self._rings = None
         self._cages = None
         self._classifier = None
-        self._ring_updater = _core.RingUpdater(6)
+        self._ring_updater = yoda.RingUpdater(6)
         self._affiliation_updater = None
 
         if cloud is not None:
@@ -182,7 +182,7 @@ class Frame:
         low, high = self.region if self.region is not None else (
             [0, 0, 0], [0, 0, 0]
         )
-        return _core.readLammpsTrjreduced(
+        return yoda.readLammpsTrjreduced(
             filename=self.filename,
             targetFrame=frame,
             typeI=self.atom_type,
@@ -239,9 +239,9 @@ class Frame:
     @classmethod
     def from_xyz(cls, filename, cutoff=3.5, bonded="cutoff", atom_type=None):
         """Load an XYZ file through the engine reader."""
-        if not hasattr(_core, "readXYZ"):
+        if not hasattr(yoda, "readXYZ"):
             raise RuntimeError("this build has no readXYZ")
-        cloud = _core.readXYZ(str(filename))
+        cloud = yoda.readXYZ(str(filename))
         typ = atom_type
         if typ is None and cloud.nop > 0:
             typ = int(cloud.pts[0].c_type)
@@ -257,11 +257,11 @@ class Frame:
     def from_chemfiles(cls, filename, frame=1, type_filter=-1, cutoff=3.5,
                        bonded="cutoff", atom_type=None):
         """Load PDB/GRO/DCD (or any chemfiles format) when chemfiles is linked."""
-        if not hasattr(_core, "readChemfiles"):
+        if not hasattr(yoda, "readChemfiles"):
             raise RuntimeError(
                 "chemfiles is not linked in this build of seams-core"
             )
-        cloud = _core.readChemfiles(str(filename), int(frame), int(type_filter))
+        cloud = yoda.readChemfiles(str(filename), int(frame), int(type_filter))
         typ = atom_type
         if typ is None and cloud.nop > 0:
             typ = int(cloud.pts[0].c_type)
@@ -278,11 +278,11 @@ class Frame:
     def from_con(cls, filename, frame=1, cutoff=3.5, bonded="cutoff",
                  atom_type=None):
         """Load an eOn .con file when readcon-core is linked."""
-        if not hasattr(_core, "readCon"):
+        if not hasattr(yoda, "readCon"):
             raise RuntimeError(
                 "readcon-core is not linked in this build of seams-core"
             )
-        cloud = _core.readCon(str(filename), int(frame))
+        cloud = yoda.readCon(str(filename), int(frame))
         typ = atom_type
         if typ is None and cloud.nop > 0:
             typ = int(cloud.pts[0].c_type)
@@ -330,7 +330,7 @@ class Frame:
     @property
     def neighbor_list(self):
         if self._nlist is None:
-            self._nlist = _core.neighListO(
+            self._nlist = yoda.neighListO(
                 rcutoff=self.cutoff, yCloud=self.cloud, typeI=self.atom_type
             )
         return self._nlist
@@ -339,13 +339,13 @@ class Frame:
     def hbonds(self):
         if self._hbonds is None:
             if self._h_cloud is not None:
-                self._hbonds = _core.populateHbondsWithInputClouds(
+                self._hbonds = yoda.populateHbondsWithInputClouds(
                     yCloud=self.cloud,
                     hCloud=self._h_cloud,
                     nList=self.neighbor_list,
                 )
             elif self.filename is not None:
-                self._hbonds = _core.populateHbonds(
+                self._hbonds = yoda.populateHbonds(
                     filename=self.filename,
                     yCloud=self.cloud,
                     nList=self.neighbor_list,
@@ -374,7 +374,7 @@ class Frame:
         source = (
             self.neighbor_list if self.bonded == "cutoff" else self.hbonds
         )
-        return _core.neighbourListByIndex(yCloud=self.cloud, nList=source)
+        return yoda.neighbourListByIndex(yCloud=self.cloud, nList=source)
 
     @property
     def rings(self):
@@ -392,20 +392,20 @@ class Frame:
 
     def chill_plus(self):
         """CHILL+ labels. Does not write a file."""
-        _core.getCorrelPlus(
+        yoda.getCorrelPlus(
             yCloud=self.cloud, nList=self.neighbor_list, isSlice=False
         )
-        _core.getIceTypePlusNoPrint(
+        yoda.getIceTypePlusNoPrint(
             yCloud=self.cloud, nList=self.neighbor_list, isSlice=False
         )
         return self._count_ice()
 
     def chill(self):
         """CHILL labels. Does not write a file."""
-        _core.getCorrel(
+        yoda.getCorrel(
             yCloud=self.cloud, nList=self.neighbor_list, isSlice=False
         )
-        _core.getIceTypeNoPrint(
+        yoda.getIceTypeNoPrint(
             yCloud=self.cloud, nList=self.neighbor_list, isSlice=False
         )
         return self._count_ice()
@@ -442,7 +442,7 @@ class Frame:
     def cage_affiliation(self):
         six = [r for r in self.rings if len(r) == 6]
         if self._affiliation_updater is None:
-            self._affiliation_updater = _core.AffiliationUpdater()
+            self._affiliation_updater = yoda.AffiliationUpdater()
         hc, ddc = self._affiliation_updater.update(six, self.bonds_by_index)
         return {
             "six_rings": six,
@@ -455,28 +455,28 @@ class Frame:
         cut = (
             self.cutoff + 1.5 if candidate_cutoff is None else candidate_cutoff
         )
-        strict = _core.neighbourListByIndex(
+        strict = yoda.neighbourListByIndex(
             self.cloud,
-            _core.kNearestNeighbourList(
+            yoda.kNearestNeighbourList(
                 self.cloud, k, cut, self.atom_type, True
             ),
         )
-        union = _core.neighbourListByIndex(
+        union = yoda.neighbourListByIndex(
             self.cloud,
-            _core.kNearestNeighbourList(
+            yoda.kNearestNeighbourList(
                 self.cloud, k, cut, self.atom_type, False
             ),
         )
-        six_s = [r for r in _core.ringNetwork(strict, 6) if len(r) == 6]
-        six_u = [r for r in _core.ringNetwork(union, 6) if len(r) == 6]
-        hc, ddc = _core.seededCageAffiliation(six_s, strict, six_u, union)
+        six_s = [r for r in yoda.ringNetwork(strict, 6) if len(r) == 6]
+        six_u = [r for r in yoda.ringNetwork(union, 6) if len(r) == 6]
+        hc, ddc = yoda.seededCageAffiliation(six_s, strict, six_u, union)
         return CageScore(hc, ddc)
 
     def find_prisms(self, output_dir="output/", max_depth=6, shape_matching=False):
-        hbonds_idx = _core.neighbourListByIndex(
+        hbonds_idx = yoda.neighbourListByIndex(
             yCloud=self.cloud, nList=self.hbonds
         )
-        _core.prismAnalysis(
+        yoda.prismAnalysis(
             path=output_dir,
             rings=self.rings,
             nList=hbonds_idx,
@@ -489,8 +489,8 @@ class Frame:
         )
 
     def monolayer_rings(self, output_dir, sheet_area, max_depth=4):
-        rings = _core.ringNetwork(self.bonds_by_index, max_depth)
-        _core.polygonRingAnalysis(
+        rings = yoda.ringNetwork(self.bonds_by_index, max_depth)
+        yoda.polygonRingAnalysis(
             path=str(output_dir) + "/",
             rings=rings,
             nList=self.bonds_by_index,
@@ -509,7 +509,7 @@ class Frame:
         return counts
 
     def rdf_2d(self, output_dir, cutoff=12.0, binwidth=0.05):
-        _core.rdf2Danalysis_AA(
+        yoda.rdf2Danalysis_AA(
             path=str(output_dir) + "/",
             rdfValues=[],
             yCloud=self.cloud,
@@ -530,13 +530,13 @@ class Frame:
         return r, g
 
     def steinhardt(self, order_l=6):
-        result = _core.steinhardtQl(
+        result = yoda.steinhardtQl(
             yCloud=self.cloud, nList=self.neighbor_list, orderL=order_l
         )
         return {"ql": list(result.ql), "ql_bar": list(result.qlBar)}
 
     def steinhardt_voronoi(self, order_l=6, cutoff=None):
-        result = _core.steinhardtQlVoronoi(
+        result = yoda.steinhardtQlVoronoi(
             yCloud=self.cloud,
             candidateCutoff=cutoff if cutoff is not None else self.cutoff,
             orderL=order_l,
@@ -544,7 +544,7 @@ class Frame:
         return {"ql": list(result.ql), "ql_bar": list(result.qlBar)}
 
     def classify_templates(self, k_neigh=12):
-        hits = _core.classifyTemplates(self.cloud, self.neighbor_list, k_neigh)
+        hits = yoda.classifyTemplates(self.cloud, self.neighbor_list, k_neigh)
         rows = []
         for h in hits:
             name = h.name
@@ -557,22 +557,22 @@ class Frame:
         if iatom is None:
             return [
                 list(spec)
-                for spec in _core.soapSpectrumAll(
+                for spec in yoda.soapSpectrumAll(
                     self.cloud, self.neighbor_list, n_max, l_max, r
                 )
             ]
         return list(
-            _core.soapSpectrum(
+            yoda.soapSpectrum(
                 self.cloud, iatom, self.neighbor_list, n_max, l_max, r
             )
         )
 
     def voronoi_features(self, cutoff=None):
         cut = self.cutoff if cutoff is None else cutoff
-        return [list(row) for row in _core.voronoiFeatures(self.cloud, cut)]
+        return [list(row) for row in yoda.voronoiFeatures(self.cloud, cut)]
 
     def fit_classifier(self, X, y, labels=None):
-        clf = _core.LinearClassifier()
+        clf = yoda.LinearClassifier()
         if labels is not None:
             clf.labels = list(labels)
         clf.fit(X, y)

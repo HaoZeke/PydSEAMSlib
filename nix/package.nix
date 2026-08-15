@@ -109,6 +109,7 @@ python3.pkgs.buildPythonPackage {
 
   pythonImportsCheck = [
     "pydseams"
+    "pydseams.yoda"
     "pydseamslib"
   ];
 

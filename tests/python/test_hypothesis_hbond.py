@@ -6,7 +6,7 @@ structural invariants of the H-bond network.
 
 from pathlib import Path
 
-from pydseams import _core
+from pydseams import yoda
 
 TRAJ = Path(__file__).resolve().parents[1] / "data" / "exampleTraj.lammpstrj"
 
@@ -14,7 +14,7 @@ TRAJ = Path(__file__).resolve().parents[1] / "data" / "exampleTraj.lammpstrj"
 def _load_hbond_network():
     """Load trajectory and build H-bond network."""
     strTRJ = str(TRAJ.absolute())
-    cloud = _core.readLammpsTrjreduced(
+    cloud = yoda.readLammpsTrjreduced(
         filename=strTRJ,
         targetFrame=1,
         typeI=2,
@@ -22,8 +22,8 @@ def _load_hbond_network():
         coordLow=[0, 0, 0],
         coordHigh=[0, 0, 0],
     )
-    nList = _core.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
-    hbonds = _core.populateHbonds(
+    nList = yoda.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
+    hbonds = yoda.populateHbonds(
         filename=strTRJ,
         yCloud=cloud,
         nList=nList,
@@ -75,7 +75,7 @@ class TestHbondProperties:
 
         Convert to index-based lists first for consistent comparison.
         """
-        hbondsIdx = _core.neighbourListByIndex(
+        hbondsIdx = yoda.neighbourListByIndex(
             yCloud=self.cloud, nList=self.hbonds
         )
         for i in range(len(hbondsIdx)):
@@ -86,7 +86,7 @@ class TestHbondProperties:
 
     def test_bonded_atoms_are_valid_indices(self):
         """All atom IDs in the H-bond list should be valid."""
-        hbondsIdx = _core.neighbourListByIndex(
+        hbondsIdx = yoda.neighbourListByIndex(
             yCloud=self.cloud, nList=self.hbonds
         )
         n = self.cloud.nop
@@ -101,10 +101,10 @@ class TestHbondProperties:
 
         Every H-bond pair must also be spatial neighbors (within cutoff).
         """
-        nListIdx = _core.neighbourListByIndex(
+        nListIdx = yoda.neighbourListByIndex(
             yCloud=self.cloud, nList=self.nList
         )
-        hbondsIdx = _core.neighbourListByIndex(
+        hbondsIdx = yoda.neighbourListByIndex(
             yCloud=self.cloud, nList=self.hbonds
         )
         for i in range(len(hbondsIdx)):
@@ -121,7 +121,7 @@ class TestHbondWithDifferentCutoffs:
     def test_tighter_cutoff_fewer_neighbors(self):
         """A smaller cutoff should yield fewer or equal spatial neighbors."""
         strTRJ = str(TRAJ.absolute())
-        cloud = _core.readLammpsTrjreduced(
+        cloud = yoda.readLammpsTrjreduced(
             filename=strTRJ,
             targetFrame=1,
             typeI=2,
@@ -129,11 +129,11 @@ class TestHbondWithDifferentCutoffs:
             coordLow=[0, 0, 0],
             coordHigh=[0, 0, 0],
         )
-        nList_tight = _core.neighListO(rcutoff=3.0, yCloud=cloud, typeI=2)
-        nList_loose = _core.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
+        nList_tight = yoda.neighListO(rcutoff=3.0, yCloud=cloud, typeI=2)
+        nList_loose = yoda.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
 
-        tight_idx = _core.neighbourListByIndex(yCloud=cloud, nList=nList_tight)
-        loose_idx = _core.neighbourListByIndex(yCloud=cloud, nList=nList_loose)
+        tight_idx = yoda.neighbourListByIndex(yCloud=cloud, nList=nList_tight)
+        loose_idx = yoda.neighbourListByIndex(yCloud=cloud, nList=nList_loose)
 
         total_tight = sum(len(nl) - 1 for nl in tight_idx)
         total_loose = sum(len(nl) - 1 for nl in loose_idx)

@@ -35,8 +35,9 @@ atoms = frame.to_ase()
 system = frame.to_solvis()           # optional extra
 ```
 
-`ds.read` picks the engine reader from the suffix. `_core` is the compiled
+`ds.read` picks the engine reader from the suffix. `yoda` is the compiled
 surface. Helpers (`Frame`, `io`, ASE, solvis) stay in Python.
+`_core` and `cyoda` still name the same module.
 
 Primary author: Ruhila S. The project started as PSF GSoC 2023 (`pyseams`).
 

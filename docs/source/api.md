@@ -1,8 +1,8 @@
 # ``pydseams`` API
 
 The public surface is ``Frame`` / ``read`` / ``from_ase``. The compiled
-extension is nanobind ``pydseams._core``. ``cyoda`` is a compatibility
-alias of ``_core``.
+extension is nanobind ``pydseams.yoda``. ``_core`` and ``cyoda`` are
+compatibility aliases of ``yoda``.
 
 ```{toctree}
 :maxdepth: 2
@@ -11,7 +11,7 @@ alias of ``_core``.
 ```
 
 ```{eval-rst}
-.. automodule:: pydseams.cyoda
+.. automodule:: pydseams.yoda
 ```
 
 <!-- ```{autodoc2-summary}

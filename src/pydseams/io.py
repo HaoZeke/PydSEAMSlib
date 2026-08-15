@@ -28,11 +28,11 @@ def read(path, frame=1, **kwargs):
 
 def available_readers():
     """Which optional C++ readers this build linked."""
-    from . import _core
+    from . import yoda
 
     return {
         "lammps": True,
-        "xyz": hasattr(_core, "readXYZ"),
-        "chemfiles": hasattr(_core, "readChemfiles"),
-        "readcon": hasattr(_core, "readCon"),
+        "xyz": hasattr(yoda, "readXYZ"),
+        "chemfiles": hasattr(yoda, "readChemfiles"),
+        "readcon": hasattr(yoda, "readCon"),
     }

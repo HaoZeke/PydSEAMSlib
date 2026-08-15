@@ -41,8 +41,8 @@
 
 namespace nb = nanobind;
 
-NB_MODULE(_core, m) {
-    m.doc() = "PydSEAMSlib nanobind bindings";
+NB_MODULE(yoda, m) {
+    m.doc() = "d-SEAMS compiled surface (yoda)";
 
     nb::class_<molSys::Point<double>>(m, "PointDouble",
         "Per-particle data: coordinates, type, molecule ID, ice classification.")
@@ -473,7 +473,7 @@ NB_MODULE(_core, m) {
 
     // CHILL/CHILL+ classification. The C++ routines mutate yCloud in place
     // and return void. The Python bindings return the same object so that
-    // `cloud = _core.getCorrel(yCloud=cloud, ...)` keeps the caller's
+    // `cloud = yoda.getCorrel(yCloud=cloud, ...)` keeps the caller's
     // reference, which is the contract the 2.0 bindings shipped.
     m.def(
         "getCorrelPlus",

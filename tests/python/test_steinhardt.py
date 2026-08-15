@@ -6,7 +6,7 @@ atom an identical local environment, so the neighbour-averaged qlBar
 must coincide with the local ql.
 """
 
-from pydseams import _core
+from pydseams import yoda
 
 
 def _fcc_cloud(reps, lattice):
@@ -18,7 +18,7 @@ def _fcc_cloud(reps, lattice):
         (0.0, 0.5, 0.5),
     ]
 
-    cloud = _core.PointCloudDouble()
+    cloud = yoda.PointCloudDouble()
     pts = []
     id_index_map = {}
     atom_id = 1
@@ -26,7 +26,7 @@ def _fcc_cloud(reps, lattice):
         for j in range(reps):
             for k in range(reps):
                 for bx, by, bz in basis:
-                    pt = _core.PointDouble()
+                    pt = yoda.PointDouble()
                     pt.c_type = 1
                     pt.atomID = atom_id
                     pt.molID = atom_id
@@ -54,9 +54,9 @@ def test_steinhardt_qbar_equals_ql_for_uniform_environment():
     # First FCC shell sits at a/sqrt(2); cut between that and the second
     # shell at a.
     cutoff = 0.85 * lattice
-    nList = _core.neighListO(rcutoff=cutoff, yCloud=cloud, typeI=1)
+    nList = yoda.neighListO(rcutoff=cutoff, yCloud=cloud, typeI=1)
 
-    result = _core.steinhardtQl(yCloud=cloud, nList=nList, orderL=6)
+    result = yoda.steinhardtQl(yCloud=cloud, nList=nList, orderL=6)
 
     assert len(result.ql) == cloud.nop
     for ql, ql_bar in zip(result.ql, result.qlBar):
@@ -70,9 +70,9 @@ def test_steinhardt_q4_matches_fcc_reference():
     lattice = 4.0
     cloud = _fcc_cloud(reps=4, lattice=lattice)
     cutoff = 0.85 * lattice
-    nList = _core.neighListO(rcutoff=cutoff, yCloud=cloud, typeI=1)
+    nList = yoda.neighListO(rcutoff=cutoff, yCloud=cloud, typeI=1)
 
-    result = _core.steinhardtQl(yCloud=cloud, nList=nList, orderL=4)
+    result = yoda.steinhardtQl(yCloud=cloud, nList=nList, orderL=4)
 
     assert len(result.ql) == cloud.nop
     for ql, ql_bar in zip(result.ql, result.qlBar):

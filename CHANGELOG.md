@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.2
+
+The compiled extension is `pydseams.yoda`. `_core` and `cyoda` remain
+aliases of that module.
+
 ## 2.2.1
 
 Flake-based Nix package for `pydseams`.
