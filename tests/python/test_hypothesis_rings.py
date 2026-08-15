@@ -7,7 +7,7 @@ primitive ring set.
 
 from pathlib import Path
 
-from pydseams import _core
+from pydseams import yoda
 
 TRAJ = Path(__file__).resolve().parents[1] / "data" / "exampleTraj.lammpstrj"
 
@@ -15,7 +15,7 @@ TRAJ = Path(__file__).resolve().parents[1] / "data" / "exampleTraj.lammpstrj"
 def _load_rings(max_depth=6):
     """Helper: load trajectory, build H-bond graph, find rings."""
     strTRJ = str(TRAJ.absolute())
-    cloud = _core.readLammpsTrjreduced(
+    cloud = yoda.readLammpsTrjreduced(
         filename=strTRJ,
         targetFrame=1,
         typeI=2,
@@ -23,16 +23,16 @@ def _load_rings(max_depth=6):
         coordLow=[0, 0, 0],
         coordHigh=[0, 0, 0],
     )
-    nList = _core.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
-    hbonds = _core.populateHbonds(
+    nList = yoda.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
+    hbonds = yoda.populateHbonds(
         filename=strTRJ,
         yCloud=cloud,
         nList=nList,
         targetFrame=1,
         Htype=1,
     )
-    hbondsIdx = _core.neighbourListByIndex(yCloud=cloud, nList=hbonds)
-    rings = _core.ringNetwork(nList=hbondsIdx, maxDepth=max_depth)
+    hbondsIdx = yoda.neighbourListByIndex(yCloud=cloud, nList=hbonds)
+    rings = yoda.ringNetwork(nList=hbondsIdx, maxDepth=max_depth)
     return rings, hbondsIdx, cloud
 
 

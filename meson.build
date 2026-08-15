@@ -29,7 +29,7 @@ if host_machine.system() == 'linux'
 endif
 
 py.extension_module(
-  '_core',
+  'yoda',
   'src/bindings.cpp',
   dependencies: [yds_dep, nanobind_dep],
   link_args: _link_args,

@@ -6,7 +6,7 @@ known properties of the test systems.
 """
 
 from pathlib import Path
-from pydseams import _core, Trajectory
+from pydseams import yoda, Trajectory
 
 # Test trajectory (relative to repo root)
 TRAJ = Path(__file__).resolve().parents[1] / "data" / "exampleTraj.lammpstrj"
@@ -15,7 +15,7 @@ TRAJ = Path(__file__).resolve().parents[1] / "data" / "exampleTraj.lammpstrj"
 def test_read_lammps_trajectory():
     """Read a LAMMPS trajectory and verify basic properties."""
     strTRJ = str(TRAJ.absolute())
-    cloud = _core.readLammpsTrjreduced(
+    cloud = yoda.readLammpsTrjreduced(
         filename=strTRJ,
         targetFrame=1,
         typeI=2,  # oxygen atoms
@@ -34,7 +34,7 @@ def test_read_lammps_trajectory():
 def test_neighbour_list_consistency():
     """Verify neighbour list is symmetric (if A neighbours B, B neighbours A)."""
     strTRJ = str(TRAJ.absolute())
-    cloud = _core.readLammpsTrjreduced(
+    cloud = yoda.readLammpsTrjreduced(
         filename=strTRJ,
         targetFrame=1,
         typeI=2,
@@ -43,11 +43,11 @@ def test_neighbour_list_consistency():
         coordHigh=[0, 0, 0],
     )
 
-    nList = _core.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
+    nList = yoda.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
     assert len(nList) == cloud.nop
 
     # Convert to index-based for easier checking
-    nListIdx = _core.neighbourListByIndex(yCloud=cloud, nList=nList)
+    nListIdx = yoda.neighbourListByIndex(yCloud=cloud, nList=nList)
 
     # Check symmetry: if j in nListIdx[i], then i in nListIdx[j]
     for i in range(len(nListIdx)):
@@ -60,7 +60,7 @@ def test_neighbour_list_consistency():
 def test_hydrogen_bond_network():
     """Build H-bond network and verify reasonable properties."""
     strTRJ = str(TRAJ.absolute())
-    cloud = _core.readLammpsTrjreduced(
+    cloud = yoda.readLammpsTrjreduced(
         filename=strTRJ,
         targetFrame=1,
         typeI=2,
@@ -69,8 +69,8 @@ def test_hydrogen_bond_network():
         coordHigh=[0, 0, 0],
     )
 
-    nList = _core.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
-    hbonds = _core.populateHbonds(
+    nList = yoda.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
+    hbonds = yoda.populateHbonds(
         filename=strTRJ,
         yCloud=cloud,
         nList=nList,
@@ -88,7 +88,7 @@ def test_hydrogen_bond_network():
 def test_ring_network():
     """Find rings and verify they have the right sizes."""
     strTRJ = str(TRAJ.absolute())
-    cloud = _core.readLammpsTrjreduced(
+    cloud = yoda.readLammpsTrjreduced(
         filename=strTRJ,
         targetFrame=1,
         typeI=2,
@@ -97,16 +97,16 @@ def test_ring_network():
         coordHigh=[0, 0, 0],
     )
 
-    nList = _core.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
-    hbonds = _core.populateHbonds(
+    nList = yoda.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
+    hbonds = yoda.populateHbonds(
         filename=strTRJ,
         yCloud=cloud,
         nList=nList,
         targetFrame=1,
         Htype=1,
     )
-    hbondsIdx = _core.neighbourListByIndex(yCloud=cloud, nList=hbonds)
-    rings = _core.ringNetwork(nList=hbondsIdx, maxDepth=6)
+    hbondsIdx = yoda.neighbourListByIndex(yCloud=cloud, nList=hbonds)
+    rings = yoda.ringNetwork(nList=hbondsIdx, maxDepth=6)
 
     # Should find some rings
     assert len(rings) > 0
@@ -119,7 +119,7 @@ def test_ring_network():
 def test_full_pipeline_chill_plus():
     """Run full CHILL+ pipeline and verify ice type classification."""
     strTRJ = str(TRAJ.absolute())
-    cloud = _core.readLammpsTrjreduced(
+    cloud = yoda.readLammpsTrjreduced(
         filename=strTRJ,
         targetFrame=1,
         typeI=2,
@@ -128,10 +128,10 @@ def test_full_pipeline_chill_plus():
         coordHigh=[0, 0, 0],
     )
 
-    nList = _core.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
+    nList = yoda.neighListO(rcutoff=3.5, yCloud=cloud, typeI=2)
 
     # Mutates the cloud in place and returns the same object
-    returned = _core.getCorrelPlus(yCloud=cloud, nList=nList, isSlice=False)
+    returned = yoda.getCorrelPlus(yCloud=cloud, nList=nList, isSlice=False)
     assert returned is cloud
 
     # Every atom should now have c_ij entries

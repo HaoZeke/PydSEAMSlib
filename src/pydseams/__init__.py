@@ -13,8 +13,9 @@ ASE Atoms work the same way::
     atoms = frame.to_ase()
 """
 
-from . import _core
-from . import _core as cyoda
+from . import yoda
+from . import yoda as _core
+from . import yoda as cyoda
 from .frame import CageScore, Frame, IceCounts, read
 from .io import available_readers
 
@@ -71,6 +72,7 @@ __all__ = [
     "from_xyz",
     "to_solvis",
     "available_readers",
+    "yoda",
     "_core",
     "cyoda",
     "__version__",
