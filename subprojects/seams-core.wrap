@@ -1,7 +1,7 @@
 [wrap-git]
 directory = seams-core
-url = https://github.com/HaoZeke/seams-core.git
-revision = perf/2026-08-14-neighbour-and-bop-hot-paths
+url = https://github.com/d-SEAMS/seams-core.git
+revision = v2.1.0
 depth = 1
 
 [provide]
