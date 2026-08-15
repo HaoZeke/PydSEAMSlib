@@ -1,5 +1,7 @@
 # PydSEAMSlib
 
+[![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
+
 Python bindings for the [d-SEAMS](https://dseams.info) C++ engine
 ([`seams-core`](https://github.com/d-SEAMS/seams-core)).
 
@@ -12,6 +14,13 @@ Do not grow a second engine here. `import pydseamslib` still works.
 pip install pydseams
 pip install 'pydseams[ase]'      # ASE Atoms
 pip install 'pydseams[solvis]'   # solvis / PyVista
+```
+
+Nix flake:
+
+```bash
+nix build
+nix develop
 ```
 
 ```python

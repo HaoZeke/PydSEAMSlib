@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.1
+
+Flake-based Nix package for `pydseams`.
+
 ## 2.2.0
 
 The import is `pydseams`. `pydseamslib` remains a compatibility alias.
