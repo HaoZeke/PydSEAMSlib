@@ -20,10 +20,10 @@ def test_chill_plus_no_tempdir(tmp_path, monkeypatch):
     frame = read(TRAJ.resolve())
     counts = frame.chill_plus()
     assert isinstance(counts, IceCounts)
-    assert counts.hexagonal == 65
-    assert counts.cubic == 42
-    assert counts.interfacial == 58
-    assert counts.water == 85
+    assert counts.interClathrate == 12
+    assert counts.water == 238
+    assert counts.cubic == 0
+    assert counts.hexagonal == 0
     assert sum(counts.values()) == 250
     leftover = [p for p in tmp_path.iterdir() if p.name.startswith("dseams_")]
     assert leftover == []

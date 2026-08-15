@@ -91,13 +91,13 @@ Expected output:
 
 .. code-block:: text
 
-   IceCounts(cubic=42, hexagonal=65, interfacial=58, water=85)
+   IceCounts(interClathrate=12, water=238)
 
 These counts are the engine fixture result for seams-core
 ``input/traj/exampleTraj.lammpstrj``, vendored here as
 ``tests/data/exampleTraj.lammpstrj``. CHILL+ labels each oxygen from
-its four neighbours: cubic 42, hexagonal 65, interfacial 58, water
-85. The four numbers sum to 250.
+its four neighbours: 12 interfacial clathrate (three eclipsed bonds)
+and 238 water.
 
 ``IceCounts`` is a histogram. ``counts.cubic`` and
 ``counts["cubic"]`` are the same value. Missing labels read as
