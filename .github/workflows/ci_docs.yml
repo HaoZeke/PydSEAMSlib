@@ -27,7 +27,8 @@ jobs:
           python-version: "3.12"
       - name: Generate Docs
         run: |
-          pip install '.[docs]'
+          pip install sphinx shibuya myst-parser sphinx-copybutton \
+            sphinx-design sphinxcontrib-bibtex sphinx-contributors
           sphinx-build -b html docs/source html
       - name: Setup Pages
         uses: actions/configure-pages@v5
