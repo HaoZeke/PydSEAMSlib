@@ -1,0 +1,44 @@
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1786599213,
+        "narHash": "sha256-yNJd40f11EzXBjSByCB7IPpeFFAdeoSKKM67dGkfFoU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "0e251e24a4f24e036a084b6b4b2d2491af4167f4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "seams-core": "seams-core"
+      }
+    },
+    "seams-core": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1786821100,
+        "narHash": "sha256-hPy9J7nBj70wCloPQ4BAXE3K+Vv6ujyQwWSEOMmNELY=",
+        "owner": "d-SEAMS",
+        "repo": "seams-core",
+        "rev": "007d2557aff305ccdad1d59cd2f27cc105ef9a60",
+        "type": "github"
+      },
+      "original": {
+        "owner": "d-SEAMS",
+        "repo": "seams-core",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
