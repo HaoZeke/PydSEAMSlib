@@ -478,3 +478,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 docs/source/_generate/
+
+!/subprojects/packagefiles/
+!/subprojects/packagefiles/**

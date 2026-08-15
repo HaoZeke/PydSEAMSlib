@@ -1,56 +1,57 @@
 project(
-    'PydSEAMSlib',
-    'cpp',
-    version: '0.0.2',
-    default_options: ['warning_level=1', 'cpp_std=c++14'],
+  'PydSEAMSlib',
+  'cpp',
+  version: '2.0.0',
+  default_options: ['warning_level=1', 'cpp_std=c++20'],
+  meson_version: '>=1.3.0',
 )
 
-host_system = host_machine.system()
-
-# Add C++ compiler options
-# Note that fast-math gives incorrect results, and the third set is for debugging
-_args = ['-funroll-loops']  # ['-ffast-math', '-funroll-loops'] #['-ggdb', '-Og', '-fno-inline-functions']
-_deps = []  # Dependencies
-_linkto = []  # All the sub-libraries
-_incdirs = []  # All the includes
-
-# ---------------------- Library Dependencies
-ydslib = subproject(
-    'seams-core',
-    default_options: ['default_library=static', 'wrap_mode=forcefallback'],
-).get_variable(
-    'yds_dep',
+# C++ engine. Bindings live here; seams-core is the library, not a monolith.
+seams = subproject(
+  'seams-core',
+  default_options: [
+    'default_library=static',
+    'with_python=false',
+    'with_tests=false',
+    'with_lua=disabled',
+  ],
 )
-_deps += ydslib
+yds_dep = seams.get_variable('yds_dep')
 
-# ---------------------- Bindings
-py_mod = import('python')
-py = py_mod.find_installation(pure: false)
-python_dep = py.dependency()
-pyb11f_deps = [python_dep, dependency('pybind11')]
+nanobind_dep = dependency('nanobind')
 
-_deps += [pyb11f_deps, declare_dependency(link_args: '-lstdc++')]
+py = import('python').find_installation(pure: false)
 
-# cyoda, for the bindings to seams-core
+_link_args = []
+if host_machine.system() == 'linux'
+  _link_args += ['-Wl,--enable-new-dtags']
+endif
+
 py.extension_module(
-    'cyoda',
-    sources: ['pyb11_srcs/py_one.cc'],
-    dependencies: _deps,
-    link_with: _linkto,
-    cpp_args: _args,
-    install: true,
-    subdir: 'pydseamslib/',
-)
-
-# pydseamslib main package
-py.install_sources(
-    ['src/__init__.py'],
-    pure: false,  # install next to compiled extension
-    subdir: 'pydseamslib/',
+  '_core',
+  'src/bindings.cpp',
+  dependencies: [yds_dep, nanobind_dep],
+  link_args: _link_args,
+  install: true,
+  subdir: 'pydseamslib',
+  limited_api: '3.12',
 )
 
 py.install_sources(
-    ['src/adapters/__init__.py', 'src/adapters/_ase.py'],
-    pure: false,
-    subdir: 'pydseamslib/adapters',
+  [
+    'src/pydseamslib/__init__.py',
+    'src/pydseamslib/frame.py',
+    'src/pydseamslib/aseio.py',
+  ],
+  pure: false,
+  subdir: 'pydseamslib',
+)
+
+py.install_sources(
+  [
+    'src/pydseamslib/adapters/__init__.py',
+    'src/pydseamslib/adapters/_ase.py',
+  ],
+  pure: false,
+  subdir: 'pydseamslib/adapters',
 )
