@@ -3,8 +3,10 @@
 Python bindings for the [d-SEAMS](https://dseams.info) C++ engine
 ([`seams-core`](https://github.com/d-SEAMS/seams-core)).
 
-This repository is the Python package. The C++ library and the Lua
-`yodaStruct` CLI live in `seams-core`. Do not grow a second engine here.
+This repository is the Python package. The C++ library lives in
+[`seams-core`](https://github.com/d-SEAMS/seams-core). The Lua and Fennel
+CLI lives in [`yodaStruct`](https://github.com/d-SEAMS/yodaStruct). Do
+not grow a second engine here.
 
 ```python
 import pydseamslib as ds
