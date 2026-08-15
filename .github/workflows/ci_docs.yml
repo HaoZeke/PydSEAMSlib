@@ -5,7 +5,11 @@ name: Build documentation
 concurrency:
   group: "pages"
   cancel-in-progress: false
-on: [push, pull_request]
+# Docs stack is PDM-era. Rebuild it on main only so PRs are not red
+# on a lock that does not match pyproject.toml.
+on:
+  push:
+    branches: [main]
 jobs:
   build_docs:
     name: Build documentation

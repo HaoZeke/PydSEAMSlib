@@ -86,12 +86,14 @@ nanobind_sources = files('src/nb_combined.cpp')
 # A static library is linked into the extension. The wrapdb recipe uses
 # declare_dependency(sources:), which compiled the object but did not put
 # it on the extension_module link line.
+# Meson limited_api on the extension does not reach this TU.
+# Keep the hex in lockstep with meson.build limited_api: '3.12'.
 nanobind_lib = static_library(
   'nanobind',
   nanobind_sources,
   include_directories: [incdir],
   dependencies: [py_dep, robin_map_dep],
-  cpp_args: dep_compile_args,
+  cpp_args: dep_compile_args + ['-DPy_LIMITED_API=0x030C0000'],
 )
 
 nanobind_dep = declare_dependency(
