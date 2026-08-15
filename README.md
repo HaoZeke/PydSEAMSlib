@@ -23,6 +23,9 @@ nix build
 nix develop
 ```
 
+Docs: `docs/orgmode/` (ox-rst) and `docs/source/` (Shibuya).
+Site: <https://d-seams.github.io/PydSEAMSlib/>.
+
 ```python
 import pydseams as ds
 

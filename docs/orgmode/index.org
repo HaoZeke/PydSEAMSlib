@@ -1,0 +1,56 @@
+#+TITLE: pydseams
+#+OPTIONS: toc:nil todo:nil num:nil author:nil title:nil ^:nil
+
+#+begin_export rst
+========
+pydseams
+========
+
+Python bindings for the d-SEAMS C++ engine.
+#+end_export
+
+* Overview
+
+~pydseams~ is the Python package. The compiled module is ~yoda~.
+Helpers (~Frame~, ~read~, ASE, solvis) sit on that surface, the way
+metatomic sits on its C API. ~import pydseamslib~ still works.
+
+The engine and ~seams~ CLI live in
+[[https://github.com/d-SEAMS/seams-core][seams-core]]. Lua is
+~dseams~ in [[https://github.com/d-SEAMS/yodaStruct][yodaStruct]].
+
+#+begin_src python
+import pydseams as ds
+
+frame = ds.read("water.lammpstrj")
+print(frame.chill_plus())
+print(frame.cages())
+#+end_src
+
+* Getting Started
+#+begin_export rst
+  .. toctree::
+     :maxdepth: 1
+     :caption: Getting Started
+
+     quickstart
+#+end_export
+
+* How-To
+#+begin_export rst
+  .. toctree::
+     :maxdepth: 1
+     :caption: How-To
+
+     howto/ase
+#+end_export
+
+* Reference
+#+begin_export rst
+  .. toctree::
+     :maxdepth: 2
+     :caption: Reference
+
+     reference/python
+     api
+#+end_export
