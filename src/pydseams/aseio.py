@@ -1,4 +1,4 @@
-"""ASE Atoms in and out of a Frame. Optional: pip install 'pydseamslib[ase]'."""
+"""ASE Atoms in and out of a Frame. Optional: pip install 'pydseams[ase]'."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ def _require_ase():
     except ImportError as exc:
         raise ImportError(
             "ASE interop needs the ase package. "
-            "Install it with: pip install 'pydseamslib[ase]'"
+            "Install it with: pip install 'pydseams[ase]'"
         ) from exc
     return ase, Atoms, chemical_symbols
 

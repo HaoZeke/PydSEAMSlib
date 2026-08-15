@@ -310,7 +310,7 @@ class Frame:
         return frame_to_ase(self)
 
     def to_solvis(self, expand_box=True):
-        """solvis.System for this frame. Optional: pip install 'pydseamslib[solvis]'."""
+        """solvis.System for this frame. Optional: pip install 'pydseams[solvis]'."""
         from .solvis import to_solvis
 
         return to_solvis(self, expand_box=expand_box)
@@ -586,7 +586,7 @@ class Frame:
 
 
 def read(filename, **kwargs):
-    """Load a trajectory. Format follows the suffix. See pydseamslib.io.read."""
+    """Load a trajectory. Format follows the suffix. See pydseams.io.read."""
     from .io import read as _read
 
     return _read(filename, **kwargs)

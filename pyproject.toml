@@ -3,8 +3,8 @@ requires = ["meson-python>=0.17", "numpy"]
 build-backend = "mesonpy"
 
 [project]
-name = "pydseamslib"
-version = "2.1.0"
+name = "pydseams"
+version = "2.2.0"
 description = "Python bindings for the d-SEAMS C++ engine"
 readme = "README.md"
 license = {text = "MIT"}

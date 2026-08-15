@@ -1,7 +1,7 @@
 project(
-  'PydSEAMSlib',
+  'pydseams',
   'cpp',
-  version: '2.1.0',
+  version: '2.2.0',
   default_options: ['warning_level=1', 'cpp_std=c++20'],
   meson_version: '>=1.3.0',
 )
@@ -33,27 +33,33 @@ py.extension_module(
   dependencies: [yds_dep, nanobind_dep],
   link_args: _link_args,
   install: true,
-  subdir: 'pydseamslib',
+  subdir: 'pydseams',
   limited_api: '3.12',
 )
 
 py.install_sources(
   [
-    'src/pydseamslib/__init__.py',
-    'src/pydseamslib/frame.py',
-    'src/pydseamslib/aseio.py',
-    'src/pydseamslib/io.py',
-    'src/pydseamslib/solvis.py',
+    'src/pydseams/__init__.py',
+    'src/pydseams/frame.py',
+    'src/pydseams/aseio.py',
+    'src/pydseams/io.py',
+    'src/pydseams/solvis.py',
   ],
   pure: false,
-  subdir: 'pydseamslib',
+  subdir: 'pydseams',
 )
 
 py.install_sources(
   [
-    'src/pydseamslib/adapters/__init__.py',
-    'src/pydseamslib/adapters/_ase.py',
+    'src/pydseams/adapters/__init__.py',
+    'src/pydseams/adapters/_ase.py',
   ],
   pure: false,
-  subdir: 'pydseamslib/adapters',
+  subdir: 'pydseams/adapters',
+)
+
+py.install_sources(
+  ['src/pydseamslib/__init__.py'],
+  pure: false,
+  subdir: 'pydseamslib',
 )

@@ -27,9 +27,9 @@ micromamba activate pyseamsdev
 Which can then be used directly for a ``pip`` install:
 
 ```{code-block} sh
-pip install pydseamslib
-pip install 'pydseamslib[ase]'
-pip install 'pydseamslib[test]'
+pip install pydseams
+pip install 'pydseams[ase]'
+pip install 'pydseams[test]'
 # from a checkout
 pip install -e '.[test,ase]'
 ```
