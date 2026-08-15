@@ -27,21 +27,11 @@ micromamba activate pyseamsdev
 Which can then be used directly for a ``pip`` install:
 
 ```{code-block} sh
-# Pure bindings
-pip install .
-# For ASE integration
-pip install .[adapters]
-# With tests
-pip install .[testing]
-# Everything
-pip install .[testing,adapters,docs]
-```
-
-Development local builds can be prepared via ``meson``:
-
-```{code-block} sh
-meson setup bbdir --prefix=$CONDA_PREFIX --libdir=lib
-meson compile install bbdir
+pip install pydseamslib
+pip install 'pydseamslib[ase]'
+pip install 'pydseamslib[test]'
+# from a checkout
+pip install -e '.[test,ase]'
 ```
 
 

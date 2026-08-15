@@ -17,7 +17,7 @@ from . import _core
 from . import _core as cyoda
 from .frame import CageScore, Frame, IceCounts, read
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 # Drop-in name used in the 2.0 docs and tests
 Trajectory = Frame

@@ -6,7 +6,7 @@ from pydseamslib import _core
 
 def test_version():
     assert hasattr(pydseamslib, "__version__")
-    assert pydseamslib.__version__ == "2.0.0"
+    assert pydseamslib.__version__ == "2.0.1"
 
 
 def test_import_core():

@@ -127,9 +127,9 @@ class Frame:
         self,
         filename=None,
         frame=1,
-        atom_type=2,
+        atom_type=None,
         cutoff=3.5,
-        bonded="hbond",
+        bonded="auto",
         region=None,
         *,
         cloud=None,
@@ -149,6 +149,7 @@ class Frame:
         self._nlist = None
         self._hbonds = None
         self._rings = None
+        self._cages = None
         self._classifier = None
         self._ring_updater = _core.RingUpdater(6)
         self._affiliation_updater = None
@@ -301,6 +302,7 @@ class Frame:
         self._nlist = None
         self._hbonds = None
         self._rings = None
+        self._cages = None
 
     @property
     def bonds_by_index(self):
@@ -357,17 +359,20 @@ class Frame:
         affiliation on this frame's six-rings.
         """
         if seeded:
-            return self.seeded_affiliation(k=k, candidate_cutoff=candidate_cutoff)
-        aff = self.cage_affiliation()
-        n = self.n_atoms
-        hc = [False] * n
-        ddc = [False] * n
-        for ring, is_hc, is_ddc in zip(aff["six_rings"], aff["hc"], aff["ddc"]):
-            for atom in ring:
-                if 0 <= atom < n:
-                    hc[atom] = hc[atom] or bool(is_hc)
-                    ddc[atom] = ddc[atom] or bool(is_ddc)
-        return CageScore(hc, ddc)
+            score = self.seeded_affiliation(k=k, candidate_cutoff=candidate_cutoff)
+        else:
+            aff = self.cage_affiliation()
+            n = self.n_atoms
+            hc = [False] * n
+            ddc = [False] * n
+            for ring, is_hc, is_ddc in zip(aff["six_rings"], aff["hc"], aff["ddc"]):
+                for atom in ring:
+                    if 0 <= atom < n:
+                        hc[atom] = hc[atom] or bool(is_hc)
+                        ddc[atom] = ddc[atom] or bool(is_ddc)
+            score = CageScore(hc, ddc)
+        self._cages = score
+        return score
 
     def cage_affiliation(self):
         six = [r for r in self.rings if len(r) == 6]
