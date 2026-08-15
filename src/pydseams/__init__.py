@@ -1,5 +1,11 @@
 """d-SEAMS Python front end.
 
+``pydseams`` is the package. The compiled nanobind module is
+:mod:`pydseams.yoda`. Helpers (:class:`~pydseams.frame.Frame`,
+:func:`~pydseams.io.read`, ASE, solvis) sit on that surface.
+``_core`` and ``cyoda`` are aliases of ``yoda``. ``Trajectory`` is an
+alias of :class:`~pydseams.frame.Frame`.
+
 Load a frame and ask for ice::
 
     import pydseams as ds
@@ -26,34 +32,162 @@ Trajectory = Frame
 
 
 def from_ase(atoms, select="O", cutoff=3.5, bonded="auto"):
-    """Build a Frame from an ASE Atoms. select is a symbol or atomic number."""
+    """Build a :class:`~pydseams.frame.Frame` from an ASE ``Atoms``.
+
+    Parameters
+    ----------
+    atoms : ase.Atoms
+        Configuration with an orthorhombic cell.
+    select : str or int, optional
+        Chemical symbol or atomic number of the species to analyse.
+        Default ``"O"``. ``None`` keeps every atom.
+    cutoff : float, optional
+        Neighbour cutoff in Angstroms. Default ``3.5``.
+    bonded : {"auto", "hbond", "cutoff"}, optional
+        Graph for rings. ``"auto"`` uses hydrogen bonds when the
+        ``Atoms`` contain H, otherwise the cutoff neighbour list.
+
+    Returns
+    -------
+    Frame
+        Analysable oxygen (or selected-species) configuration.
+
+    Raises
+    ------
+    ImportError
+        If ASE is not installed (``pip install 'pydseams[ase]'``).
+    TypeError
+        If ``atoms`` is not an ASE ``Atoms``.
+    ValueError
+        If the cell is not orthorhombic, or ``select`` matches no atom.
+    """
     return Frame.from_ase(atoms, select=select, cutoff=cutoff, bonded=bonded)
 
 
 def from_arrays(positions, cell, numbers=None, cutoff=3.5, bonded="cutoff"):
-    """Build a Frame from (N, 3) positions and three box lengths."""
+    """Build a :class:`~pydseams.frame.Frame` from coordinates and box lengths.
+
+    Parameters
+    ----------
+    positions : sequence of (x, y, z)
+        Cartesian coordinates, shape ``(N, 3)``.
+    cell : sequence of float
+        Three orthorhombic box lengths ``[lx, ly, lz]``.
+    numbers : sequence of int, optional
+        Per-atom type codes stored as ``c_type``. Default ``1`` for
+        every particle.
+    cutoff : float, optional
+        Neighbour cutoff in Angstroms. Default ``3.5``.
+    bonded : {"auto", "hbond", "cutoff"}, optional
+        Graph for rings. Default ``"cutoff"`` because this constructor
+        does not attach a hydrogen cloud.
+
+    Returns
+    -------
+    Frame
+
+    Raises
+    ------
+    ValueError
+        If ``positions`` is empty or ``cell`` is not three lengths.
+    """
     return Frame.from_arrays(
         positions, cell, numbers=numbers, cutoff=cutoff, bonded=bonded
     )
 
 
 def from_chemfiles(path, frame=1, **kwargs):
-    """Build a Frame through chemfiles (PDB, GRO, DCD, ...)."""
+    """Build a :class:`~pydseams.frame.Frame` through chemfiles.
+
+    Parameters
+    ----------
+    path : path-like
+        Trajectory chemfiles can read (PDB, GRO, DCD, ...).
+    frame : int, optional
+        1-indexed frame. Default ``1``.
+    **kwargs
+        Forwarded to :meth:`Frame.from_chemfiles` (``cutoff``,
+        ``bonded``, ``atom_type``, ``type_filter``).
+
+    Returns
+    -------
+    Frame
+
+    Raises
+    ------
+    RuntimeError
+        If this build of seams-core did not link chemfiles.
+    """
     return Frame.from_chemfiles(path, frame=frame, **kwargs)
 
 
 def from_con(path, frame=1, **kwargs):
-    """Build a Frame from an eOn .con file."""
+    """Build a :class:`~pydseams.frame.Frame` from an eOn ``.con`` file.
+
+    Parameters
+    ----------
+    path : path-like
+        eOn ``.con`` trajectory.
+    frame : int, optional
+        1-indexed frame. Default ``1``.
+    **kwargs
+        Forwarded to :meth:`Frame.from_con` (``cutoff``, ``bonded``,
+        ``atom_type``).
+
+    Returns
+    -------
+    Frame
+
+    Raises
+    ------
+    RuntimeError
+        If this build of seams-core did not link readcon-core.
+    """
     return Frame.from_con(path, frame=frame, **kwargs)
 
 
 def from_xyz(path, **kwargs):
-    """Build a Frame from an XYZ file."""
+    """Build a :class:`~pydseams.frame.Frame` from an XYZ file.
+
+    Parameters
+    ----------
+    path : path-like
+        XYZ structure.
+    **kwargs
+        Forwarded to :meth:`Frame.from_xyz` (``cutoff``, ``bonded``,
+        ``atom_type``).
+
+    Returns
+    -------
+    Frame
+
+    Raises
+    ------
+    RuntimeError
+        If this build of seams-core has no ``readXYZ``.
+    """
     return Frame.from_xyz(path, **kwargs)
 
 
 def to_solvis(frame, expand_box=True):
-    """solvis.System for a Frame. Optional extra."""
+    """Wrap a :class:`~pydseams.frame.Frame` as a ``solvis.System``.
+
+    Parameters
+    ----------
+    frame : Frame
+        Configuration to view. Converted through :meth:`Frame.to_ase`.
+    expand_box : bool, optional
+        Passed to ``solvis.system.System``. Default ``True``.
+
+    Returns
+    -------
+    solvis.system.System
+
+    Raises
+    ------
+    ImportError
+        If solvis is not installed (``pip install 'pydseams[solvis]'``).
+    """
     from .solvis import to_solvis as _to
 
     return _to(frame, expand_box=expand_box)

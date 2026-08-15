@@ -1,0 +1,92 @@
+#+TITLE: API reference
+#+OPTIONS: toc:nil num:nil
+
+The public Python surface is ~Frame~, ~read~, and the ASE helpers.
+Autodoc of those helpers is the Sphinx landing
+[[file:../../source/api.md][api.md]] (~automodule~ + Napoleon).
+~pydseams.yoda~ is mocked in the Sphinx build, so the tables below
+are the hand list of functions ~Frame~ and the I/O helpers call,
+taken from ~src/bindings.cpp~.
+
+* Package constructors
+
+| name | role |
+|------+------|
+| ~pydseams.read~ | suffix-dispatching loader |
+| ~pydseams.from_ase~ | ASE ~Atoms~ to ~Frame~ |
+| ~pydseams.from_arrays~ | ~(N, 3)~ positions and three box lengths |
+| ~pydseams.from_chemfiles~ | PDB / GRO / DCD when chemfiles is linked |
+| ~pydseams.from_con~ | eOn ~.con~ when readcon-core is linked |
+| ~pydseams.from_xyz~ | XYZ through ~yoda.readXYZ~ |
+| ~pydseams.available_readers~ | which compiled readers this build linked |
+| ~pydseams.to_solvis~ | optional ~solvis.System~ view |
+
+* yoda (compiled)
+
+36 symbols. Names match ~src/bindings.cpp~; do not invent extras.
+
+** I/O
+
+| name | role |
+|------+------|
+| ~readLammpsTrjreduced~ | LAMMPS frame, one atom type |
+| ~readLammpsTrj~ | LAMMPS frame, all types |
+| ~readLammpsTrjO~ | LAMMPS frame, oxygen only |
+| ~readXYZ~ | XYZ coordinates |
+| ~readChemfiles~ | chemfiles (PDB, GRO, DCD, ...); ~SEAMS_HAS_CHEMFILES~ |
+| ~readCon~ | eOn ~.con~; ~SEAMS_HAS_READCON~ |
+
+** Neighbours and hydrogen bonds
+
+| name | role |
+|------+------|
+| ~neighListO~ | full neighbour list, one type, cutoff |
+| ~neighbourListByIndex~ | atom-ID list to index-based list |
+| ~kNearestNeighbourList~ | exact k-nearest graph (union or mutual) |
+| ~populateHbonds~ | H-bond network from a trajectory |
+| ~populateHbondsWithInputClouds~ | H-bonds from pre-loaded O and H clouds |
+
+** Rings and cages
+
+| name | role |
+|------+------|
+| ~ringNetwork~ | primitive (shortest-path) rings up to ~maxDepth~ |
+| ~cageAffiliation~ | order-free per-ring ~(hc, ddc)~ flags |
+| ~seededCageAffiliation~ | hysteresis per-atom cage flags |
+| ~RingUpdater~ | incremental primitive rings |
+| ~AffiliationUpdater~ | incremental per-ring cage flags |
+
+** CHILL / CHILL+
+
+| name | role |
+|------+------|
+| ~getCorrelPlus~ | CHILL+ bond-order correlations |
+| ~getIceTypePlusNoPrint~ | CHILL+ ice type; no file |
+| ~getIceTypePlus~ | CHILL+ ice type; writes a file |
+| ~getCorrel~ | CHILL bond-order correlations |
+| ~getIceTypeNoPrint~ | CHILL ice type; no file |
+| ~getIceType~ | CHILL ice type; writes a file |
+
+** Descriptors and topology
+
+| name | role |
+|------+------|
+| ~steinhardtQl~ | local and neighbour-averaged Steinhardt ~ql~ |
+| ~steinhardtQlVoronoi~ | Voronoi-weighted Steinhardt |
+| ~classifyTemplates~ | IRA/Horn overlay onto FCC/HCP/BCC/SC |
+| ~soapSpectrum~ | SOAP of one particle |
+| ~soapSpectrumAll~ | SOAP of every particle |
+| ~voronoiFeatures~ | per-atom ~[q4, q6, q8]~ |
+| ~prismAnalysis~ | prism identification; writes output |
+| ~polygonRingAnalysis~ | quasi-2D monolayer rings; writes output |
+| ~rdf2Danalysis_AA~ | 2D RDF for identical types |
+| ~LinearClassifier~ | linear classifier for ~Frame.fit_classifier~ |
+
+** Types
+
+| name | role |
+|------+------|
+| ~PointCloudDouble~ | one-frame point cloud and box |
+| ~PointDouble~ | per-particle coordinates, type, ice label |
+| ~SteinhardtQl~ | per-particle ~ql~ and ~qlBar~ |
+| ~AtomStateType~ | CHILL / CHILL+ / q6 ice-phase enum |

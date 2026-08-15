@@ -36,6 +36,15 @@ print(frame.cages())
      quickstart
 #+end_export
 
+* Tutorials
+#+begin_export rst
+  .. toctree::
+     :maxdepth: 1
+     :caption: Tutorials
+
+     tutorials/classify-ice
+#+end_export
+
 * How-To
 #+begin_export rst
   .. toctree::
@@ -43,6 +52,15 @@ print(frame.cages())
      :caption: How-To
 
      howto/ase
+#+end_export
+
+* Explanation
+#+begin_export rst
+  .. toctree::
+     :maxdepth: 1
+     :caption: Explanation
+
+     explanation/yoda-surface
 #+end_export
 
 * Reference
@@ -53,4 +71,13 @@ print(frame.cages())
 
      reference/python
      api
+#+end_export
+
+* Development
+#+begin_export rst
+  .. toctree::
+     :maxdepth: 1
+     :caption: Development
+
+     history
 #+end_export

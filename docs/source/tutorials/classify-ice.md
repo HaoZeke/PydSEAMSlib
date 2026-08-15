@@ -1,0 +1,58 @@
+# Classify ice
+
+Load a mixed ice-water LAMMPS dump, print CHILL+ counts, and compare
+them to cage membership on the same frame.
+
+## Install
+
+```bash
+pip install pydseams
+```
+
+`pydseams` is the Python package. The C++ engine and `seams` CLI live
+in [seams-core](https://github.com/d-SEAMS/seams-core); a wheel
+already links that engine. Requires Python 3.12+.
+`import pydseamslib` is a compatibility alias of `pydseams`.
+
+## Classify
+
+From a PydSEAMSlib checkout, at the repository root:
+
+```python
+import pydseams as ds
+
+frame = ds.read("tests/data/exampleTraj.lammpstrj")
+print(frame.chill_plus())
+print(frame.cages())
+```
+
+The same dump is `input/traj/exampleTraj.lammpstrj` in seams-core.
+Copy it and pass that path to `ds.read` if you installed from PyPI
+only.
+
+You should see:
+
+```text
+IceCounts(cubic=42, hexagonal=65, interfacial=58, water=85)
+CageScore(n_ih=0, n_ic=0, n_water=250)
+```
+
+`read` keeps the 250 oxygen atoms (LAMMPS type 2). CHILL+ labels each
+oxygen from its four neighbours: cubic 42, hexagonal 65, interfacial
+58, water 85. `cages()` scores complete hexagonal cages (HC, ice Ih)
+and double-diamond cages (DDC, ice Ic). This mixed snapshot has no
+finished HC or DDC, so every oxygen stays water under the cage score.
+
+## Peek at yoda
+
+`Frame` calls the compiled module `yoda`. Same session:
+
+```python
+from pydseams import yoda
+
+print(yoda.__doc__)
+print(type(frame.cloud))
+```
+
+You should see `d-SEAMS compiled surface (yoda)` and
+`<class 'pydseams.yoda.PointCloudDouble'>`.

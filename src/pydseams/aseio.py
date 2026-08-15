@@ -1,4 +1,8 @@
-"""ASE Atoms in and out of a Frame. Optional: pip install 'pydseams[ase]'."""
+"""ASE ``Atoms`` in and out of a :class:`~pydseams.frame.Frame`.
+
+Optional extra: ``pip install 'pydseams[ase]'``. The compiled engine
+does not import ASE; this module is the adapter.
+"""
 
 from __future__ import annotations
 
@@ -35,6 +39,43 @@ def _cell_lengths(atoms):
 
 
 def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
+    """Construct ``cls`` (a :class:`~pydseams.frame.Frame`) from ASE ``Atoms``.
+
+    Parameters
+    ----------
+    cls : type
+        :class:`~pydseams.frame.Frame` or a subclass.
+    atoms : ase.Atoms
+        Configuration with an orthorhombic cell.
+    select : str or int, optional
+        Chemical symbol or atomic number kept for analysis. Default
+        ``"O"``. ``None`` keeps every atom.
+    cutoff : float, optional
+        Neighbour cutoff in Angstroms. Default ``3.5``.
+    bonded : {"auto", "hbond", "cutoff"}, optional
+        Graph for rings. ``"auto"`` becomes ``"hbond"`` when the
+        ``Atoms`` contain hydrogen, otherwise ``"cutoff"``.
+
+    Returns
+    -------
+    Frame
+        Selected-species cloud plus an optional hydrogen cloud for
+        hydrogen-bond analysis.
+
+    Raises
+    ------
+    ImportError
+        If ASE is not installed.
+    TypeError
+        If ``atoms`` has no ``get_positions``.
+    ValueError
+        If the cell is not orthorhombic, or ``select`` matches no atom.
+
+    Notes
+    -----
+    Hydrogens stay in a side cloud so the analysed species remain the
+    CHILL / ring particles. Cell origin follows ``atoms.get_celldisp()``.
+    """
     _, Atoms, _ = _require_ase()
     if not hasattr(atoms, "get_positions"):
         raise TypeError("from_ase expects an ASE Atoms object")
@@ -85,6 +126,28 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
 
 
 def frame_to_ase(frame):
+    """Build an ASE ``Atoms`` from a :class:`~pydseams.frame.Frame`.
+
+    Parameters
+    ----------
+    frame : Frame
+        Configuration to export.
+
+    Returns
+    -------
+    ase.Atoms
+        Orthorhombic cell, ``pbc=True``. Symbols come from the ASE
+        import when present; LAMMPS-only frames fall back to ``O``.
+
+    Notes
+    -----
+    After :meth:`~pydseams.frame.Frame.chill_plus` (or
+    :meth:`~pydseams.frame.Frame.chill`), ``atoms.arrays['ice_type']``
+    holds the per-atom labels. After
+    :meth:`~pydseams.frame.Frame.cages`, ``atoms.arrays['hc']`` and
+    ``atoms.arrays['ddc']`` hold the cage flags.
+    ``atoms.info['dseams_n_atoms']`` is the analysed particle count.
+    """
     _, Atoms, _ = _require_ase()
     n = frame.n_atoms
     if frame._symbols is not None:

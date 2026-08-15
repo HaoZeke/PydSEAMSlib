@@ -1,7 +1,8 @@
-"""Suffix dispatch onto the C++ readers.
+"""Suffix dispatch onto the compiled I/O readers.
 
-The compiled module stays thin. This is the Python helper layer: pick
-LAMMPS, XYZ, chemfiles, or readcon from the path, then return a Frame.
+The compiled module stays thin. This helper picks LAMMPS, XYZ,
+chemfiles, or readcon from the path suffix and returns a
+:class:`~pydseams.frame.Frame`.
 """
 
 from __future__ import annotations
@@ -15,7 +16,38 @@ _LAMMPS = {".lammpstrj", ".dump", ".lammps"}
 
 
 def read(path, frame=1, **kwargs):
-    """Load a frame. Format follows the suffix; kwargs go to Frame."""
+    """Load one configuration. Format follows the file suffix.
+
+    Parameters
+    ----------
+    path : path-like
+        Trajectory or structure file.
+    frame : int, optional
+        1-indexed frame for multi-frame formats (LAMMPS, chemfiles,
+        ``.con``). Ignored for XYZ. Default ``1``.
+    **kwargs
+        Forwarded to the matching :class:`~pydseams.frame.Frame`
+        constructor (``cutoff``, ``bonded``, ``atom_type``,
+        ``region``, ...).
+
+    Returns
+    -------
+    Frame
+        Analysable configuration.
+
+    Notes
+    -----
+    Suffix dispatch:
+
+    * ``.xyz`` -- :meth:`Frame.from_xyz`
+    * ``.con`` -- :meth:`Frame.from_con`
+    * ``.pdb``, ``.gro``, ``.dcd`` -- :meth:`Frame.from_chemfiles`
+    * otherwise -- :meth:`Frame.from_file` (LAMMPS dump)
+
+    ``.lammpstrj``, ``.dump``, and ``.lammps`` take the LAMMPS path.
+    Builds without chemfiles or readcon raise ``RuntimeError`` when
+    those suffixes are used.
+    """
     suffix = Path(path).suffix.lower()
     if suffix == ".xyz":
         return Frame.from_xyz(path, **kwargs)
@@ -27,7 +59,15 @@ def read(path, frame=1, **kwargs):
 
 
 def available_readers():
-    """Which optional C++ readers this build linked."""
+    """Report which compiled I/O readers this build linked.
+
+    Returns
+    -------
+    dict of str to bool
+        ``lammps`` is always ``True``. ``xyz``, ``chemfiles``, and
+        ``readcon`` are ``True`` when the matching :mod:`pydseams.yoda`
+        symbol exists (``readXYZ``, ``readChemfiles``, ``readCon``).
+    """
     from . import yoda
 
     return {
