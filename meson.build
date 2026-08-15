@@ -13,6 +13,7 @@ seams = subproject(
     'default_library=static',
     'with_python=false',
     'with_tests=false',
+    'with_cli=false',
     'with_lua=disabled',
   ],
 )

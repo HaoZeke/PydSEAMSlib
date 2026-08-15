@@ -66,7 +66,7 @@ python3.pkgs.buildPythonPackage {
   # seams-core as a second prefix.
   mesonInstallFlags = [ "--skip-subprojects" ];
 
-  pytestFlagsArray = [ "tests/python" ];
+  pytestFlags = [ "tests/python" ];
 
   pythonImportsCheck = [
     "pydseams"
