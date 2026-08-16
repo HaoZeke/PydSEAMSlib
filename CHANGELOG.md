@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+`Frame.rdf(type_i, type_j, cutoff=12.0, binwidth=0.05)` is the
+in-memory partial 3D RDF (`yoda.partialRdf`). It does not write
+files.
+
 ## 2.4.0
 
 `subprojects/seams-core.wrap` is `v2.4.0`. The engine adds

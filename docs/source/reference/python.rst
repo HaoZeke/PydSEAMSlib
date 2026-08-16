@@ -71,8 +71,8 @@ H (length >= 6) once the wrap loads them.
 
 seams-core v2.4.0 also has ``site::Table``, ``rdf::coordinationNumber``,
 ``populateHbondsFromDonors``, and ``neighListPair``. pydseams still uses
-``neighList``, ``populateHbonds``, and ``rdf2Danalysis_AA``; those new
-symbols are not bound.
+``neighList`` and ``populateHbonds``; those new symbols are not bound.
+``Frame.rdf`` binds ``rdf::partialRdf``.
 
 Classification
 ~~~~~~~~~~~~~~
@@ -115,9 +115,11 @@ Export and descriptors
     +----------------------+-----------------------------------------------+
     | ``voronoi_features`` | per-atom ``[q4, q6, q8]``                     |
     +----------------------+-----------------------------------------------+
+    | ``rdf``              | in-memory 3D RDF (``yoda.partialRdf``)        |
+    +----------------------+-----------------------------------------------+
 
-Prism, monolayer, and RDF helpers write engine output. See the
-Frame autodoc on `api.md <../../source/api.md>`_.
+Prism, monolayer, and ``rdf_2d`` write engine output. ``Frame.rdf``
+does not. See the Frame autodoc on `api.md <../../source/api.md>`_.
 
 IceCounts
 ---------

@@ -18,7 +18,8 @@ of `Frame`.
 
 Classification ({meth}`~pydseams.frame.Frame.chill_plus`,
 {meth}`~pydseams.frame.Frame.cages`) does not write files. Prism,
-monolayer, and RDF helpers do.
+monolayer, and {meth}`~pydseams.frame.Frame.rdf_2d` do.
+{meth}`~pydseams.frame.Frame.rdf` does not.
 
 ```{eval-rst}
 .. automodule:: pydseams
@@ -124,8 +125,8 @@ directly for the raw engine.
 
 seams-core v2.4.0 also has `site::Table`, `rdf::coordinationNumber`,
 `populateHbondsFromDonors`, and `neighListPair`. pydseams still uses
-`neighList`, `populateHbonds`, and `rdf2Danalysis_AA`; those new
-symbols are not bound.
+`neighList` and `populateHbonds`; those new symbols are not bound.
+`Frame.rdf` binds `rdf::partialRdf`.
 
 ### Rings and cages
 
@@ -246,6 +247,7 @@ symbols are not bound.
 | `clusterAnalysis` | Cluster ice-like particles and return the largest ice cluster. |
 | `recenterClusterCloud` | Recenter a cluster point cloud for visualization. |
 | `rdf2Danalysis_AA` | 2D radial distribution function for identical atom types. |
+| `partialRdf` | Partial 3D RDF ``g_IJ(r)``. Returns ``(r, g)``. |
 
 ### Types
 
