@@ -27,9 +27,9 @@
 #endif
 #include <cstdint>
 #include <format>
-#include <optional>
 #include <mol_sys.hpp>
 #include <neighbours.hpp>
+#include <optional>
 #include <rdf.hpp>
 #include <rdf2d.hpp>
 #include <ring.hpp>
@@ -1058,11 +1058,10 @@ NB_MODULE(yoda, m) {
         nb::arg("typeJ"),
         nb::arg("rmax"),
         nb::arg("nbins"));
-    nb::class_<rdf::PartialRdf>(
-        m,
-        "PartialRdf",
-        "Histogram from rdf::partialRdf: bin centres, g_IJ, pair counts, "
-        "and the dump-cell volume used to normalize.")
+    nb::class_<rdf::PartialRdf>(m,
+                                "PartialRdf",
+                                "Histogram from rdf::partialRdf: bin centres, g_IJ, pair counts, "
+                                "and the dump-cell volume used to normalize.")
         .def_ro("r", &rdf::PartialRdf::r)
         .def_ro("g", &rdf::PartialRdf::g)
         .def_ro("count", &rdf::PartialRdf::count)
@@ -1084,10 +1083,8 @@ NB_MODULE(yoda, m) {
     m.def(
         "runningCN",
         [](const rdf::PartialRdf &h, std::optional<double> rhoJ) {
-            const double rho =
-                rhoJ.value_or((h.volume > 0.0)
-                                  ? static_cast<double>(h.nJ) / h.volume
-                                  : 0.0);
+            const double rho
+                = rhoJ.value_or((h.volume > 0.0) ? static_cast<double>(h.nJ) / h.volume : 0.0);
             return rdf::runningCN(h, rho);
         },
         "Running site-site CN: 4 pi rho_J int s^2 g(s) ds. "
@@ -1101,10 +1098,8 @@ NB_MODULE(yoda, m) {
     m.def(
         "coordinationNumber",
         [](const rdf::PartialRdf &h, double rMax, std::optional<double> rhoJ) {
-            const double rho =
-                rhoJ.value_or((h.volume > 0.0)
-                                  ? static_cast<double>(h.nJ) / h.volume
-                                  : 0.0);
+            const double rho
+                = rhoJ.value_or((h.volume > 0.0) ? static_cast<double>(h.nJ) / h.volume : 0.0);
             return rdf::coordinationNumber(h, rMax, rho);
         },
         "Site-site CN integrated to rMax. rhoJ defaults to nJ / volume.",
@@ -1134,19 +1129,18 @@ NB_MODULE(yoda, m) {
         .value("confinedWater", site::Family::confinedWater)
         .value("networkFormer", site::Family::networkFormer);
     nb::class_<site::Table>(
-        m,
-        "SiteTable",
-        "Map LAMMPS types (and optional atom-ID overrides) onto Kind.")
+        m, "SiteTable", "Map LAMMPS types (and optional atom-ID overrides) onto Kind.")
         .def(nb::init<>())
         .def_rw("family", &site::Table::family)
         .def_rw("typeToKind", &site::Table::typeToKind)
         .def_rw("atomOverride", &site::Table::atomOverride)
         .def("of", &site::Table::of, nb::arg("p"))
         .def("ofType", &site::Table::ofType, nb::arg("typeId"));
-    m.def("parseSiteSpec",
-          [](const std::string &spec) { return site::parseSiteSpec(spec); },
-          "Parse '1=cationHead,2=anion[,family=ionicLiquid]'.",
-          nb::arg("spec"));
+    m.def(
+        "parseSiteSpec",
+        [](const std::string &spec) { return site::parseSiteSpec(spec); },
+        "Parse '1=cationHead,2=anion[,family=ionicLiquid]'.",
+        nb::arg("spec"));
     m.def("indicesOf",
           &site::indicesOf,
           "Cloud indices whose mapped kind matches (polar/apolar are unions).",
