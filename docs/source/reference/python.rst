@@ -66,6 +66,14 @@ Geometry and graphs
     | ``load_frame``    | reload a later frame from the same file     |
     +-------------------+---------------------------------------------+
 
+``box`` is three lengths on an orthorhombic frame. Tilt dumps use dump
+H (length >= 6) once the wrap loads them.
+
+seams-core v2.4.0 also has ``site::Table``, ``rdf::coordinationNumber``,
+``populateHbondsFromDonors``, and ``neighListPair``. pydseams still uses
+``neighList``, ``populateHbonds``, and ``rdf2Danalysis_AA``; those new
+symbols are not bound.
+
 Classification
 ~~~~~~~~~~~~~~
 

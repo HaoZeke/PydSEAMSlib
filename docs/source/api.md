@@ -122,6 +122,11 @@ directly for the raw engine.
 | `populateHbondsWithInputClouds` | Build hydrogen bonds from pre-loaded oxygen and hydrogen point clouds. |
 | `trimBonds` | Remove duplicate bonds from a bond list. |
 
+seams-core v2.4.0 also has `site::Table`, `rdf::coordinationNumber`,
+`populateHbondsFromDonors`, and `neighListPair`. pydseams still uses
+`neighList`, `populateHbonds`, and `rdf2Danalysis_AA`; those new
+symbols are not bound.
+
 ### Rings and cages
 
 | name | role |

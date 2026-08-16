@@ -543,7 +543,10 @@ class Frame:
 
     @property
     def box(self):
-        """Orthorhombic box lengths ``[lx, ly, lz]``."""
+        """Orthorhombic box lengths ``[lx, ly, lz]``.
+
+        Tilt dumps use dump H (length >= 6) once the wrap loads them.
+        """
         return list(self.cloud.box)
 
     @property
