@@ -1,7 +1,7 @@
 # PydSEAMSlib
 
 <p align="center">
-  <img src="docs/source/_static/logo/pydseams-icon.svg" alt="pydseams" width="96">
+  <img src="docs/source/_static/logo/pydseams-icon.png" alt="pydseams" width="96">
 </p>
 
 [![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)

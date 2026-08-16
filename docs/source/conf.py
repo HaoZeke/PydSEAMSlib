@@ -63,7 +63,8 @@ master_doc = "index"
 html_theme = "shibuya"
 html_title = "pydseams"
 html_static_path = ["_static"]
-html_favicon = "_static/logo/pydseams-icon.svg"
+html_favicon = "_static/logo/pydseams-icon.ico"
+html_css_files = ["custom.css"]
 
 html_context = {
     "source_type": "github",
@@ -85,8 +86,8 @@ html_theme_options = {
     "toctree_collapse": True,
     "toctree_maxdepth": 3,
     "toctree_titles_only": True,
-    "light_logo": "_static/logo/pydseams-logo-light.svg",
-    "dark_logo": "_static/logo/pydseams-logo-dark.svg",
+    "light_logo": "_static/logo/pydseams-logo-light.png",
+    "dark_logo": "_static/logo/pydseams-logo-dark.png",
     "nav_links": [
         {
             "title": "Ecosystem",
