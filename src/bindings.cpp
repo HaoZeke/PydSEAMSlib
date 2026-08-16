@@ -1152,10 +1152,38 @@ NB_MODULE(yoda, m) {
           "The unique LAMMPS type mapped to kind. Errors if not unique.",
           nb::arg("table"),
           nb::arg("kind"));
+    m.attr("Kind") = m.attr("SiteKind");
+    m.attr("Family") = m.attr("SiteFamily");
     m.def("ionCloud",
           &site::ionCloud,
           "One COM vertex per ion molID, unwrapped with relDist. "
           "Output types are 1 (cationHead) and 2 (anion).",
           nb::arg("src"),
           nb::arg("table"));
+    m.def(
+        "ionCloud",
+        [](const molSys::PointCloud<molSys::Point<double>, double> &src,
+           int cationType,
+           int anionType) {
+            site::Table table;
+            table.family = site::Family::ionicLiquid;
+            table.typeToKind[cationType] = site::Kind::cationHead;
+            table.typeToKind[anionType] = site::Kind::anion;
+            return site::ionCloud(src, table);
+        },
+        "One COM vertex per ion molID from cation and anion LAMMPS types.",
+        nb::arg("src"),
+        nb::arg("cationType"),
+        nb::arg("anionType"));
+    m.def(
+        "ionCloud",
+        [](const molSys::PointCloud<molSys::Point<double>, double> &src,
+           const std::unordered_map<int, site::Kind> &typeToKind) {
+            site::Table table;
+            table.typeToKind = typeToKind;
+            return site::ionCloud(src, table);
+        },
+        "One COM vertex per ion molID from a type-to-Kind map.",
+        nb::arg("src"),
+        nb::arg("typeToKind"));
 }
