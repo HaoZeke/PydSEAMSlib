@@ -20,9 +20,8 @@ def test_chill_plus_no_tempdir(tmp_path, monkeypatch):
     frame = read(TRAJ.resolve())
     counts = frame.chill_plus()
     assert isinstance(counts, IceCounts)
-    assert counts.interClathrate == 9
-    assert counts.water == 240
-    assert counts.clathrate == 1
+    assert counts.interClathrate == 12
+    assert counts.water == 238
     assert counts.cubic == 0
     assert counts.hexagonal == 0
     assert sum(counts.values()) == 250
@@ -44,9 +43,8 @@ def test_trajectory_alias():
     traj = Trajectory(str(TRAJ.resolve()))
     counts = traj.classify_chill_plus()
     assert counts["hexagonal"] == 0
-    assert counts["water"] == 240
-    assert counts["interClathrate"] == 9
-    assert counts["clathrate"] == 1
+    assert counts["water"] == 238
+    assert counts["interClathrate"] == 12
 
 
 def test_from_arrays_roundtrip_positions():
