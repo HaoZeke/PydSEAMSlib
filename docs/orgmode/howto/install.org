@@ -10,7 +10,7 @@ ASE or solvis extras.
 * Requirements
 
 - Python 3.12+
-- pip or pixi
+- pip, pixi, or a meson-python checkout
 
 Wheels are the CPython 3.12 limited ABI (one ~abi3~ wheel per
 platform). A wheel already links the d-SEAMS engine. Do not compile
@@ -62,6 +62,13 @@ The first line prints the installed version. The second line prints
 
 * From a checkout
 
+The package build is meson-python. From the repository root:
+
+#+begin_src bash
+pip install -v '.[test,ase]'
+pip install -e .
+#+end_src
+
 Nix, at the repository root:
 
 #+begin_src bash
@@ -70,10 +77,10 @@ nix develop
 #+end_src
 
 ~nix build~ produces the ~pydseams~ package. ~nix develop~ is the
-dev shell (pytest, hypothesis).
+dev shell (pytest, hypothesis). There is no CMake install.
 
-This is the checkout path. The published wheel is the install path
-for the docs site and for application code.
+The published wheel is the install path for the docs site and for
+application code.
 
 * Next steps
 

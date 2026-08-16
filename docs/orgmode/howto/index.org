@@ -15,6 +15,17 @@ problem.
 | [[file:faq.org][FAQ]] | Names, extras, formats |
 | [[file:troubleshooting.org][Troubleshooting]] | Import errors, cells, hydrogens |
 
+#+begin_export rst
+.. toctree::
+   :maxdepth: 1
+
+   install
+   ase
+   solvis
+   faq
+   troubleshooting
+#+end_export
+
 * Structure
 
 Each how-to states the problem, shows the command or snippet, and
