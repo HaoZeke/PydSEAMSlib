@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 2.4.0
+
+`subprojects/seams-core.wrap` is `v2.4.0`. The engine adds
+`site::Table`, `rdf::coordinationNumber`,
+`populateHbondsFromDonors`, and `neighListPair`. pydseams still
+uses `neighList`, `populateHbonds`, and `rdf2Danalysis_AA`; those
+new symbols are not bound.
+
+Tilt dumps expose dump H on `cloud.box` (length >= 6).
+Orthorhombic frames stay three lengths. `pydseams.config` is
+installed with the wheel.
+
 ## 2.3.1
 
 `subprojects/seams-core.wrap` is `v2.3.1`. Remaining cutoff

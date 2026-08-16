@@ -14,3 +14,8 @@ the hand table of every public name registered in
 ~src/bindings.cpp~ (111 names: 98 functions, 13 types). Four
 functions are compile-gated: ~readChemfiles~, ~readCon~,
 ~ira_match~, ~sofi_point_group~.
+
+seams-core v2.4.0 also has ~site::Table~, ~rdf::coordinationNumber~,
+~populateHbondsFromDonors~, and ~neighListPair~. pydseams still uses
+~neighList~, ~populateHbonds~, and ~rdf2Danalysis_AA~; those new
+symbols are not bound.

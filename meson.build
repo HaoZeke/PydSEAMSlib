@@ -1,7 +1,7 @@
 project(
     'pydseams',
     'cpp',
-    version: '2.3.1',
+    version: '2.4.0',
     default_options: ['warning_level=1', 'cpp_std=c++20'],
     meson_version: '>=1.3.0',
 )
@@ -45,6 +45,7 @@ py.install_sources(
         'src/pydseams/aseio.py',
         'src/pydseams/io.py',
         'src/pydseams/solvis.py',
+        'src/pydseams/config.py',
     ],
     pure: false,
     subdir: 'pydseams',

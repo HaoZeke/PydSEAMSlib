@@ -31,7 +31,10 @@ Why helpers stay in Python
 
 ``yoda`` registers the engine: ``PointCloudDouble``, the readers,
 neighbour lists, CHILL, rings, cages, Steinhardt, SOAP. It does not
-own suffix dispatch, ASE ``Atoms``, or solvis.
+own suffix dispatch, ASE ``Atoms``, or solvis. seams-core v2.4.0 also
+has ``site::Table``, ``rdf::coordinationNumber``,
+``populateHbondsFromDonors``, and ``neighListPair``; ``yoda`` still
+exposes ``neighList``, ``populateHbonds``, and ``rdf2Danalysis_AA``.
 
 ``Frame``, ``read``, ``from_ase``, ``from_arrays``, ``from_xyz``,
 ``from_chemfiles``, ``from_con``, and ``to_solvis`` sit in Python on that
