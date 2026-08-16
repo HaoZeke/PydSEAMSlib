@@ -12,7 +12,8 @@ new symbols are not bound.
 
 Tilt dumps expose dump H on `cloud.box` (length >= 6).
 Orthorhombic frames stay three lengths. `pydseams.config` is
-installed with the wheel.
+installed with the wheel. The exampleTraj CHILL+ fixture is
+1 clathrate, 9 interfacial clathrate, 240 water.
 
 ## 2.3.1
 

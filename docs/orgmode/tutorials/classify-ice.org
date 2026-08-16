@@ -82,14 +82,14 @@ print(frame.chill_plus())
 Expected output:
 
 #+begin_example
-IceCounts(interClathrate=12, water=238)
+IceCounts(clathrate=1, interClathrate=9, water=240)
 #+end_example
 
 These counts are the engine fixture result for seams-core
 =input/traj/exampleTraj.lammpstrj=, vendored here as
 =tests/data/exampleTraj.lammpstrj=. CHILL+ labels each oxygen from
-its four neighbours: 12 interfacial clathrate (three eclipsed bonds)
-and 238 water.
+its four neighbours: 1 clathrate, 9 interfacial clathrate, and
+240 water.
 
 ~IceCounts~ is a histogram. ~counts.cubic~ and ~counts["cubic"]~
 are the same value. Missing labels read as ~0~.
