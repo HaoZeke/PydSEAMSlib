@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+`yoda` binds `neighListPair`, `SiteTable` / `parseSiteSpec` /
+`ionCloud`, `partialRdfHist` / `coordinationNumber` / `runningCN`
+/ `firstMinimumBin`, `populateHbondsFromDonors`, and
+`donatedHydrogenBond`. `yoda.Kind` / `yoda.Family` alias
+`SiteKind` / `SiteFamily`. `yoda.ionCloud` also accepts
+`(src, cationType, anionType)` or `(src, typeToKind)`.
+`Frame.cn`, `Frame.running_cn`, `Frame.ion_cloud`, and
+`Frame.hbonds_from_donors` call those. `Frame.rdf` stays
+`(r, g)`. `Frame.running_cn` uses `rho_J = nJ / volume` from
+the bound `PartialRdf`.
+
 ## 2.4.0
 
 `subprojects/seams-core.wrap` is `v2.4.0`. The engine adds

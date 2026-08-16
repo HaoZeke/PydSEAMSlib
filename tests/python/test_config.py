@@ -1,6 +1,27 @@
 """Twelve-factor knobs: file, then env, then the call."""
 
+import os
+
+import pytest
+
 from pydseams import config
+
+_SEAMS_KEYS = (
+    "SEAMS_FRAME",
+    "SEAMS_CUTOFF",
+    "SEAMS_K",
+    "SEAMS_CONFIG",
+    "SEAMS_GRAPH",
+)
+
+
+@pytest.fixture(autouse=True)
+def _no_seams_env_leak():
+    """Drop keys apply_file setdefault writes; monkeypatch does not track them."""
+    yield
+    for key in _SEAMS_KEYS:
+        os.environ.pop(key, None)
+    config.reset()
 
 
 def test_cutoff_defaults(monkeypatch, tmp_path):

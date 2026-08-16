@@ -17,6 +17,7 @@
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/array.h>
 #include <nanobind/stl/complex.h>
+#include <nanobind/stl/optional.h>
 #include <nanobind/stl/pair.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unordered_map.h>
@@ -28,11 +29,14 @@
 #include <format>
 #include <mol_sys.hpp>
 #include <neighbours.hpp>
+#include <optional>
+#include <rdf.hpp>
 #include <rdf2d.hpp>
 #include <ring.hpp>
 #include <seams_input.hpp>
 #include <seams_output.hpp>
 #include <selection.hpp>
+#include <site.hpp>
 #include <structure_desc.hpp>
 #include <topo_one_dim.hpp>
 #include <topo_two_dim.hpp>
@@ -266,6 +270,14 @@ NB_MODULE(yoda, m) {
           nb::arg("rcutoff"),
           nb::arg("yCloud"),
           nb::arg("typeI"));
+    m.def("neighListPair",
+          &nneigh::neighListPair,
+          "I-J neighbour list. Like-type reuses neighListO; unlike-type "
+          "pairs use the dump MIC.",
+          nb::arg("rcutoff"),
+          nb::arg("yCloud"),
+          nb::arg("typeI"),
+          nb::arg("typeJ"));
 
     // Bonds
     m.def("createBondsFromCages",
@@ -302,6 +314,28 @@ NB_MODULE(yoda, m) {
           nb::arg("yCloud"),
           nb::arg("hCloud"),
           nb::arg("nList"),
+          nb::arg("distCutoff") = 2.42,
+          nb::arg("angleCutoff") = 30.0);
+    m.def("donatedHydrogenBond",
+          &bond::donatedHydrogenBond,
+          "Geometric O-O-H test for one donor-acceptor assignment. "
+          "donorHs are hCloud indices on the donor.",
+          nb::arg("yCloud"),
+          nb::arg("hCloud"),
+          nb::arg("acceptorIndex"),
+          nb::arg("donorIndex"),
+          nb::arg("donorHs"),
+          nb::arg("distCutoff") = 2.42,
+          nb::arg("angleCutoff") = 30.0);
+    m.def("populateHbondsFromDonors",
+          &bond::populateHbondsFromDonors,
+          "Hydrogen-bond network from an explicit donor-H set. donorHs "
+          "are hCloud indices; each is paired with the heavy atom that "
+          "shares its molID.",
+          nb::arg("yCloud"),
+          nb::arg("hCloud"),
+          nb::arg("nList"),
+          nb::arg("donorHs"),
           nb::arg("distCutoff") = 2.42,
           nb::arg("angleCutoff") = 30.0);
     m.def("trimBonds",
@@ -1008,4 +1042,148 @@ NB_MODULE(yoda, m) {
           nb::arg("binwidth"),
           nb::arg("firstFrame"),
           nb::arg("finalFrame"));
+    m.def(
+        "partialRdf",
+        [](const molSys::PointCloud<molSys::Point<double>, double> &yCloud,
+           int typeI,
+           int typeJ,
+           double rmax,
+           int nbins) {
+            const auto h = rdf::partialRdf(yCloud, typeI, typeJ, rmax, nbins);
+            return std::pair<std::vector<double>, std::vector<double>>(h.r, h.g);
+        },
+        "Partial 3D radial distribution function g_IJ(r). Returns (r, g).",
+        nb::arg("yCloud"),
+        nb::arg("typeI"),
+        nb::arg("typeJ"),
+        nb::arg("rmax"),
+        nb::arg("nbins"));
+    nb::class_<rdf::PartialRdf>(m,
+                                "PartialRdf",
+                                "Histogram from rdf::partialRdf: bin centres, g_IJ, pair counts, "
+                                "and the dump-cell volume used to normalize.")
+        .def_ro("r", &rdf::PartialRdf::r)
+        .def_ro("g", &rdf::PartialRdf::g)
+        .def_ro("count", &rdf::PartialRdf::count)
+        .def_ro("rmax", &rdf::PartialRdf::rmax)
+        .def_ro("binwidth", &rdf::PartialRdf::binwidth)
+        .def_ro("volume", &rdf::PartialRdf::volume)
+        .def_ro("typeI", &rdf::PartialRdf::typeI)
+        .def_ro("typeJ", &rdf::PartialRdf::typeJ)
+        .def_ro("nI", &rdf::PartialRdf::nI)
+        .def_ro("nJ", &rdf::PartialRdf::nJ);
+    m.def("partialRdfHist",
+          &rdf::partialRdf,
+          "Partial 3D RDF as a PartialRdf (r, g, count, volume, nI, nJ).",
+          nb::arg("yCloud"),
+          nb::arg("typeI"),
+          nb::arg("typeJ"),
+          nb::arg("rmax"),
+          nb::arg("nbins"));
+    m.def(
+        "runningCN",
+        [](const rdf::PartialRdf &h, std::optional<double> rhoJ) {
+            const double rho
+                = rhoJ.value_or((h.volume > 0.0) ? static_cast<double>(h.nJ) / h.volume : 0.0);
+            return rdf::runningCN(h, rho);
+        },
+        "Running site-site CN: 4 pi rho_J int s^2 g(s) ds. "
+        "rhoJ defaults to nJ / volume.",
+        nb::arg("h"),
+        nb::arg("rhoJ") = nb::none());
+    m.def("firstMinimumBin",
+          &rdf::firstMinimumBin,
+          "Bin index of the first minimum of g after the first peak, or -1.",
+          nb::arg("h"));
+    m.def(
+        "coordinationNumber",
+        [](const rdf::PartialRdf &h, double rMax, std::optional<double> rhoJ) {
+            const double rho
+                = rhoJ.value_or((h.volume > 0.0) ? static_cast<double>(h.nJ) / h.volume : 0.0);
+            return rdf::coordinationNumber(h, rMax, rho);
+        },
+        "Site-site CN integrated to rMax. rhoJ defaults to nJ / volume.",
+        nb::arg("h"),
+        nb::arg("rMax"),
+        nb::arg("rhoJ") = nb::none());
+
+    nb::enum_<site::Kind>(m, "SiteKind", "Per-atom site chemistry. Type 1 is not a kind.")
+        .value("unspecified", site::Kind::unspecified)
+        .value("cationHead", site::Kind::cationHead)
+        .value("anion", site::Kind::anion)
+        .value("tail", site::Kind::tail)
+        .value("donorH", site::Kind::donorH)
+        .value("acceptor", site::Kind::acceptor)
+        .value("polar", site::Kind::polar)
+        .value("apolar", site::Kind::apolar)
+        .value("waterO", site::Kind::waterO)
+        .value("waterH", site::Kind::waterH)
+        .value("solvent", site::Kind::solvent);
+    nb::enum_<site::Family>(m, "SiteFamily", "Input family; not inferred from types.")
+        .value("waterIce", site::Family::waterIce)
+        .value("ionicLiquid", site::Family::ionicLiquid)
+        .value("moltenSalt", site::Family::moltenSalt)
+        .value("des", site::Family::des)
+        .value("electrolyte", site::Family::electrolyte)
+        .value("confinedIL", site::Family::confinedIL)
+        .value("confinedWater", site::Family::confinedWater)
+        .value("networkFormer", site::Family::networkFormer);
+    nb::class_<site::Table>(
+        m, "SiteTable", "Map LAMMPS types (and optional atom-ID overrides) onto Kind.")
+        .def(nb::init<>())
+        .def_rw("family", &site::Table::family)
+        .def_rw("typeToKind", &site::Table::typeToKind)
+        .def_rw("atomOverride", &site::Table::atomOverride)
+        .def("of", &site::Table::of, nb::arg("p"))
+        .def("ofType", &site::Table::ofType, nb::arg("typeId"));
+    m.def(
+        "parseSiteSpec",
+        [](const std::string &spec) { return site::parseSiteSpec(spec); },
+        "Parse '1=cationHead,2=anion[,family=ionicLiquid]'.",
+        nb::arg("spec"));
+    m.def("indicesOf",
+          &site::indicesOf,
+          "Cloud indices whose mapped kind matches (polar/apolar are unions).",
+          nb::arg("yCloud"),
+          nb::arg("table"),
+          nb::arg("kind"));
+    m.def("lammpsTypeOfKind",
+          &site::lammpsTypeOfKind,
+          "The unique LAMMPS type mapped to kind. Errors if not unique.",
+          nb::arg("table"),
+          nb::arg("kind"));
+    m.attr("Kind") = m.attr("SiteKind");
+    m.attr("Family") = m.attr("SiteFamily");
+    m.def("ionCloud",
+          &site::ionCloud,
+          "One COM vertex per ion molID, unwrapped with relDist. "
+          "Output types are 1 (cationHead) and 2 (anion).",
+          nb::arg("src"),
+          nb::arg("table"));
+    m.def(
+        "ionCloud",
+        [](const molSys::PointCloud<molSys::Point<double>, double> &src,
+           int cationType,
+           int anionType) {
+            site::Table table;
+            table.family = site::Family::ionicLiquid;
+            table.typeToKind[cationType] = site::Kind::cationHead;
+            table.typeToKind[anionType] = site::Kind::anion;
+            return site::ionCloud(src, table);
+        },
+        "One COM vertex per ion molID from cation and anion LAMMPS types.",
+        nb::arg("src"),
+        nb::arg("cationType"),
+        nb::arg("anionType"));
+    m.def(
+        "ionCloud",
+        [](const molSys::PointCloud<molSys::Point<double>, double> &src,
+           const std::unordered_map<int, site::Kind> &typeToKind) {
+            site::Table table;
+            table.typeToKind = typeToKind;
+            return site::ionCloud(src, table);
+        },
+        "One COM vertex per ion molID from a type-to-Kind map.",
+        nb::arg("src"),
+        nb::arg("typeToKind"));
 }

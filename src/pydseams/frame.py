@@ -878,6 +878,124 @@ class Frame:
             counts[int(size)] = {"count": int(n), "coverage_xy": float(area)}
         return counts
 
+    def rdf(self, type_i, type_j, cutoff=12.0, binwidth=0.05):
+        """Partial 3D radial distribution function.
+
+        Parameters
+        ----------
+        type_i : int
+            First species type code (``c_type``).
+        type_j : int
+            Second species type code (``c_type``).
+        cutoff : float, optional
+            RDF cutoff in Angstroms. Default ``12.0``.
+        binwidth : float, optional
+            Histogram width. Default ``0.05``.
+
+        Returns
+        -------
+        r, g : list of float
+            Bin centres and ``g_IJ(r)`` from
+            :func:`pydseams.yoda.partialRdf`.
+        """
+        nbin = int(cutoff / binwidth)
+        return yoda.partialRdf(
+            yCloud=self.cloud,
+            typeI=type_i,
+            typeJ=type_j,
+            rmax=cutoff,
+            nbins=nbin,
+        )
+
+    def cn(self, type_i, type_j, cutoff, binwidth=0.05):
+        """Site-site coordination number integrated to ``cutoff``.
+
+        Uses :func:`pydseams.yoda.partialRdfHist` and
+        :func:`pydseams.yoda.coordinationNumber` with
+        ``rho_J = nJ / dumpVolume``.
+        """
+        nbin = max(1, int(cutoff / binwidth))
+        hist = yoda.partialRdfHist(
+            yCloud=self.cloud,
+            typeI=type_i,
+            typeJ=type_j,
+            rmax=cutoff,
+            nbins=nbin,
+        )
+        return yoda.coordinationNumber(h=hist, rMax=cutoff)
+
+    def running_cn(self, type_i, type_j, cutoff=12.0, binwidth=0.05):
+        """Running site-site coordination number.
+
+        Parameters
+        ----------
+        type_i : int
+            First species type code (``c_type``).
+        type_j : int
+            Second species type code (``c_type``).
+        cutoff : float, optional
+            Histogram cutoff in Angstroms. Default ``12.0``.
+        binwidth : float, optional
+            Histogram width. Default ``0.05``.
+
+        Returns
+        -------
+        list of float
+            Running CN at each bin outer edge from
+            :func:`pydseams.yoda.partialRdfHist` and
+            :func:`pydseams.yoda.runningCN` with
+            ``rho_J = nJ / dumpVolume``.
+        """
+        nbin = max(1, int(cutoff / binwidth))
+        hist = yoda.partialRdfHist(
+            yCloud=self.cloud,
+            typeI=type_i,
+            typeJ=type_j,
+            rmax=cutoff,
+            nbins=nbin,
+        )
+        rho_j = (hist.nJ / hist.volume) if hist.volume > 0.0 else 0.0
+        return yoda.runningCN(h=hist, rhoJ=rho_j)
+
+    def ion_cloud(self, table):
+        """One COM vertex per ion molecule.
+
+        Parameters
+        ----------
+        table : pydseams.yoda.SiteTable
+            Type-to-kind map. Cation molecules restamp to type 1,
+            anions to type 2.
+        """
+        return yoda.ionCloud(src=self.cloud, table=table)
+
+    def hbonds_from_donors(self, donor_hs, h_cloud=None, dist=2.42, angle=30.0):
+        """Hydrogen-bond network from an explicit donor-H index list.
+
+        Parameters
+        ----------
+        donor_hs : sequence of int
+            ``hCloud`` indices. Each H is paired with the heavy atom
+            that shares its ``molID``.
+        h_cloud : PointCloudDouble, optional
+            Hydrogen cloud. Defaults to the ASE hydrogen cloud.
+        dist, angle : float, optional
+            Acceptor-H distance and acceptor-centered O-O-H angle.
+        """
+        hydro = h_cloud if h_cloud is not None else self._h_cloud
+        if hydro is None:
+            raise ValueError(
+                "hbonds_from_donors needs a hydrogen cloud. Pass h_cloud "
+                "or build the Frame from ASE Atoms that include H."
+            )
+        return yoda.populateHbondsFromDonors(
+            yCloud=self.cloud,
+            hCloud=hydro,
+            nList=self.neighbor_list,
+            donorHs=list(donor_hs),
+            distCutoff=dist,
+            angleCutoff=angle,
+        )
+
     def rdf_2d(self, output_dir, cutoff=12.0, binwidth=0.05):
         """2D radial distribution function for identical atom types.
 

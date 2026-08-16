@@ -69,10 +69,14 @@ Geometry and graphs
 ``box`` is three lengths on an orthorhombic frame. Tilt dumps use dump
 H (length >= 6) once the wrap loads them.
 
-seams-core v2.4.0 also has ``site::Table``, ``rdf::coordinationNumber``,
-``populateHbondsFromDonors``, and ``neighListPair``. pydseams still uses
-``neighList``, ``populateHbonds``, and ``rdf2Danalysis_AA``; those new
-symbols are not bound.
+``neighListPair``, ``SiteTable``, ``parseSiteSpec``, ``Kind`` /
+``Family`` (aliases of ``SiteKind`` / ``SiteFamily``), ``ionCloud``
+(``table``, ``cationType``/``anionType``, or ``typeToKind``),
+``partialRdfHist``, ``coordinationNumber``, ``runningCN``,
+``populateHbondsFromDonors``, and ``donatedHydrogenBond`` are bound.
+``Frame.rdf`` is still ``(r, g)``. ``Frame.cn``, ``Frame.running_cn``,
+``Frame.ion_cloud``, and ``Frame.hbonds_from_donors`` call those
+symbols.
 
 Classification
 ~~~~~~~~~~~~~~
@@ -115,9 +119,15 @@ Export and descriptors
     +----------------------+-----------------------------------------------+
     | ``voronoi_features`` | per-atom ``[q4, q6, q8]``                     |
     +----------------------+-----------------------------------------------+
+    | ``rdf``              | in-memory 3D RDF (``yoda.partialRdf``)        |
+    +----------------------+-----------------------------------------------+
+    | ``cn``               | site-site CN to a cutoff                     |
+    +----------------------+-----------------------------------------------+
+    | ``running_cn``       | running site-site CN (``yoda.runningCN``)    |
+    +----------------------+-----------------------------------------------+
 
-Prism, monolayer, and RDF helpers write engine output. See the
-Frame autodoc on `api.md <../../source/api.md>`_.
+Prism, monolayer, and ``rdf_2d`` write engine output. ``Frame.rdf``
+does not. See the Frame autodoc on `api.md <../../source/api.md>`_.
 
 IceCounts
 ---------
