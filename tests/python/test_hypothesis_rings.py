@@ -50,9 +50,7 @@ class TestRingProperties:
     def test_ring_sizes_in_range(self):
         """Every ring size must be in [3, maxDepth]."""
         for i, ring in enumerate(self.rings):
-            assert 3 <= len(ring) <= 6, (
-                f"Ring {i} has size {len(ring)}, expected 3-6"
-            )
+            assert 3 <= len(ring) <= 6, f"Ring {i} has size {len(ring)}, expected 3-6"
 
     def test_no_duplicate_rings(self):
         """No two rings should contain the same set of atoms."""

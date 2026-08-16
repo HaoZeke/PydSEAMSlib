@@ -4,14 +4,11 @@ Uses Hypothesis to generate random inputs and verify mathematical properties
 of the minimum image convention distance formula.
 """
 
-import math
-
-import numpy as np
 import pytest
 
 hypothesis = pytest.importorskip("hypothesis")
-from hypothesis import given, settings, assume
-from hypothesis import strategies as st
+from hypothesis import given, settings  # noqa: E402
+from hypothesis import strategies as st  # noqa: E402
 
 
 def periodic_dist_1d(dr, L):
@@ -32,7 +29,9 @@ def periodic_dist_sq_3d(dx, dy, dz, bx, by, bz):
 
 # Coordinate and box strategies
 coord = st.floats(min_value=-50, max_value=50, allow_nan=False, allow_infinity=False)
-box_len = st.floats(min_value=1.0, max_value=100.0, allow_nan=False, allow_infinity=False)
+box_len = st.floats(
+    min_value=1.0, max_value=100.0, allow_nan=False, allow_infinity=False
+)
 
 
 # -- 1D PBC properties --
@@ -68,7 +67,10 @@ def test_pbc_non_negative(a, b, L):
 
 
 @given(
-    a=coord, b=coord, c=coord, L=box_len,
+    a=coord,
+    b=coord,
+    c=coord,
+    L=box_len,
 )
 @settings(max_examples=500)
 def test_pbc_triangle_inequality(a, b, c, L):
@@ -85,8 +87,12 @@ def test_pbc_triangle_inequality(a, b, c, L):
 
 
 @given(
-    dx=coord, dy=coord, dz=coord,
-    bx=box_len, by=box_len, bz=box_len,
+    dx=coord,
+    dy=coord,
+    dz=coord,
+    bx=box_len,
+    by=box_len,
+    bz=box_len,
 )
 def test_pbc_3d_non_negative(dx, dy, dz, bx, by, bz):
     """Squared distance is always non-negative."""
@@ -95,8 +101,12 @@ def test_pbc_3d_non_negative(dx, dy, dz, bx, by, bz):
 
 
 @given(
-    dx=coord, dy=coord, dz=coord,
-    bx=box_len, by=box_len, bz=box_len,
+    dx=coord,
+    dy=coord,
+    dz=coord,
+    bx=box_len,
+    by=box_len,
+    bz=box_len,
 )
 def test_pbc_3d_sign_invariance(dx, dy, dz, bx, by, bz):
     """Negating all deltas gives the same squared distance."""
@@ -113,8 +123,12 @@ def test_pbc_3d_zero_displacement(bx, by, bz):
 
 
 @given(
-    dx=coord, dy=coord, dz=coord,
-    bx=box_len, by=box_len, bz=box_len,
+    dx=coord,
+    dy=coord,
+    dz=coord,
+    bx=box_len,
+    by=box_len,
+    bz=box_len,
 )
 def test_pbc_3d_upper_bound(dx, dy, dz, bx, by, bz):
     """Squared distance bounded by (bx/2)^2 + (by/2)^2 + (bz/2)^2."""
@@ -124,8 +138,12 @@ def test_pbc_3d_upper_bound(dx, dy, dz, bx, by, bz):
 
 
 @given(
-    dx=coord, dy=coord, dz=coord,
-    bx=box_len, by=box_len, bz=box_len,
+    dx=coord,
+    dy=coord,
+    dz=coord,
+    bx=box_len,
+    by=box_len,
+    bz=box_len,
 )
 def test_pbc_3d_periodicity(dx, dy, dz, bx, by, bz):
     """Shifting by a full box length does not change the distance."""

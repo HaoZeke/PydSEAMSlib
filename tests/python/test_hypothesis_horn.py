@@ -13,8 +13,8 @@ import numpy as np
 import pytest
 
 hypothesis = pytest.importorskip("hypothesis")
-from hypothesis import given, settings, assume
-from hypothesis import strategies as st
+from hypothesis import given, settings, assume  # noqa: E402
+from hypothesis import strategies as st  # noqa: E402
 
 
 # -- Pure-Python quaternion -> rotation matrix --
@@ -26,21 +26,25 @@ def quat_to_rotation(q):
     Uses the same convention as absor::quat2RotMatrix.
     """
     w, x, y, z = q
-    return np.array([
-        [w*w + x*x - y*y - z*z, 2*(x*y - w*z),         2*(x*z + w*y)],
-        [2*(x*y + w*z),         w*w - x*x + y*y - z*z,  2*(y*z - w*x)],
-        [2*(x*z - w*y),         2*(y*z + w*x),          w*w - x*x - y*y + z*z],
-    ])
+    return np.array(
+        [
+            [w * w + x * x - y * y - z * z, 2 * (x * y - w * z), 2 * (x * z + w * y)],
+            [2 * (x * y + w * z), w * w - x * x + y * y - z * z, 2 * (y * z - w * x)],
+            [2 * (x * z - w * y), 2 * (y * z + w * x), w * w - x * x - y * y + z * z],
+        ]
+    )
 
 
 def normalize_quat(q):
     """Normalize a quaternion to unit length."""
-    n = math.sqrt(sum(c*c for c in q))
+    n = math.sqrt(sum(c * c for c in q))
     return tuple(c / n for c in q)
 
 
 # Strategy: random unit quaternions via normalization of 4-vectors
-quat_component = st.floats(min_value=-10, max_value=10, allow_nan=False, allow_infinity=False)
+quat_component = st.floats(
+    min_value=-10, max_value=10, allow_nan=False, allow_infinity=False
+)
 
 
 @st.composite
@@ -50,7 +54,7 @@ def unit_quaternions(draw):
     x = draw(quat_component)
     y = draw(quat_component)
     z = draw(quat_component)
-    norm = math.sqrt(w*w + x*x + y*y + z*z)
+    norm = math.sqrt(w * w + x * x + y * y + z * z)
     assume(norm > 0.01)  # avoid degenerate near-zero quaternions
     return normalize_quat((w, x, y, z))
 
@@ -108,11 +112,14 @@ def test_90deg_around_z():
     """90-degree rotation around z matches known matrix."""
     s = math.sqrt(2) / 2
     R = quat_to_rotation((s, 0, 0, s))
-    expected = np.array([
-        [0, -1, 0],
-        [1,  0, 0],
-        [0,  0, 1],
-    ], dtype=float)
+    expected = np.array(
+        [
+            [0, -1, 0],
+            [1, 0, 0],
+            [0, 0, 1],
+        ],
+        dtype=float,
+    )
     assert np.allclose(R, expected, atol=1e-12)
 
 
@@ -130,12 +137,14 @@ def test_rotation_composition(q1, q2):
     # Hamilton product: q1 * q2
     w1, x1, y1, z1 = q1
     w2, x2, y2, z2 = q2
-    q12 = normalize_quat((
-        w1*w2 - x1*x2 - y1*y2 - z1*z2,
-        w1*x2 + x1*w2 + y1*z2 - z1*y2,
-        w1*y2 - x1*z2 + y1*w2 + z1*x2,
-        w1*z2 + x1*y2 - y1*x2 + z1*w2,
-    ))
+    q12 = normalize_quat(
+        (
+            w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
+            w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
+            w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
+            w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2,
+        )
+    )
     R12 = quat_to_rotation(q12)
     R1_R2 = quat_to_rotation(q1) @ quat_to_rotation(q2)
     assert np.allclose(R12, R1_R2, atol=1e-9), (

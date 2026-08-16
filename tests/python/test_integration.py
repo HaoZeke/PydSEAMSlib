@@ -250,9 +250,7 @@ def test_trajectory_classify_chill():
 
 def test_trajectory_custom_parameters():
     """Verify Trajectory accepts custom frame, atom_type, and cutoff."""
-    traj = Trajectory(
-        str(TRAJ.absolute()), frame=1, atom_type=2, cutoff=4.0
-    )
+    traj = Trajectory(str(TRAJ.absolute()), frame=1, atom_type=2, cutoff=4.0)
     assert traj.cutoff == 4.0
     assert traj.n_atoms > 0
 

@@ -25,7 +25,7 @@ from . import yoda as cyoda
 from .frame import CageScore, Frame, IceCounts, read
 from .io import available_readers
 
-__version__ = "2.2.0"
+__version__ = "2.2.4"
 
 # Drop-in name used in the 2.0 docs and tests
 Trajectory = Frame

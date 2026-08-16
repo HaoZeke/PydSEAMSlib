@@ -77,7 +77,7 @@ def test_to_solvis_optional():
 
 
 def test_from_ase_optional():
-    ase = pytest.importorskip("ase")
+    pytest.importorskip("ase")
     from ase import Atoms
     from pydseams import from_ase
 

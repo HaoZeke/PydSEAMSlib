@@ -53,9 +53,7 @@ class TestHbondProperties:
         for i in range(len(self.hbonds)):
             # First element is self, rest are bonded neighbors
             n_hbonds = len(self.hbonds[i]) - 1
-            assert 0 <= n_hbonds <= 6, (
-                f"Atom {i} has {n_hbonds} H-bonds (expected 0-6)"
-            )
+            assert 0 <= n_hbonds <= 6, f"Atom {i} has {n_hbonds} H-bonds (expected 0-6)"
 
     def test_no_self_bonds(self):
         """No atom should have itself as a bonded neighbor (beyond the self entry).
@@ -75,9 +73,7 @@ class TestHbondProperties:
 
         Convert to index-based lists first for consistent comparison.
         """
-        hbondsIdx = yoda.neighbourListByIndex(
-            yCloud=self.cloud, nList=self.hbonds
-        )
+        hbondsIdx = yoda.neighbourListByIndex(yCloud=self.cloud, nList=self.hbonds)
         for i in range(len(hbondsIdx)):
             for j in hbondsIdx[i][1:]:  # skip self
                 assert i in hbondsIdx[j], (
@@ -86,9 +82,7 @@ class TestHbondProperties:
 
     def test_bonded_atoms_are_valid_indices(self):
         """All atom IDs in the H-bond list should be valid."""
-        hbondsIdx = yoda.neighbourListByIndex(
-            yCloud=self.cloud, nList=self.hbonds
-        )
+        hbondsIdx = yoda.neighbourListByIndex(yCloud=self.cloud, nList=self.hbonds)
         n = self.cloud.nop
         for i in range(len(hbondsIdx)):
             for j in hbondsIdx[i]:
@@ -101,12 +95,8 @@ class TestHbondProperties:
 
         Every H-bond pair must also be spatial neighbors (within cutoff).
         """
-        nListIdx = yoda.neighbourListByIndex(
-            yCloud=self.cloud, nList=self.nList
-        )
-        hbondsIdx = yoda.neighbourListByIndex(
-            yCloud=self.cloud, nList=self.hbonds
-        )
+        nListIdx = yoda.neighbourListByIndex(yCloud=self.cloud, nList=self.nList)
+        hbondsIdx = yoda.neighbourListByIndex(yCloud=self.cloud, nList=self.hbonds)
         for i in range(len(hbondsIdx)):
             hb_set = set(hbondsIdx[i][1:])  # skip self
             nl_set = set(nListIdx[i])
