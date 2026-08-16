@@ -47,6 +47,10 @@ def test_populate_hbonds_exists():
     assert hasattr(yoda, "populateHbonds")
 
 
+def test_partial_rdf_exists():
+    assert hasattr(yoda, "partialRdf")
+
+
 def test_ring_network_exists():
     assert hasattr(yoda, "ringNetwork")
     assert hasattr(yoda, "RingUpdater")

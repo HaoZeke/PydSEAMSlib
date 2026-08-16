@@ -54,6 +54,26 @@ def test_from_arrays_roundtrip_positions():
     assert frame.positions[0] == src.positions[0]
 
 
+def test_frame_rdf_two_type(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    positions = [
+        [0.0, 0.0, 0.0],
+        [2.8, 0.0, 0.0],
+        [0.0, 2.8, 0.0],
+        [2.8, 2.8, 0.0],
+    ]
+    frame = from_arrays(
+        positions, [30.0, 30.0, 30.0], numbers=[1, 2, 1, 2]
+    )
+    r, g = frame.rdf(1, 2)
+    nbin = int(12.0 / 0.05)
+    assert len(r) == nbin
+    assert len(g) == nbin
+    assert any(gi > 0 for gi in g)
+    leftover = [p for p in tmp_path.iterdir() if p.name.startswith("dseams_")]
+    assert leftover == []
+
+
 def test_available_readers():
     from pydseams import available_readers
 
