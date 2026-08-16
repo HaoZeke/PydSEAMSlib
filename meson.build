@@ -45,6 +45,7 @@ py.install_sources(
         'src/pydseams/aseio.py',
         'src/pydseams/io.py',
         'src/pydseams/solvis.py',
+        'src/pydseams/config.py',
     ],
     pure: false,
     subdir: 'pydseams',
