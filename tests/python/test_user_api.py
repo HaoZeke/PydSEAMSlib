@@ -130,6 +130,37 @@ def test_ion_cloud_two_atom_com():
     assert ions.pts[0].x == pytest.approx(0.0)
 
 
+def test_ion_cloud_two_type_ints():
+    from pydseams import yoda
+
+    positions = [[0.5, 0.0, 0.0], [9.5, 0.0, 0.0]]
+    frame = from_arrays(positions, [10.0, 10.0, 10.0], numbers=[1, 2])
+    frame.cloud.pts[0].molID = 7
+    frame.cloud.pts[0].atomID = 1
+    frame.cloud.pts[1].molID = 8
+    frame.cloud.pts[1].atomID = 2
+    ions = yoda.ionCloud(src=frame.cloud, cationType=1, anionType=2)
+    assert ions.nop == 2
+    assert sorted(p.c_type for p in ions.pts) == [1, 2]
+
+
+def test_ion_cloud_type_to_kind_dict():
+    from pydseams import yoda
+
+    positions = [[0.5, 0.0, 0.0], [9.5, 0.0, 0.0]]
+    frame = from_arrays(positions, [10.0, 10.0, 10.0], numbers=[1, 2])
+    frame.cloud.pts[0].molID = 7
+    frame.cloud.pts[0].atomID = 1
+    frame.cloud.pts[1].molID = 8
+    frame.cloud.pts[1].atomID = 2
+    ions = yoda.ionCloud(
+        src=frame.cloud,
+        typeToKind={1: yoda.Kind.cationHead, 2: yoda.Kind.anion},
+    )
+    assert ions.nop == 2
+    assert sorted(p.c_type for p in ions.pts) == [1, 2]
+
+
 def test_available_readers():
     from pydseams import available_readers
 

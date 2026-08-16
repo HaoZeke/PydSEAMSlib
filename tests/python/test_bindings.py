@@ -59,6 +59,9 @@ def test_v240_symbols_exist():
     assert hasattr(yoda, "firstMinimumBin")
     assert hasattr(yoda, "SiteTable")
     assert hasattr(yoda, "SiteKind")
+    assert hasattr(yoda, "SiteFamily")
+    assert yoda.Kind is yoda.SiteKind
+    assert yoda.Family is yoda.SiteFamily
     assert hasattr(yoda, "parseSiteSpec")
     assert hasattr(yoda, "ionCloud")
     assert hasattr(yoda, "populateHbondsFromDonors")
