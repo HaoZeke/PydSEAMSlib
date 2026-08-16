@@ -47,6 +47,10 @@ system = frame.to_solvis()           # optional extra
 surface. Helpers (`Frame`, `io`, ASE, solvis) stay in Python.
 `_core` and `cyoda` still name the same module.
 
+Cutoff, frame, and *k* follow the same twelve-factor table as
+`seams`: `SEAMS_CONFIG` or `./seams.env`, then the environment, then
+the function argument. `pydseams.config` is the reader.
+
 Primary author: Ruhila S. The project started as PSF GSoC 2023 (`pyseams`).
 
 Requires Python 3.12+. Wheels are built against the CPython 3.12 stable

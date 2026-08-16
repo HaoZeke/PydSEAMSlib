@@ -19,6 +19,7 @@ ASE Atoms work the same way::
     atoms = frame.to_ase()
 """
 
+from . import config
 from . import yoda
 from . import yoda as _core
 from . import yoda as cyoda
@@ -31,7 +32,7 @@ __version__ = "2.2.5"
 Trajectory = Frame
 
 
-def from_ase(atoms, select="O", cutoff=3.5, bonded="auto"):
+def from_ase(atoms, select="O", cutoff=None, bonded="auto"):
     """Build a :class:`~pydseams.frame.Frame` from an ASE ``Atoms``.
 
     Parameters
@@ -42,7 +43,7 @@ def from_ase(atoms, select="O", cutoff=3.5, bonded="auto"):
         Chemical symbol or atomic number of the species to analyse.
         Default ``"O"``. ``None`` keeps every atom.
     cutoff : float, optional
-        Neighbour cutoff in Angstroms. Default ``3.5``.
+        Neighbour cutoff in Angstroms. Default ``SEAMS_CUTOFF`` or ``3.5``.
     bonded : {"auto", "hbond", "cutoff"}, optional
         Graph for rings. ``"auto"`` uses hydrogen bonds when the
         ``Atoms`` contain H, otherwise the cutoff neighbour list.
@@ -61,10 +62,15 @@ def from_ase(atoms, select="O", cutoff=3.5, bonded="auto"):
     ValueError
         If the cell is not orthorhombic, or ``select`` matches no atom.
     """
-    return Frame.from_ase(atoms, select=select, cutoff=cutoff, bonded=bonded)
+    return Frame.from_ase(
+        atoms,
+        select=select,
+        cutoff=config.cutoff() if cutoff is None else cutoff,
+        bonded=bonded,
+    )
 
 
-def from_arrays(positions, cell, numbers=None, cutoff=3.5, bonded="cutoff"):
+def from_arrays(positions, cell, numbers=None, cutoff=None, bonded="cutoff"):
     """Build a :class:`~pydseams.frame.Frame` from coordinates and box lengths.
 
     Parameters
@@ -77,7 +83,7 @@ def from_arrays(positions, cell, numbers=None, cutoff=3.5, bonded="cutoff"):
         Per-atom type codes stored as ``c_type``. Default ``1`` for
         every particle.
     cutoff : float, optional
-        Neighbour cutoff in Angstroms. Default ``3.5``.
+        Neighbour cutoff in Angstroms. Default ``SEAMS_CUTOFF`` or ``3.5``.
     bonded : {"auto", "hbond", "cutoff"}, optional
         Graph for rings. Default ``"cutoff"`` because this constructor
         does not attach a hydrogen cloud.
@@ -92,7 +98,11 @@ def from_arrays(positions, cell, numbers=None, cutoff=3.5, bonded="cutoff"):
         If ``positions`` is empty or ``cell`` is not three lengths.
     """
     return Frame.from_arrays(
-        positions, cell, numbers=numbers, cutoff=cutoff, bonded=bonded
+        positions,
+        cell,
+        numbers=numbers,
+        cutoff=config.cutoff() if cutoff is None else cutoff,
+        bonded=bonded,
     )
 
 
