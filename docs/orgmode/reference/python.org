@@ -54,6 +54,9 @@ H (length >= 6) once the wrap loads them.
 ~Frame.cn~ integrates that histogram; ~Frame.running_cn~ is the
 running integral with ~rho_J = nJ / volume~; ~Frame.ion_cloud~
 and ~Frame.hbonds_from_donors~ wrap the site and donor-H paths.
+Ice-score ~--family~, contact pairs, polar/apolar domains, and
+type-resolved ~rho(z)~ are the ~seams~ CLI in seams-core 2.5.0,
+not ~Frame~ methods.
 
 ** Classification
 
