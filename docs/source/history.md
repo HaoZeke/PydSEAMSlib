@@ -20,3 +20,8 @@ programme](https://summerofcode.withgoogle.com/programs/2023/projects/WAft7HXq).
 
 # Team
 
+Primary author: Ruhila S (PSF GSoC 2023, then `pyseams`). The engine
+and the 2020 JCIM paper are Amrita Goswami, Rohit Goswami, and
+Jayant K. Singh. Software `CITATION.cff` on this tree lists Ruhila
+with the engine authors.
+
