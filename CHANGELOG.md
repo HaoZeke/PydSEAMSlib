@@ -2,9 +2,12 @@
 
 ## Unreleased
 
-`yoda` binds `neighListPair`, `SiteTable` / `parseSiteSpec` /
-`ionCloud`, `partialRdfHist` / `coordinationNumber` / `runningCN`
-/ `firstMinimumBin`, `populateHbondsFromDonors`, and
+## 2.4.1
+
+`subprojects/seams-core.wrap` stays `v2.4.0`. `yoda` binds
+`neighListPair`, `SiteTable` / `parseSiteSpec` / `ionCloud`,
+`partialRdfHist` / `coordinationNumber` / `runningCN` /
+`firstMinimumBin`, `populateHbondsFromDonors`, and
 `donatedHydrogenBond`. `yoda.Kind` / `yoda.Family` alias
 `SiteKind` / `SiteFamily`. `yoda.ionCloud` also accepts
 `(src, cationType, anionType)` or `(src, typeToKind)`.
