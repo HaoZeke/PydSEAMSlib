@@ -878,6 +878,35 @@ class Frame:
             counts[int(size)] = {"count": int(n), "coverage_xy": float(area)}
         return counts
 
+    def rdf(self, type_i, type_j, cutoff=12.0, binwidth=0.05):
+        """Partial 3D radial distribution function.
+
+        Parameters
+        ----------
+        type_i : int
+            First species type code (``c_type``).
+        type_j : int
+            Second species type code (``c_type``).
+        cutoff : float, optional
+            RDF cutoff in Angstroms. Default ``12.0``.
+        binwidth : float, optional
+            Histogram width. Default ``0.05``.
+
+        Returns
+        -------
+        r, g : list of float
+            Bin centres and ``g_IJ(r)`` from
+            :func:`pydseams.yoda.partialRdf`.
+        """
+        nbin = int(cutoff / binwidth)
+        return yoda.partialRdf(
+            yCloud=self.cloud,
+            typeI=type_i,
+            typeJ=type_j,
+            rmax=cutoff,
+            nbins=nbin,
+        )
+
     def rdf_2d(self, output_dir, cutoff=12.0, binwidth=0.05):
         """2D radial distribution function for identical atom types.
 
