@@ -76,7 +76,9 @@ H (length >= 6) once the wrap loads them.
 ``populateHbondsFromDonors``, and ``donatedHydrogenBond`` are bound.
 ``Frame.rdf`` is still ``(r, g)``. ``Frame.cn``, ``Frame.running_cn``,
 ``Frame.ion_cloud``, and ``Frame.hbonds_from_donors`` call those
-symbols.
+symbols. Ice-score ``--family``, contact pairs, polar/apolar
+domains, and type-resolved ``rho(z)`` are the ``seams`` CLI in
+seams-core 2.5.0, not ``Frame`` methods.
 
 Classification
 ~~~~~~~~~~~~~~

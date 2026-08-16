@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 2.5.0
+
+`subprojects/seams-core.wrap` is `v2.5.0`. The Python surface
+stays the 2.4.1 binds (`Frame.rdf`, `Frame.cn`, `Frame.running_cn`,
+`Frame.ion_cloud`, `Frame.hbonds_from_donors`). Ice-score
+`--family`, `seams cn --ions`, `seams pairs`, `seams domains`,
+and `seams density-z` live on the engine CLI.
+
 ## 2.4.1
 
 `subprojects/seams-core.wrap` stays `v2.4.0`. `yoda` binds
