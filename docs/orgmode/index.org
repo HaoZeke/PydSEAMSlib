@@ -103,8 +103,8 @@ module.
      end
      CLI["seams CLI"]
      LUA["yodaStruct / dseams"]
-     LC[linkcell k-NN]
-     VE[vesin cutoff]
+     LC["linkcell k-NN"]
+     VE["vesin cutoff"]
      LC --> LIB
      VE --> LIB
      LIB --> YODA

@@ -1,3 +1,4 @@
+
 ========
 pydseams
 ========
@@ -48,11 +49,11 @@ pydseams
       cloud.
 
 About
-=====
+-----
 
 ``pydseams`` is the Python package for the d-SEAMS engine. The compiled
-module is ``yoda``. Helpers (``Frame``, ``read``, ASE, solvis) sit on
-that surface. ``import pydseamslib`` still works.
+module is ``yoda``. Helpers (``Frame``, ``read``, ASE, solvis) sit on that
+surface. ``import pydseamslib`` still works.
 
 Primary author: Ruhila S. The project started as PSF GSoC 2023
 (``pyseams``; the PyPI name became ``pydseams``). Helpers stay in
@@ -61,19 +62,20 @@ Python so the C++ ABI does not grow a second I/O layer.
 The engine and the ``seams`` CLI live in
 `seams-core <https://github.com/d-SEAMS/seams-core>`_. Lua is
 ``dseams`` in `yodaStruct <https://github.com/d-SEAMS/yodaStruct>`_.
-This site documents the Python ``Frame`` API. The header *Ecosystem*
-menu jumps to the engine docs, the Lua front end, and linkcell.
+This site documents the Python ``Frame`` API. The header **Ecosystem**
+menu jumps to the engine docs, the Lua front end, and the
+neighbour backends (vesin cutoff lists, linkcell k-NN).
 
-.. code-block:: python
+.. code:: python
 
-   import pydseams as ds
+    import pydseams as ds
 
-   frame = ds.read("water.lammpstrj")
-   print(frame.chill_plus())
-   print(frame.cages())
+    frame = ds.read("water.lammpstrj")
+    print(frame.chill_plus())
+    print(frame.cages())
 
 Suite stack
-===========
+-----------
 
 Python helpers sit on the compiled ``yoda`` module. The same
 ``libyodaLib`` engine backs the ``seams`` CLI and the Lua ``dseams``
@@ -97,8 +99,10 @@ module.
      end
      CLI["seams CLI"]
      LUA["yodaStruct / dseams"]
-     LC[linkcell]
+     LC["linkcell k-NN"]
+     VE["vesin cutoff"]
      LC --> LIB
+     VE --> LIB
      LIB --> YODA
      YODA --- ALIAS
      LIB --> CLI
@@ -109,7 +113,7 @@ module.
      FRAME --> SOL
 
 Documentation structure
-=======================
+-----------------------
 
 This documentation follows the `Diataxis <https://diataxis.fr/>`_
 framework.
@@ -162,24 +166,44 @@ framework.
    history
 
 Related projects
-================
+----------------
 
-- `seams-core <https://github.com/d-SEAMS/seams-core>`_ :: ``libyodaLib`` and the ``seams`` CLI
-- `yodaStruct <https://github.com/d-SEAMS/yodaStruct>`_ :: Lua / Fennel ``require("dseams")``
-- `linkcell <https://github.com/d-SEAMS/linkcell>`_ :: periodic linked-cell k-nearest neighbours
-- `d-SEAMS engine docs <https://docs.dseams.info>`_ :: C++ API and theory
-- `dseams.info <https://dseams.info>`_ :: project site
+`seams-core <https://github.com/d-SEAMS/seams-core>`_
+    ``libyodaLib`` and the ``seams`` CLI
+
+`yodaStruct <https://github.com/d-SEAMS/yodaStruct>`_
+    Lua / Fennel ``require("dseams")``
+
+`linkcell <https://github.com/d-SEAMS/linkcell>`_
+    periodic linked-cell k-nearest neighbours
+
+vesin
+    optional cutoff cell list (``neighListO``); brute force if not built
+
+`d-SEAMS engine docs <https://docs.dseams.info>`_
+    C++ API and theory
+
+`dseams.info <https://dseams.info>`_
+    project site
 
 License
-=======
+-------
 
 MIT. Cite the 2020 d-SEAMS paper (DOI
 `10.1021/acs.jcim.0c00031 <https://doi.org/10.1021/acs.jcim.0c00031>`_).
-See :doc:`explanation/citation`.
+See `How to cite <explanation/citation.rst>`_.
 
+#+begin\_export rst
 Indices and tables
-==================
+``================``
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+:ref:\`genindex\`
+-----------------
+
+:ref:\`modindex\`
+-----------------
+
+:ref:\`search\`
+---------------
+
+#+end\_export

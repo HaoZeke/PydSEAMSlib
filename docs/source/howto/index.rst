@@ -2,31 +2,52 @@
 How-to guides
 =============
 
+
 How-to guides are goal-oriented. Use them to solve a specific
 problem.
 
 Available how-tos
-=================
+-----------------
 
-======================================= ==========================================
-Guide                                   Description
-======================================= ==========================================
-:doc:`install`                          pip, pixi, extras, checkout
-:doc:`ase`                              ``from_ase``, ``to_ase``, select, bonding
-:doc:`solvis`                           ``to_solvis`` extra
-:doc:`faq`                              Names, extras, formats
-:doc:`troubleshooting`                  Import errors, cells, hydrogens
-======================================= ==========================================
+.. table::
+
+    +------------------------------------------+-------------------------------------------+
+    | Guide                                    | Description                               |
+    +==========================================+===========================================+
+    | `Install pydseams <install.rst>`_        | pip, pixi, extras, checkout               |
+    +------------------------------------------+-------------------------------------------+
+    | `Classify ASE Atoms <ase.rst>`_          | ``from_ase``, ``to_ase``, select, bonding |
+    +------------------------------------------+-------------------------------------------+
+    | `View a frame in solvis <solvis.rst>`_   | ``to_solvis`` extra                       |
+    +------------------------------------------+-------------------------------------------+
+    | `FAQ <faq.rst>`_                         | Names, extras, formats                    |
+    +------------------------------------------+-------------------------------------------+
+    | `Troubleshooting <troubleshooting.rst>`_ | Import errors, cells, hydrogens           |
+    +------------------------------------------+-------------------------------------------+
+
+.. toctree::
+   :maxdepth: 1
+
+   install
+   ase
+   solvis
+   faq
+   troubleshooting
 
 Structure
-=========
+---------
 
 Each how-to states the problem, shows the command or snippet, and
 links to the tutorial or the reference.
 
 Getting help
-============
+------------
 
-- :doc:`../tutorials/index` : learn the ``Frame`` path
-- :doc:`../reference/python` : live names
-- :doc:`../explanation/index` : design
+`Tutorials <../tutorials/index.rst>`_
+    learn the ``Frame`` path
+
+`Python surface <../reference/python.rst>`_
+    live names
+
+`Explanation <../explanation/index.rst>`_
+    design
