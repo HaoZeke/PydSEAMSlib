@@ -924,6 +924,39 @@ class Frame:
         )
         return yoda.coordinationNumber(h=hist, rMax=cutoff)
 
+    def running_cn(self, type_i, type_j, cutoff=12.0, binwidth=0.05):
+        """Running site-site coordination number.
+
+        Parameters
+        ----------
+        type_i : int
+            First species type code (``c_type``).
+        type_j : int
+            Second species type code (``c_type``).
+        cutoff : float, optional
+            Histogram cutoff in Angstroms. Default ``12.0``.
+        binwidth : float, optional
+            Histogram width. Default ``0.05``.
+
+        Returns
+        -------
+        list of float
+            Running CN at each bin outer edge from
+            :func:`pydseams.yoda.partialRdfHist` and
+            :func:`pydseams.yoda.runningCN` with
+            ``rho_J = nJ / dumpVolume``.
+        """
+        nbin = max(1, int(cutoff / binwidth))
+        hist = yoda.partialRdfHist(
+            yCloud=self.cloud,
+            typeI=type_i,
+            typeJ=type_j,
+            rmax=cutoff,
+            nbins=nbin,
+        )
+        rho_j = (hist.nJ / hist.volume) if hist.volume > 0.0 else 0.0
+        return yoda.runningCN(h=hist, rhoJ=rho_j)
+
     def ion_cloud(self, table):
         """One COM vertex per ion molecule.
 
