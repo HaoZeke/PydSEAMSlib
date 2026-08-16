@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 2.3.1
+
+`subprojects/seams-core.wrap` is `v2.3.1`. Remaining cutoff
+builders (`neighList`, `halfNeighList`, in-plane RDF) use vesin.
+
 ## 2.3.0
 
 `subprojects/seams-core.wrap` is `v2.3.0` (linkcell v0.3.0).
