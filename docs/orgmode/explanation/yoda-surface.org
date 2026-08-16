@@ -29,7 +29,7 @@ repository name, re-exported from ~pydseams~.
 ~yoda~ registers the engine: ~PointCloudDouble~, the readers,
 neighbour lists (~neighList~, ~neighListO~, ~neighListPair~),
 CHILL, rings, cages, Steinhardt, SOAP, ~SiteTable~,
-~partialRdfHist~, ~coordinationNumber~, and
+~partialRdfHist~, ~coordinationNumber~, ~runningCN~, and
 ~populateHbondsFromDonors~. It does not own suffix dispatch, ASE
 ~Atoms~, or solvis.
 

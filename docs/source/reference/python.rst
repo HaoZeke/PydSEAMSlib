@@ -70,10 +70,11 @@ Geometry and graphs
 H (length >= 6) once the wrap loads them.
 
 ``neighListPair``, ``SiteTable``, ``parseSiteSpec``, ``ionCloud``,
-``partialRdfHist``, ``coordinationNumber``,
+``partialRdfHist``, ``coordinationNumber``, ``runningCN``,
 ``populateHbondsFromDonors``, and ``donatedHydrogenBond`` are bound.
-``Frame.rdf`` is still ``(r, g)``. ``Frame.cn``, ``Frame.ion_cloud``,
-and ``Frame.hbonds_from_donors`` call those symbols.
+``Frame.rdf`` is still ``(r, g)``. ``Frame.cn``, ``Frame.running_cn``,
+``Frame.ion_cloud``, and ``Frame.hbonds_from_donors`` call those
+symbols.
 
 Classification
 ~~~~~~~~~~~~~~
@@ -117,6 +118,10 @@ Export and descriptors
     | ``voronoi_features`` | per-atom ``[q4, q6, q8]``                     |
     +----------------------+-----------------------------------------------+
     | ``rdf``              | in-memory 3D RDF (``yoda.partialRdf``)        |
+    +----------------------+-----------------------------------------------+
+    | ``cn``               | site-site CN to a cutoff                     |
+    +----------------------+-----------------------------------------------+
+    | ``running_cn``       | running site-site CN (``yoda.runningCN``)    |
     +----------------------+-----------------------------------------------+
 
 Prism, monolayer, and ``rdf_2d`` write engine output. ``Frame.rdf``

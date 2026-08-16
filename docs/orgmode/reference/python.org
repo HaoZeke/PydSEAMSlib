@@ -47,10 +47,11 @@ H (length >= 6) once the wrap loads them.
 
 ~yoda.neighListPair~, ~yoda.SiteTable~, ~yoda.parseSiteSpec~,
 ~yoda.ionCloud~, ~yoda.partialRdfHist~, ~yoda.coordinationNumber~,
-~yoda.populateHbondsFromDonors~, and ~yoda.donatedHydrogenBond~ are
-bound. ~Frame.rdf~ is ~(r, g)~; ~Frame.cn~ integrates that
-histogram; ~Frame.ion_cloud~ and ~Frame.hbonds_from_donors~ wrap
-the site and donor-H paths.
+~yoda.runningCN~, ~yoda.populateHbondsFromDonors~, and
+~yoda.donatedHydrogenBond~ are bound. ~Frame.rdf~ is ~(r, g)~;
+~Frame.cn~ integrates that histogram; ~Frame.running_cn~ is the
+running integral with ~rho_J = nJ / volume~; ~Frame.ion_cloud~
+and ~Frame.hbonds_from_donors~ wrap the site and donor-H paths.
 
 ** Classification
 
@@ -77,6 +78,7 @@ six-rings.
 | ~voronoi_features~ | per-atom ~[q4, q6, q8]~ |
 | ~rdf~ | in-memory partial 3D RDF (~yoda.partialRdf~) |
 | ~cn~ | site-site CN to a cutoff (~yoda.coordinationNumber~) |
+| ~running_cn~ | running site-site CN (~yoda.runningCN~) |
 | ~ion_cloud~ | ion COM vertices (~yoda.ionCloud~) |
 | ~hbonds_from_donors~ | H-bond net from an explicit H-index list |
 

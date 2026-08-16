@@ -120,7 +120,8 @@ directly for the raw engine.
 | `neighListPair` | I-J neighbour list (like-type reuses `neighListO`). |
 | `SiteTable` / `parseSiteSpec` | Type-to-kind map. Type 1 is not a chemistry. |
 | `ionCloud` | One COM vertex per ion `molID`, unwrapped with `relDist`. |
-| `partialRdfHist` | Partial 3D RDF as `PartialRdf` (r, g, count, volume). |
+| `partialRdfHist` | Partial 3D RDF as `PartialRdf` (r, g, count, volume, nI, nJ). |
+| `runningCN` | Running site-site CN (`rhoJ` defaults to `nJ/volume`). |
 | `coordinationNumber` | Site-site CN to `rMax` (`rhoJ` defaults to `nJ/volume`). |
 | `populateHbondsFromDonors` | H-bond net from a flat list of `hCloud` indices. |
 | `donatedHydrogenBond` | One donor-acceptor O-O-H test. |
@@ -134,8 +135,8 @@ directly for the raw engine.
 `partialRdfHist`, `coordinationNumber`, `runningCN`,
 `firstMinimumBin`, `populateHbondsFromDonors`, and
 `donatedHydrogenBond` are bound. `Frame.rdf` returns `(r, g)`.
-`Frame.cn`, `Frame.ion_cloud`, and `Frame.hbonds_from_donors` call
-the new symbols.
+`Frame.cn`, `Frame.running_cn`, `Frame.ion_cloud`, and
+`Frame.hbonds_from_donors` call the new symbols.
 
 ### Rings and cages
 
@@ -257,11 +258,13 @@ the new symbols.
 | `recenterClusterCloud` | Recenter a cluster point cloud for visualization. |
 | `rdf2Danalysis_AA` | 2D radial distribution function for identical atom types. |
 | `partialRdf` | Partial 3D RDF ``g_IJ(r)``. Returns ``(r, g)``. |
+| `runningCN` | Running CN `4 pi rho_J int s^2 g ds`. Returns a list. |
 
 ### Types
 
 | name | role |
 |------|------|
+| `PartialRdf` | Histogram from `partialRdfHist`: `r`, `g`, `count`, `volume`, `nI`, `nJ`. |
 | `PointCloudDouble` | Collection of points for a single frame, with box dimensions. |
 | `PointDouble` | Per-particle data: coordinates, type, molecule ID, ice classification. |
 | `SteinhardtQl` | Per-particle Steinhardt `ql` and neighbour-averaged `qlBar`. |
