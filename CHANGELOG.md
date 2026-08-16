@@ -2,7 +2,7 @@
 
 ## 2.2.4
 
-`subprojects/seams-core.wrap` is `68367c0` (linked-cell k-nearest).
+`subprojects/seams-core.wrap` is `v2.2.4` (linked-cell k-nearest).
 `kNearestNeighbourList` keeps the same Python signature.
 
 ## 2.2.3
