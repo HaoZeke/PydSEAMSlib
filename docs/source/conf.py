@@ -105,7 +105,7 @@ html_theme_options = {
                 {
                     "title": "dseams (Lua)",
                     "url": "https://d-seams.github.io/yodaStruct/",
-                    "summary": "require(\"dseams\") and Fennel",
+                    "summary": 'require("dseams") and Fennel',
                     "external": True,
                 },
             ],

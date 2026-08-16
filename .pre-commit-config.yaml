@@ -12,7 +12,8 @@ repos:
   -   id: trailing-whitespace
       exclude: |
         (?x)^(
-        docs/.*           # Exclude docs folder
+        docs/.*|
+        tests/data/.*
         )$
   -   id: end-of-file-fixer
       exclude: |
