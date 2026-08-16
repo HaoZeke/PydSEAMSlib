@@ -7,9 +7,9 @@
 pydseams
 ========
 
-.. image:: _static/logo/pydseamslib_logo_light.png
-   :alt: pydseams logo
-   :width: 280px
+.. image:: _static/logo/pydseams-logo-light.svg
+   :alt: pydseams
+   :width: 320px
    :align: center
 
 .. grid:: 1 2 3 3

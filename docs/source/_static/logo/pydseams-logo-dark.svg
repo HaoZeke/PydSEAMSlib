@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="112" viewBox="0 0 420 112" fill="none" role="img" aria-labelledby="pyDarkTitle">
+  <title id="pyDarkTitle">pydseams</title>
+  <desc>Python Frame API on the d-SEAMS ice cage</desc>
+  <rect x="8" y="16" width="80" height="80" rx="18" fill="#0D47A1"/>
+  <rect x="18" y="26" width="60" height="60" rx="10" fill="none" stroke="#F9A825" stroke-width="2"/>
+  <path d="M18 36 H25 M71 36 H78 M18 76 H25 M71 76 H78" stroke="#F9A825" stroke-width="2" stroke-linecap="round"/>
+  <g fill="none" stroke="#81D4FA" stroke-width="1.7" stroke-linejoin="round">
+    <path d="M53 36.5 L67.1 36.5 L67.1 52.8 L53 60.9 L38.9 52.8 L38.9 36.5 Z"/>
+    <path d="M48 32 L65.3 42 L65.3 62 L48 72 L30.7 62 L30.7 42 Z"/>
+    <path d="M48 32 L53 30.4"/>
+    <path d="M65.3 42 L67.1 36.5"/>
+    <path d="M65.3 62 L67.1 52.8"/>
+    <path d="M48 72 L53 60.9"/>
+    <path d="M30.7 62 L38.9 52.8"/>
+    <path d="M30.7 42 L38.9 36.5"/>
+  </g>
+  <circle cx="48" cy="32" r="3" fill="#E3F2FD"/>
+  <circle cx="65.3" cy="42" r="3" fill="#E3F2FD"/>
+  <circle cx="65.3" cy="62" r="3" fill="#BBDEFB"/>
+  <circle cx="48" cy="72" r="3" fill="#BBDEFB"/>
+  <circle cx="30.7" cy="62" r="3" fill="#90CAF9"/>
+  <circle cx="30.7" cy="42" r="3" fill="#E3F2FD"/>
+  <text x="108" y="58" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="34" font-weight="750" letter-spacing="-1.1" fill="#E3F2FD">pydseams</text>
+  <text x="108" y="82" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="14" font-weight="600" letter-spacing="0.14em" fill="#81D4FA">PYTHON FRAME</text>
+</svg>

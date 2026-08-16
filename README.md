@@ -1,5 +1,9 @@
 # PydSEAMSlib
 
+<p align="center">
+  <img src="docs/source/_static/logo/pydseams-icon.svg" alt="pydseams" width="96">
+</p>
+
 [![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
 
 Python bindings for the [d-SEAMS](https://dseams.info) C++ engine
