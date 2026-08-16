@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.5
+
+`subprojects/seams-core.wrap` is `v2.2.5` (linkcell v0.2.4).
+The Python signature is unchanged.
+
 ## 2.2.4
 
 `subprojects/seams-core.wrap` is `v2.2.4` (linked-cell k-nearest).
