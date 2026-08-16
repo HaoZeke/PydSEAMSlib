@@ -15,7 +15,7 @@ the hand table of every public name registered in
 functions are compile-gated: ~readChemfiles~, ~readCon~,
 ~ira_match~, ~sofi_point_group~.
 
-seams-core v2.4.0 also has ~site::Table~, ~rdf::coordinationNumber~,
-~populateHbondsFromDonors~, and ~neighListPair~. pydseams still uses
-~neighList~ and ~populateHbonds~; those new symbols are not bound.
-~Frame.rdf~ binds ~rdf::partialRdf~.
+~yoda~ binds ~neighListPair~, ~SiteTable~, ~parseSiteSpec~,
+~ionCloud~, ~partialRdfHist~, ~coordinationNumber~,
+~populateHbondsFromDonors~, and ~donatedHydrogenBond~. ~Frame.rdf~
+is still ~(r, g)~.

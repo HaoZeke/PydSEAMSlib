@@ -45,10 +45,12 @@ Package-level aliases: ~pydseams.from_ase~, ~from_arrays~,
 ~box~ is three lengths on an orthorhombic frame. Tilt dumps use dump
 H (length >= 6) once the wrap loads them.
 
-seams-core v2.4.0 also has ~site::Table~, ~rdf::coordinationNumber~,
-~populateHbondsFromDonors~, and ~neighListPair~. pydseams still uses
-~neighList~ and ~populateHbonds~; those new symbols are not bound.
-~Frame.rdf~ binds ~rdf::partialRdf~.
+~yoda.neighListPair~, ~yoda.SiteTable~, ~yoda.parseSiteSpec~,
+~yoda.ionCloud~, ~yoda.partialRdfHist~, ~yoda.coordinationNumber~,
+~yoda.populateHbondsFromDonors~, and ~yoda.donatedHydrogenBond~ are
+bound. ~Frame.rdf~ is ~(r, g)~; ~Frame.cn~ integrates that
+histogram; ~Frame.ion_cloud~ and ~Frame.hbonds_from_donors~ wrap
+the site and donor-H paths.
 
 ** Classification
 
@@ -74,6 +76,9 @@ six-rings.
 | ~soap~ | SOAP power spectrum |
 | ~voronoi_features~ | per-atom ~[q4, q6, q8]~ |
 | ~rdf~ | in-memory partial 3D RDF (~yoda.partialRdf~) |
+| ~cn~ | site-site CN to a cutoff (~yoda.coordinationNumber~) |
+| ~ion_cloud~ | ion COM vertices (~yoda.ionCloud~) |
+| ~hbonds_from_donors~ | H-bond net from an explicit H-index list |
 
 Prism, monolayer, and ~rdf_2d~ write engine output. ~Frame.rdf~
 does not. See the Frame autodoc on [[file:../../source/api.md][api.md]].

@@ -74,6 +74,42 @@ def test_frame_rdf_two_type(tmp_path, monkeypatch):
     assert leftover == []
 
 
+def test_frame_cn_matches_unlike_degree():
+    positions = [
+        [0.0, 0.0, 0.0],
+        [2.8, 0.0, 0.0],
+        [0.0, 2.8, 0.0],
+        [2.8, 2.8, 0.0],
+    ]
+    frame = from_arrays(positions, [30.0, 30.0, 30.0], numbers=[1, 2, 1, 2])
+    assert frame.cn(1, 2, cutoff=3.0, binwidth=0.1) == pytest.approx(1.0)
+    assert frame.cn(1, 2, cutoff=1.0, binwidth=0.1) == pytest.approx(0.0)
+
+
+def test_site_table_type_one_is_not_chemistry():
+    from pydseams import yoda
+
+    table = yoda.parseSiteSpec("2=anion")
+    assert table.ofType(1) == yoda.SiteKind.unspecified
+    assert table.ofType(2) == yoda.SiteKind.anion
+
+
+def test_ion_cloud_two_atom_com():
+    from pydseams import yoda
+
+    positions = [[0.5, 0.0, 0.0], [9.5, 0.0, 0.0]]
+    frame = from_arrays(positions, [10.0, 10.0, 10.0], numbers=[1, 1])
+    frame.cloud.pts[0].molID = 7
+    frame.cloud.pts[0].atomID = 1
+    frame.cloud.pts[1].molID = 7
+    frame.cloud.pts[1].atomID = 2
+    table = yoda.parseSiteSpec("1=cationHead")
+    ions = frame.ion_cloud(table)
+    assert ions.nop == 1
+    assert ions.pts[0].type == 1
+    assert ions.pts[0].x == pytest.approx(0.0)
+
+
 def test_available_readers():
     from pydseams import available_readers
 

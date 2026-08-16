@@ -907,6 +907,62 @@ class Frame:
             nbins=nbin,
         )
 
+    def cn(self, type_i, type_j, cutoff, binwidth=0.05):
+        """Site-site coordination number integrated to ``cutoff``.
+
+        Uses :func:`pydseams.yoda.partialRdfHist` and
+        :func:`pydseams.yoda.coordinationNumber` with
+        ``rho_J = nJ / dumpVolume``.
+        """
+        nbin = max(1, int(cutoff / binwidth))
+        hist = yoda.partialRdfHist(
+            yCloud=self.cloud,
+            typeI=type_i,
+            typeJ=type_j,
+            rmax=cutoff,
+            nbins=nbin,
+        )
+        return yoda.coordinationNumber(h=hist, rMax=cutoff)
+
+    def ion_cloud(self, table):
+        """One COM vertex per ion molecule.
+
+        Parameters
+        ----------
+        table : pydseams.yoda.SiteTable
+            Type-to-kind map. Cation molecules restamp to type 1,
+            anions to type 2.
+        """
+        return yoda.ionCloud(src=self.cloud, table=table)
+
+    def hbonds_from_donors(self, donor_hs, h_cloud=None, dist=2.42, angle=30.0):
+        """Hydrogen-bond network from an explicit donor-H index list.
+
+        Parameters
+        ----------
+        donor_hs : sequence of int
+            ``hCloud`` indices. Each H is paired with the heavy atom
+            that shares its ``molID``.
+        h_cloud : PointCloudDouble, optional
+            Hydrogen cloud. Defaults to the ASE hydrogen cloud.
+        dist, angle : float, optional
+            Acceptor-H distance and acceptor-centered O-O-H angle.
+        """
+        hydro = h_cloud if h_cloud is not None else self._h_cloud
+        if hydro is None:
+            raise ValueError(
+                "hbonds_from_donors needs a hydrogen cloud. Pass h_cloud "
+                "or build the Frame from ASE Atoms that include H."
+            )
+        return yoda.populateHbondsFromDonors(
+            yCloud=self.cloud,
+            hCloud=hydro,
+            nList=self.neighbor_list,
+            donorHs=list(donor_hs),
+            distCutoff=dist,
+            angleCutoff=angle,
+        )
+
     def rdf_2d(self, output_dir, cutoff=12.0, binwidth=0.05):
         """2D radial distribution function for identical atom types.
 

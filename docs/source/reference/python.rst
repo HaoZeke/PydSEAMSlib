@@ -69,10 +69,11 @@ Geometry and graphs
 ``box`` is three lengths on an orthorhombic frame. Tilt dumps use dump
 H (length >= 6) once the wrap loads them.
 
-seams-core v2.4.0 also has ``site::Table``, ``rdf::coordinationNumber``,
-``populateHbondsFromDonors``, and ``neighListPair``. pydseams still uses
-``neighList`` and ``populateHbonds``; those new symbols are not bound.
-``Frame.rdf`` binds ``rdf::partialRdf``.
+``neighListPair``, ``SiteTable``, ``parseSiteSpec``, ``ionCloud``,
+``partialRdfHist``, ``coordinationNumber``,
+``populateHbondsFromDonors``, and ``donatedHydrogenBond`` are bound.
+``Frame.rdf`` is still ``(r, g)``. ``Frame.cn``, ``Frame.ion_cloud``,
+and ``Frame.hbonds_from_donors`` call those symbols.
 
 Classification
 ~~~~~~~~~~~~~~

@@ -2,9 +2,11 @@
 
 ## Unreleased
 
-`Frame.rdf(type_i, type_j, cutoff=12.0, binwidth=0.05)` is the
-in-memory partial 3D RDF (`yoda.partialRdf`). It does not write
-files.
+`yoda` binds `neighListPair`, `SiteTable` / `parseSiteSpec` /
+`ionCloud`, `partialRdfHist` / `coordinationNumber` / `runningCN`
+/ `firstMinimumBin`, `populateHbondsFromDonors`, and
+`donatedHydrogenBond`. `Frame.cn`, `Frame.ion_cloud`, and
+`Frame.hbonds_from_donors` call those. `Frame.rdf` stays `(r, g)`.
 
 ## 2.4.0
 

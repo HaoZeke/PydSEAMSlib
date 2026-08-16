@@ -51,6 +51,20 @@ def test_partial_rdf_exists():
     assert hasattr(yoda, "partialRdf")
 
 
+def test_v240_symbols_exist():
+    assert hasattr(yoda, "neighListPair")
+    assert hasattr(yoda, "partialRdfHist")
+    assert hasattr(yoda, "coordinationNumber")
+    assert hasattr(yoda, "runningCN")
+    assert hasattr(yoda, "firstMinimumBin")
+    assert hasattr(yoda, "SiteTable")
+    assert hasattr(yoda, "SiteKind")
+    assert hasattr(yoda, "parseSiteSpec")
+    assert hasattr(yoda, "ionCloud")
+    assert hasattr(yoda, "populateHbondsFromDonors")
+    assert hasattr(yoda, "donatedHydrogenBond")
+
+
 def test_ring_network_exists():
     assert hasattr(yoda, "ringNetwork")
     assert hasattr(yoda, "RingUpdater")

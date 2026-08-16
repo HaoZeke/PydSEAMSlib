@@ -117,16 +117,25 @@ directly for the raw engine.
 | `neighbourListByIndex` | Convert an atom-ID neighbour list to an index-based neighbour list. |
 | `neighList` | Build a full neighbour list for two atom types within a cutoff. |
 | `neighListO` | Build a full neighbour list for a single atom type within a cutoff. |
+| `neighListPair` | I-J neighbour list (like-type reuses `neighListO`). |
+| `SiteTable` / `parseSiteSpec` | Type-to-kind map. Type 1 is not a chemistry. |
+| `ionCloud` | One COM vertex per ion `molID`, unwrapped with `relDist`. |
+| `partialRdfHist` | Partial 3D RDF as `PartialRdf` (r, g, count, volume). |
+| `coordinationNumber` | Site-site CN to `rMax` (`rhoJ` defaults to `nJ/volume`). |
+| `populateHbondsFromDonors` | H-bond net from a flat list of `hCloud` indices. |
+| `donatedHydrogenBond` | One donor-acceptor O-O-H test. |
 | `createBondsFromCages` | Create bond connectivity from rings and cage information. |
 | `getHbondDistanceOH` | Compute the O-H hydrogen bond distance between two atoms. |
 | `populateHbonds` | Build the hydrogen-bond network from a trajectory and neighbour list. |
 | `populateHbondsWithInputClouds` | Build hydrogen bonds from pre-loaded oxygen and hydrogen point clouds. |
 | `trimBonds` | Remove duplicate bonds from a bond list. |
 
-seams-core v2.4.0 also has `site::Table`, `rdf::coordinationNumber`,
-`populateHbondsFromDonors`, and `neighListPair`. pydseams still uses
-`neighList` and `populateHbonds`; those new symbols are not bound.
-`Frame.rdf` binds `rdf::partialRdf`.
+`neighListPair`, `SiteTable`, `parseSiteSpec`, `ionCloud`,
+`partialRdfHist`, `coordinationNumber`, `runningCN`,
+`firstMinimumBin`, `populateHbondsFromDonors`, and
+`donatedHydrogenBond` are bound. `Frame.rdf` returns `(r, g)`.
+`Frame.cn`, `Frame.ion_cloud`, and `Frame.hbonds_from_donors` call
+the new symbols.
 
 ### Rings and cages
 
