@@ -67,7 +67,8 @@ The engine and the ~seams~ CLI live in
 [[https://github.com/d-SEAMS/seams-core][seams-core]]. Lua is
 ~dseams~ in [[https://github.com/d-SEAMS/yodaStruct][yodaStruct]].
 This site documents the Python ~Frame~ API. The header *Ecosystem*
-menu jumps to the engine docs, the Lua front end, and linkcell.
+menu jumps to the engine docs, the Lua front end, and the
+neighbour backends (vesin cutoff lists, linkcell k-NN).
 
 #+begin_src python
 import pydseams as ds
@@ -102,8 +103,10 @@ module.
      end
      CLI["seams CLI"]
      LUA["yodaStruct / dseams"]
-     LC[linkcell]
+     LC[linkcell k-NN]
+     VE[vesin cutoff]
      LC --> LIB
+     VE --> LIB
      LIB --> YODA
      YODA --- ALIAS
      LIB --> CLI
@@ -173,6 +176,7 @@ framework.
 - [[https://github.com/d-SEAMS/seams-core][seams-core]] :: ~libyodaLib~ and the ~seams~ CLI
 - [[https://github.com/d-SEAMS/yodaStruct][yodaStruct]] :: Lua / Fennel ~require("dseams")~
 - [[https://github.com/d-SEAMS/linkcell][linkcell]] :: periodic linked-cell k-nearest neighbours
+- vesin :: optional cutoff cell list (~neighListO~); brute force if not built
 - [[https://docs.dseams.info][d-SEAMS engine docs]] :: C++ API and theory
 - [[https://dseams.info][dseams.info]] :: project site
 

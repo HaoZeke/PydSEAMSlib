@@ -17,9 +17,8 @@ Each tutorial states prerequisites, lists learning objectives, and
 walks numbered steps with expected output. The flagship path is
 ~ds.read~ to ~Frame.chill_plus~ to ~Frame.cages~.
 
-The ~seams~ CLI and the Lua ~dseams~ module run the same engine.
-Tutorials stay on Python and point at those front ends instead of
-teaching them.
+Sibling packages (~seams~ in seams-core, ~require("dseams")~ in
+yodaStruct) share the same engine. These tutorials stay on Python.
 
 * Getting help
 
