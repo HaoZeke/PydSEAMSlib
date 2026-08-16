@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 2.3.0
+
+`subprojects/seams-core.wrap` is `v2.3.0` (linkcell v0.3.0).
+Cutoff, frame, and *k* follow the engine twelve-factor table
+(`SEAMS_CONFIG` / `seams.env`, then the environment, then the
+argument).
+
 The docs mark is the hexagonal ice cage inside a `Frame`, as SVG.
 
 ## 2.2.5
