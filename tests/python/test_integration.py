@@ -57,6 +57,30 @@ def test_neighbour_list_consistency():
             )
 
 
+def test_k_nearest_mutual_is_symmetric():
+    """Mutual k-nearest rows are symmetric and start with the atom ID."""
+    strTRJ = str(TRAJ.absolute())
+    cloud = yoda.readLammpsTrjreduced(
+        filename=strTRJ,
+        targetFrame=1,
+        typeI=2,
+        isSlice=False,
+        coordLow=[0, 0, 0],
+        coordHigh=[0, 0, 0],
+    )
+    knn = yoda.kNearestNeighbourList(cloud, 4, 5.5, 2, True)
+    assert len(knn) == cloud.nop
+    knnIdx = yoda.neighbourListByIndex(yCloud=cloud, nList=knn)
+    for i, row in enumerate(knn):
+        assert row[0] == cloud.pts[i].atomID
+        assert 1 <= len(row) <= 5
+    for i in range(len(knnIdx)):
+        for j in knnIdx[i][1:]:
+            assert i in knnIdx[j], (
+                f"Asymmetric k-nearest list: {j} in knn[{i}] but {i} not in knn[{j}]"
+            )
+
+
 def test_hydrogen_bond_network():
     """Build H-bond network and verify reasonable properties."""
     strTRJ = str(TRAJ.absolute())

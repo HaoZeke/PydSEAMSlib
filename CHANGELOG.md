@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.4
+
+`subprojects/seams-core.wrap` is `68367c0` (linked-cell k-nearest).
+`kNearestNeighbourList` keeps the same Python signature.
+
 ## 2.2.3
 
 Docs are orgmode plus Shibuya. Autodoc covers `Frame` and `yoda`.
