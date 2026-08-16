@@ -1,0 +1,16 @@
+#+TITLE: API reference
+#+OPTIONS: toc:nil num:nil
+
+Napoleon autodoc of the Python helpers lives in
+[[file:../../source/api.md][api.md]] (~automodule~ of ~pydseams~,
+~pydseams.frame~, ~pydseams.io~, ~pydseams.aseio~,
+~pydseams.solvis~).
+
+Human lookup of ~Frame~, ~IceCounts~, ~CageScore~, ~read~, and ASE
+is [[file:python.org][python.org]].
+
+~pydseams.yoda~ is mocked in the Sphinx build, so ~api.md~ keeps
+the hand table of every public name registered in
+~src/bindings.cpp~ (111 names: 98 functions, 13 types). Four
+functions are compile-gated: ~readChemfiles~, ~readCon~,
+~ira_match~, ~sofi_point_group~.

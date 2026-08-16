@@ -1,15 +1,154 @@
 #+TITLE: Python surface
 #+OPTIONS: toc:nil num:nil
 
+Human lookup of ~Frame~, ~IceCounts~, ~CageScore~, ~read~, and the
+ASE helpers. Napoleon autodoc of every signature is
+[[file:../../source/api.md][api.md]].
+
+* Frame
+
+~pydseams.frame.Frame~ is the one-frame handle. Load a LAMMPS dump,
+an ASE ~Atoms~, or raw arrays, then call ~chill_plus~ or ~cages~.
+Classification does not write files. Prefer ~pydseams.io.read~,
+~Frame.from_ase~, or ~Frame.from_arrays~ over constructing ~Frame~
+by filename.
+
+~Trajectory~ is an alias of ~Frame~.
+
+** Constructors
+
 | name | role |
 |------+------|
-| ~pydseams.read~ | suffix-dispatching loader |
-| ~pydseams.Frame~ | one-frame handle |
-| ~Frame.chill_plus~ / ~chill~ | four-neighbour ice labels |
-| ~Frame.cages~ | HC/DDC membership |
-| ~pydseams.from_ase~ / ~Frame.to_ase~ | ASE |
+| ~Frame.from_file~ | LAMMPS dump; guesses type 2 then type 1 |
+| ~Frame.from_ase~ | ASE ~Atoms~; ~select="O"~ |
+| ~Frame.from_arrays~ | ~(N, 3)~ positions and three box lengths |
+| ~Frame.from_xyz~ | XYZ via ~yoda.readXYZ~ |
+| ~Frame.from_chemfiles~ | PDB / GRO / DCD when chemfiles is linked |
+| ~Frame.from_con~ | eOn ~.con~ when readcon-core is linked |
+
+Package-level aliases: ~pydseams.from_ase~, ~from_arrays~,
+~from_xyz~, ~from_chemfiles~, ~from_con~. Autodoc:
+[[file:../../source/api.md][api.md]].
+
+** Geometry and graphs
+
+| name | role |
+|------+------|
+| ~n_atoms~ | analysed particle count (~cloud.nop~) |
+| ~box~ | orthorhombic box lengths ~[lx, ly, lz]~ |
+| ~positions~ | list of ~(x, y, z)~ |
+| ~neighbor_list~ | cutoff neighbour list (~yoda.neighListO~) |
+| ~hbonds~ | hydrogen-bond neighbour list |
+| ~rings~ | primitive rings up to size 6 |
+| ~load_frame~ | reload a later frame from the same file |
+
+** Classification
+
+| name | role |
+|------+------|
+| ~chill_plus~ | CHILL+ ice labels; no files written |
+| ~chill~ | CHILL ice labels; no files written |
+| ~classify_chill_plus~ | alias of ~chill_plus~ |
+| ~classify_chill~ | alias of ~chill~ |
+| ~cages~ | HC / DDC membership (~seeded=True~, ~k=4~) |
+
+~cages(seeded=True)~ is the hysteresis construction.
+~seeded=False~ is cutoff-graph affiliation on this frame's
+six-rings.
+
+** Export and descriptors
+
+| name | role |
+|------+------|
+| ~to_ase~ | ASE ~Atoms~; needs ~pydseams[ase]~ |
+| ~to_solvis~ | solvis ~System~; needs ~pydseams[solvis]~ |
+| ~steinhardt~ | local and neighbour-averaged ~ql~ |
+| ~soap~ | SOAP power spectrum |
+| ~voronoi_features~ | per-atom ~[q4, q6, q8]~ |
+
+Prism, monolayer, and RDF helpers write engine output. See the
+Frame autodoc on [[file:../../source/api.md][api.md]].
+
+* IceCounts
+
+~pydseams.frame.IceCounts~ is the histogram returned by
+~chill_plus~ and ~chill~.
+
+Keys are the ~AtomStateType~ names (~cubic~, ~hexagonal~, ~water~,
+~interfacial~, ~clathrate~, ~interClathrate~, ~unclassified~,
+~reCubic~, ~reHex~). Missing keys read as ~0~ via attribute access,
+so ~counts.cubic~ and ~counts["hexagonal"]~ are equivalent.
+~repr~ omits zero-count labels.
+
+* CageScore
+
+~pydseams.frame.CageScore~ is the per-atom score returned by
+~cages~.
+
+A molecule in an HC is ice Ih; a molecule in a DDC is ice Ic.
+
+| name | role |
+|------+------|
+| ~hc~ | per-atom hexagonal-cage flag |
+| ~ddc~ | per-atom double-diamond-cage flag |
+| ~n_ih~ | number of atoms flagged HC |
+| ~n_ic~ | number of atoms flagged DDC |
+| ~n_water~ | number of atoms in neither cage |
+
+* read
+
+~pydseams.io.read~ is the suffix-dispatching loader.
+~pydseams.available_readers~ reports which compiled readers this
+build linked.
+
+| suffix | constructor |
+|--------+-------------|
+| ~.xyz~ | ~Frame.from_xyz~ |
+| ~.con~ | ~Frame.from_con~ |
+| ~.pdb~, ~.gro~, ~.dcd~ | ~Frame.from_chemfiles~ |
+| ~.lammpstrj~, ~.dump~, ~.lammps~, other | ~Frame.from_file~ |
+
+Common kwargs: ~frame~ (1-indexed), ~cutoff~ (Angstroms, default
+3.5), ~bonded~ (~"auto"~, ~"hbond"~, ~"cutoff"~), ~atom_type~,
+~region~. ~bonded="auto"~ uses hydrogen bonds when hydrogens are
+available.
+
+Builds without chemfiles or readcon raise ~RuntimeError~ when those
+suffixes are used.
+
+* ASE
+
+~pydseams.from_ase~ / ~Frame.from_ase~ build a ~Frame~ from an ASE
+~Atoms~. ~Frame.to_ase~ is the inverse.
+
+Install: ~pip install 'pydseams[ase]'~. The cell must be
+orthorhombic. ~select~ is a symbol, an atomic number, or ~None~
+(every atom). Default ~select="O"~.
+
+~to_ase~ writes ~arrays["ice_type"]~ after CHILL and
+~arrays["hc"]~ / ~arrays["ddc"]~ after ~cages()~. A frame loaded
+from a LAMMPS dump (no ASE symbols) uses ~O~ as the fallback
+species.
+
+Implementation autodoc is the ASE helpers section of
+[[file:../../source/api.md][api.md]]. Walkthrough:
+[[file:../howto/ase.org][ASE how-to]].
+
+~pydseams.to_solvis~ wraps the same ~Atoms~. Install:
+~pip install 'pydseams[solvis]'~.
+
+* Package names
+
+| name | role |
+|------+------|
+| ~pydseams~ | Python package |
+| ~pydseamslib~ | compatibility alias of ~pydseams~ |
 | ~pydseams.yoda~ | compiled registrations |
 | ~pydseams._core~ | alias of ~yoda~ |
+| ~pydseams.cyoda~ | alias of ~yoda~ |
+| ~pydseams.Trajectory~ | alias of ~Frame~ |
 
-Autodoc of the Python helpers is on the [[file:../api.md][API]] page
-(Sphinx ~automodule~).
+Requires Python 3.12+. Wheels are the CPython 3.12 limited ABI.
+
+~yoda~ names (mocked in the Sphinx build) are tabulated on
+[[file:../../source/api.md][api.md]].

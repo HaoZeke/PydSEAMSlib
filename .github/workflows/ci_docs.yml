@@ -28,7 +28,8 @@ jobs:
       - name: Generate Docs
         run: |
           pip install sphinx shibuya myst-parser sphinx-copybutton \
-            sphinx-design sphinxcontrib-bibtex sphinx-contributors
+            sphinx-design sphinxcontrib-bibtex sphinx-contributors \
+            sphinxcontrib-mermaid
           sphinx-build -b html docs/source html
       - name: Setup Pages
         uses: actions/configure-pages@v5

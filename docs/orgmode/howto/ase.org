@@ -1,5 +1,22 @@
-#+TITLE: ASE
+#+TITLE: Classify ASE Atoms
+#+AUTHOR: [[https://rgoswami.me][Rohit Goswami]]
 #+OPTIONS: toc:nil num:nil
+
+* Problem
+
+You have an ASE ~Atoms~ and want CHILL+ labels or cage flags on the
+same configuration, then an ~Atoms~ back with those arrays.
+
+* Install the extra
+
+#+begin_src bash
+pip install 'pydseams[ase]'
+#+end_src
+
+Without it, ~from_ase~ / ~to_ase~ raise ~ImportError~ and name that
+command.
+
+* Classify ASE Atoms
 
 #+begin_src python
 import ase.io
@@ -11,6 +28,45 @@ print(frame.chill_plus())
 labelled = frame.to_ase()
 #+end_src
 
-~from_ase~ selects oxygen by default. Pass ~bonded="cutoff"~ for
-single-site models (mW). Optional extra ~pydseams[solvis]~ builds a
-solvis ~System~.
+~from_ase~ is ~Frame.from_ase~. The cell must be orthorhombic.
+~from_ase~ keeps oxygen by default (~select="O"~).
+
+* Select and bonding
+
+Pass a symbol, an atomic number, or ~None~ (every atom):
+
+#+begin_src python
+frame = ds.from_ase(atoms, select="O")
+frame = ds.from_ase(atoms, select=8)
+frame = ds.from_ase(atoms, select=None)
+#+end_src
+
+~bonded="auto"~ uses hydrogen bonds when the ~Atoms~ include ~H~,
+otherwise the cutoff neighbour list. Single-site models (mW) have
+no hydrogens:
+
+#+begin_src python
+frame = ds.from_ase(atoms, select="O", bonded="cutoff")
+#+end_src
+
+~bonded~ is ~"auto"~, ~"hbond"~, or ~"cutoff"~. Hydrogens stay in a
+side cloud so the analysed species remain the CHILL / ring
+particles.
+
+* Labels on the way back
+
+~to_ase~ rebuilds an ~Atoms~ with the analysed positions and an
+orthorhombic cell (~pbc=True~). After ~chill_plus~ / ~chill~,
+~atoms.arrays["ice_type"]~ holds the per-atom names. After
+~cages()~, ~atoms.arrays["hc"]~ and ~atoms.arrays["ddc"]~ hold the
+last ~CageScore~. ~atoms.info["dseams_n_atoms"]~ is the analysed
+particle count.
+
+A frame loaded from a LAMMPS dump (no ASE symbols) uses ~O~ as the
+fallback species.
+
+* See also
+
+- [[file:solvis.org][View a frame in solvis]] :: wraps the same ~Atoms~
+- [[file:../tutorials/classify-ice.org][Classify ice]] :: ~read~ / ~chill_plus~ / ~cages~
+- [[file:troubleshooting.org][Troubleshooting]] :: non-orthorhombic cell, missing H

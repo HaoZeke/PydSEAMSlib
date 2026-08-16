@@ -1,0 +1,28 @@
+#+TITLE: Tutorials
+#+AUTHOR: [[https://rgoswami.me][Rohit Goswami]]
+#+OPTIONS: toc:nil num:nil
+
+Tutorials are learning-oriented. Follow them in order to learn the
+~Frame~ API.
+
+* Available tutorials
+
+| Tutorial | Description |
+|----------+-------------|
+| [[file:classify-ice.org][Classify ice]] | Load a mixed ice-water dump, print CHILL+, score cages |
+
+* What a tutorial covers
+
+Each tutorial states prerequisites, lists learning objectives, and
+walks numbered steps with expected output. The flagship path is
+~ds.read~ to ~Frame.chill_plus~ to ~Frame.cages~.
+
+The ~seams~ CLI and the Lua ~dseams~ module run the same engine.
+Tutorials stay on Python and point at those front ends instead of
+teaching them.
+
+* Getting help
+
+- [[file:../howto/index.org][How-to guides]] :: solve a specific task
+- [[file:../reference/python.org][Python surface]] :: live names
+- [[file:../explanation/index.org][Explanation]] :: why the surface is split

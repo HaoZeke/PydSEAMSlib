@@ -34,6 +34,7 @@ docs = [
   "sphinx-design",
   "sphinxcontrib-bibtex",
   "sphinx-contributors",
+  "sphinxcontrib-mermaid>=1.0",
 ]
 
 [tool.meson-python]

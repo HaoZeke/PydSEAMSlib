@@ -1,0 +1,27 @@
+#+TITLE: How-to guides
+#+AUTHOR: [[https://rgoswami.me][Rohit Goswami]]
+#+OPTIONS: toc:nil num:nil
+
+How-to guides are goal-oriented. Use them to solve a specific
+problem.
+
+* Available how-tos
+
+| Guide | Description |
+|-------+-------------|
+| [[file:install.org][Install pydseams]] | pip, pixi, extras, checkout |
+| [[file:ase.org][Classify ASE Atoms]] | ~from_ase~, ~to_ase~, select, bonding |
+| [[file:solvis.org][View a frame in solvis]] | ~to_solvis~ extra |
+| [[file:faq.org][FAQ]] | Names, extras, formats |
+| [[file:troubleshooting.org][Troubleshooting]] | Import errors, cells, hydrogens |
+
+* Structure
+
+Each how-to states the problem, shows the command or snippet, and
+links to the tutorial or the reference.
+
+* Getting help
+
+- [[file:../tutorials/index.org][Tutorials]] :: learn the ~Frame~ path
+- [[file:../reference/python.org][Python surface]] :: live names
+- [[file:../explanation/index.org][Explanation]] :: design
