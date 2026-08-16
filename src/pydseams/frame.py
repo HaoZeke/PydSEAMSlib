@@ -28,10 +28,13 @@ class IceCounts(dict):
     ``repr`` omits zero-count labels.
     """
 
+    def __missing__(self, key):
+        return 0
+
     def __getattr__(self, name):
         if name.startswith("_"):
             raise AttributeError(name)
-        return self.get(name, 0)
+        return self[name]
 
     def __repr__(self):
         parts = [f"{k}={v}" for k, v in sorted(self.items()) if v]
@@ -76,15 +79,10 @@ class CageScore:
     @property
     def n_water(self):
         """Number of atoms in neither cage."""
-        return sum(
-            1 for h, d in zip(self.hc, self.ddc) if not h and not d
-        )
+        return sum(1 for h, d in zip(self.hc, self.ddc) if not h and not d)
 
     def __repr__(self):
-        return (
-            f"CageScore(n_ih={self.n_ih}, n_ic={self.n_ic}, "
-            f"n_water={self.n_water})"
-        )
+        return f"CageScore(n_ih={self.n_ih}, n_ic={self.n_ic}, n_water={self.n_water})"
 
 
 def _cloud_from_positions(positions, cell, numbers, box_low=None):
@@ -122,7 +120,6 @@ def _cloud_from_positions(positions, cell, numbers, box_low=None):
 def _guess_lammps_type(filename, frame, region):
     low, high = region if region is not None else ([0, 0, 0], [0, 0, 0])
     sliced = region is not None
-    last = None
     for type_i in (2, 1):
         cloud = yoda.readLammpsTrjreduced(
             filename=filename,
@@ -195,9 +192,7 @@ class Frame:
         if bonded not in ("hbond", "cutoff", "auto"):
             raise ValueError('bonded must be "hbond", "cutoff", or "auto"')
         self.region = region
-        self.filename = (
-            str(Path(filename).resolve()) if filename is not None else None
-        )
+        self.filename = str(Path(filename).resolve()) if filename is not None else None
         self.frame = frame
         self.cutoff = cutoff
         self._h_cloud = h_cloud
@@ -235,9 +230,7 @@ class Frame:
         return self.filename is not None and self.atom_type == 2
 
     def _read(self, frame):
-        low, high = self.region if self.region is not None else (
-            [0, 0, 0], [0, 0, 0]
-        )
+        low, high = self.region if self.region is not None else ([0, 0, 0], [0, 0, 0])
         return yoda.readLammpsTrjreduced(
             filename=self.filename,
             targetFrame=frame,
@@ -248,8 +241,9 @@ class Frame:
         )
 
     @classmethod
-    def from_file(cls, filename, frame=1, atom_type=None, cutoff=3.5,
-                  bonded="auto", region=None):
+    def from_file(
+        cls, filename, frame=1, atom_type=None, cutoff=3.5, bonded="auto", region=None
+    ):
         """Load a LAMMPS dump through :func:`pydseams.yoda.readLammpsTrjreduced`.
 
         Parameters
@@ -271,15 +265,17 @@ class Frame:
         -------
         Frame
         """
-        return cls(
-            filename,
-            frame=frame,
-            atom_type=atom_type if atom_type is not None else 2,
-            cutoff=cutoff,
-            bonded=bonded,
-            region=region,
-        ) if atom_type is not None else cls._from_file_guess(
-            filename, frame, cutoff, bonded, region
+        return (
+            cls(
+                filename,
+                frame=frame,
+                atom_type=atom_type if atom_type is not None else 2,
+                cutoff=cutoff,
+                bonded=bonded,
+                region=region,
+            )
+            if atom_type is not None
+            else cls._from_file_guess(filename, frame, cutoff, bonded, region)
         )
 
     @classmethod
@@ -297,8 +293,9 @@ class Frame:
         )
 
     @classmethod
-    def from_arrays(cls, positions, cell, numbers=None, cutoff=3.5,
-                    bonded="cutoff", box_low=None):
+    def from_arrays(
+        cls, positions, cell, numbers=None, cutoff=3.5, bonded="cutoff", box_low=None
+    ):
         """Build a frame from ``(N, 3)`` positions and three box lengths.
 
         Parameters
@@ -377,8 +374,15 @@ class Frame:
         )
 
     @classmethod
-    def from_chemfiles(cls, filename, frame=1, type_filter=-1, cutoff=3.5,
-                       bonded="cutoff", atom_type=None):
+    def from_chemfiles(
+        cls,
+        filename,
+        frame=1,
+        type_filter=-1,
+        cutoff=3.5,
+        bonded="cutoff",
+        atom_type=None,
+    ):
         """Load PDB/GRO/DCD (or any chemfiles format) when chemfiles is linked.
 
         Parameters
@@ -407,9 +411,7 @@ class Frame:
             If chemfiles is not linked in this build of seams-core.
         """
         if not hasattr(yoda, "readChemfiles"):
-            raise RuntimeError(
-                "chemfiles is not linked in this build of seams-core"
-            )
+            raise RuntimeError("chemfiles is not linked in this build of seams-core")
         cloud = yoda.readChemfiles(str(filename), int(frame), int(type_filter))
         typ = atom_type
         if typ is None and cloud.nop > 0:
@@ -424,8 +426,7 @@ class Frame:
         )
 
     @classmethod
-    def from_con(cls, filename, frame=1, cutoff=3.5, bonded="cutoff",
-                 atom_type=None):
+    def from_con(cls, filename, frame=1, cutoff=3.5, bonded="cutoff", atom_type=None):
         """Load an eOn ``.con`` file when readcon-core is linked.
 
         Parameters
@@ -452,9 +453,7 @@ class Frame:
             If readcon-core is not linked in this build of seams-core.
         """
         if not hasattr(yoda, "readCon"):
-            raise RuntimeError(
-                "readcon-core is not linked in this build of seams-core"
-            )
+            raise RuntimeError("readcon-core is not linked in this build of seams-core")
         cloud = yoda.readCon(str(filename), int(frame))
         typ = atom_type
         if typ is None and cloud.nop > 0:
@@ -491,8 +490,7 @@ class Frame:
         """
         from .aseio import frame_from_ase
 
-        return frame_from_ase(cls, atoms, select=select, cutoff=cutoff,
-                              bonded=bonded)
+        return frame_from_ase(cls, atoms, select=select, cutoff=cutoff, bonded=bonded)
 
     def to_ase(self):
         """ASE ``Atoms`` for this frame.
@@ -628,9 +626,7 @@ class Frame:
         the cutoff neighbour list. Converted with
         :func:`pydseams.yoda.neighbourListByIndex`.
         """
-        source = (
-            self.neighbor_list if self.bonded == "cutoff" else self.hbonds
-        )
+        source = self.neighbor_list if self.bonded == "cutoff" else self.hbonds
         return yoda.neighbourListByIndex(yCloud=self.cloud, nList=source)
 
     @property
@@ -664,9 +660,7 @@ class Frame:
         IceCounts
             Histogram of CHILL+ labels on this frame.
         """
-        yoda.getCorrelPlus(
-            yCloud=self.cloud, nList=self.neighbor_list, isSlice=False
-        )
+        yoda.getCorrelPlus(yCloud=self.cloud, nList=self.neighbor_list, isSlice=False)
         yoda.getIceTypePlusNoPrint(
             yCloud=self.cloud, nList=self.neighbor_list, isSlice=False
         )
@@ -684,9 +678,7 @@ class Frame:
         IceCounts
             Histogram of CHILL labels on this frame.
         """
-        yoda.getCorrel(
-            yCloud=self.cloud, nList=self.neighbor_list, isSlice=False
-        )
+        yoda.getCorrel(yCloud=self.cloud, nList=self.neighbor_list, isSlice=False)
         yoda.getIceTypeNoPrint(
             yCloud=self.cloud, nList=self.neighbor_list, isSlice=False
         )
@@ -782,20 +774,14 @@ class Frame:
         -------
         CageScore
         """
-        cut = (
-            self.cutoff + 1.5 if candidate_cutoff is None else candidate_cutoff
-        )
+        cut = self.cutoff + 1.5 if candidate_cutoff is None else candidate_cutoff
         strict = yoda.neighbourListByIndex(
             self.cloud,
-            yoda.kNearestNeighbourList(
-                self.cloud, k, cut, self.atom_type, True
-            ),
+            yoda.kNearestNeighbourList(self.cloud, k, cut, self.atom_type, True),
         )
         union = yoda.neighbourListByIndex(
             self.cloud,
-            yoda.kNearestNeighbourList(
-                self.cloud, k, cut, self.atom_type, False
-            ),
+            yoda.kNearestNeighbourList(self.cloud, k, cut, self.atom_type, False),
         )
         six_s = [r for r in yoda.ringNetwork(strict, 6) if len(r) == 6]
         six_u = [r for r in yoda.ringNetwork(union, 6) if len(r) == 6]
@@ -820,9 +806,7 @@ class Frame:
         This path writes files. :meth:`chill_plus` and :meth:`cages`
         do not.
         """
-        hbonds_idx = yoda.neighbourListByIndex(
-            yCloud=self.cloud, nList=self.hbonds
-        )
+        hbonds_idx = yoda.neighbourListByIndex(yCloud=self.cloud, nList=self.hbonds)
         yoda.prismAnalysis(
             path=output_dir,
             rings=self.rings,
@@ -865,8 +849,10 @@ class Frame:
         )
         counts = {}
         cov = (
-            Path(output_dir) / "topoMonolayer" / "coverageAreaXY.dat"
-        ).read_text().splitlines()
+            (Path(output_dir) / "topoMonolayer" / "coverageAreaXY.dat")
+            .read_text()
+            .splitlines()
+        )
         fields = cov[-1].split()[1:]
         for size, n, area in zip(fields[::3], fields[1::3], fields[2::3]):
             counts[int(size)] = {"count": int(n), "coverage_xy": float(area)}
@@ -900,9 +886,7 @@ class Frame:
             finalFrame=self.frame,
         )
         r, g = [], []
-        rdf = (
-            Path(output_dir) / "topoMonolayer" / "rdf.dat"
-        ).read_text().splitlines()
+        rdf = (Path(output_dir) / "topoMonolayer" / "rdf.dat").read_text().splitlines()
         for line in rdf:
             parts = line.split()
             if len(parts) == 2:
@@ -1003,9 +987,7 @@ class Frame:
                 )
             ]
         return list(
-            yoda.soapSpectrum(
-                self.cloud, iatom, self.neighbor_list, n_max, l_max, r
-            )
+            yoda.soapSpectrum(self.cloud, iatom, self.neighbor_list, n_max, l_max, r)
         )
 
     def voronoi_features(self, cutoff=None):

@@ -32,9 +32,7 @@ def _mask(atoms, select):
 def _cell_lengths(atoms):
     cell = atoms.get_cell()
     if hasattr(cell, "orthorhombic") and not cell.orthorhombic:
-        raise ValueError(
-            "from_ase needs an orthorhombic cell; got a general cell"
-        )
+        raise ValueError("from_ase needs an orthorhombic cell; got a general cell")
     return [float(cell[0, 0]), float(cell[1, 1]), float(cell[2, 2])]
 
 
@@ -85,15 +83,9 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
             f"no atoms matched select={select!r}; "
             f"symbols={sorted(set(atoms.get_chemical_symbols()))}"
         )
-    positions = [
-        xyz for xyz, yes in zip(atoms.get_positions(), keep) if yes
-    ]
-    numbers = [
-        int(z) for z, yes in zip(atoms.numbers, keep) if yes
-    ]
-    symbols = [
-        s for s, yes in zip(atoms.get_chemical_symbols(), keep) if yes
-    ]
+    positions = [xyz for xyz, yes in zip(atoms.get_positions(), keep) if yes]
+    numbers = [int(z) for z, yes in zip(atoms.numbers, keep) if yes]
+    symbols = [s for s, yes in zip(atoms.get_chemical_symbols(), keep) if yes]
     origin = atoms.get_celldisp().reshape(3)
     from .frame import _cloud_from_positions
 

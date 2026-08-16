@@ -53,9 +53,7 @@ class TestHbondProperties:
         for i in range(len(self.hbonds)):
             # First element is self, rest are bonded neighbors
             n_hbonds = len(self.hbonds[i]) - 1
-            assert 0 <= n_hbonds <= 6, (
-                f"Atom {i} has {n_hbonds} H-bonds (expected 0-6)"
-            )
+            assert 0 <= n_hbonds <= 6, f"Atom {i} has {n_hbonds} H-bonds (expected 0-6)"
 
     def test_no_self_bonds(self):
         """No atom should have itself as a bonded neighbor (beyond the self entry).
@@ -66,53 +64,45 @@ class TestHbondProperties:
         for i in range(len(self.hbonds)):
             own_id = self.hbonds[i][0]
             neighbors = self.hbonds[i][1:]
-            assert own_id not in neighbors, (
-                f"Atom {i} (ID {own_id}) has self-bond in neighbor portion"
-            )
+            assert (
+                own_id not in neighbors
+            ), f"Atom {i} (ID {own_id}) has self-bond in neighbor portion"
 
     def test_hbond_symmetry(self):
         """If atom i lists j as bonded, j should list i.
 
         Convert to index-based lists first for consistent comparison.
         """
-        hbondsIdx = yoda.neighbourListByIndex(
-            yCloud=self.cloud, nList=self.hbonds
-        )
+        hbondsIdx = yoda.neighbourListByIndex(yCloud=self.cloud, nList=self.hbonds)
         for i in range(len(hbondsIdx)):
             for j in hbondsIdx[i][1:]:  # skip self
-                assert i in hbondsIdx[j], (
-                    f"H-bond asymmetry: {j} in hbonds[{i}] but {i} not in hbonds[{j}]"
-                )
+                assert (
+                    i in hbondsIdx[j]
+                ), f"H-bond asymmetry: {j} in hbonds[{i}] but {i} not in hbonds[{j}]"
 
     def test_bonded_atoms_are_valid_indices(self):
         """All atom IDs in the H-bond list should be valid."""
-        hbondsIdx = yoda.neighbourListByIndex(
-            yCloud=self.cloud, nList=self.hbonds
-        )
+        hbondsIdx = yoda.neighbourListByIndex(yCloud=self.cloud, nList=self.hbonds)
         n = self.cloud.nop
         for i in range(len(hbondsIdx)):
             for j in hbondsIdx[i]:
-                assert 0 <= j < n, (
-                    f"H-bond index {j} out of range [0, {n}) for atom {i}"
-                )
+                assert (
+                    0 <= j < n
+                ), f"H-bond index {j} out of range [0, {n}) for atom {i}"
 
     def test_hbond_subset_of_neighbor_list(self):
         """H-bonded neighbors should be a subset of the spatial neighbor list.
 
         Every H-bond pair must also be spatial neighbors (within cutoff).
         """
-        nListIdx = yoda.neighbourListByIndex(
-            yCloud=self.cloud, nList=self.nList
-        )
-        hbondsIdx = yoda.neighbourListByIndex(
-            yCloud=self.cloud, nList=self.hbonds
-        )
+        nListIdx = yoda.neighbourListByIndex(yCloud=self.cloud, nList=self.nList)
+        hbondsIdx = yoda.neighbourListByIndex(yCloud=self.cloud, nList=self.hbonds)
         for i in range(len(hbondsIdx)):
             hb_set = set(hbondsIdx[i][1:])  # skip self
             nl_set = set(nListIdx[i])
-            assert hb_set.issubset(nl_set), (
-                f"Atom {i}: H-bond neighbors {hb_set - nl_set} not in spatial neighbor list"
-            )
+            assert hb_set.issubset(
+                nl_set
+            ), f"Atom {i}: H-bond neighbors {hb_set - nl_set} not in spatial neighbor list"
 
 
 class TestHbondWithDifferentCutoffs:
@@ -137,6 +127,6 @@ class TestHbondWithDifferentCutoffs:
 
         total_tight = sum(len(nl) - 1 for nl in tight_idx)
         total_loose = sum(len(nl) - 1 for nl in loose_idx)
-        assert total_tight <= total_loose, (
-            f"Tighter cutoff gave more neighbors: {total_tight} > {total_loose}"
-        )
+        assert (
+            total_tight <= total_loose
+        ), f"Tighter cutoff gave more neighbors: {total_tight} > {total_loose}"

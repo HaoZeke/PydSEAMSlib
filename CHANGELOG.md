@@ -2,8 +2,10 @@
 
 ## 2.2.4
 
-`subprojects/seams-core.wrap` is `68367c0` (linked-cell k-nearest).
-`kNearestNeighbourList` keeps the same Python signature.
+`subprojects/seams-core.wrap` is `v2.2.4` (linked-cell k-nearest).
+A top-level `linkcell.wrap` is `v0.2.4` so the extension statically
+links the archive. `kNearestNeighbourList` keeps the same Python
+signature.
 
 ## 2.2.3
 
