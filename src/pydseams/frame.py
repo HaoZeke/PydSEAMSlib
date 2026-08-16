@@ -11,6 +11,7 @@ from __future__ import annotations
 from collections import Counter
 from pathlib import Path
 
+from . import config
 from . import yoda
 
 
@@ -179,9 +180,9 @@ class Frame:
     def __init__(
         self,
         filename=None,
-        frame=1,
+        frame=None,
         atom_type=None,
-        cutoff=3.5,
+        cutoff=None,
         bonded="auto",
         region=None,
         *,
@@ -191,6 +192,10 @@ class Frame:
     ):
         if bonded not in ("hbond", "cutoff", "auto"):
             raise ValueError('bonded must be "hbond", "cutoff", or "auto"')
+        if frame is None:
+            frame = config.frame()
+        if cutoff is None:
+            cutoff = config.cutoff()
         self.region = region
         self.filename = str(Path(filename).resolve()) if filename is not None else None
         self.frame = frame
@@ -242,7 +247,7 @@ class Frame:
 
     @classmethod
     def from_file(
-        cls, filename, frame=1, atom_type=None, cutoff=3.5, bonded="auto", region=None
+        cls, filename, frame=None, atom_type=None, cutoff=None, bonded="auto", region=None
     ):
         """Load a LAMMPS dump through :func:`pydseams.yoda.readLammpsTrjreduced`.
 
@@ -294,7 +299,7 @@ class Frame:
 
     @classmethod
     def from_arrays(
-        cls, positions, cell, numbers=None, cutoff=3.5, bonded="cutoff", box_low=None
+        cls, positions, cell, numbers=None, cutoff=None, bonded="cutoff", box_low=None
     ):
         """Build a frame from ``(N, 3)`` positions and three box lengths.
 
@@ -335,7 +340,7 @@ class Frame:
         )
 
     @classmethod
-    def from_xyz(cls, filename, cutoff=3.5, bonded="cutoff", atom_type=None):
+    def from_xyz(cls, filename, cutoff=None, bonded="cutoff", atom_type=None):
         """Load an XYZ file through :func:`pydseams.yoda.readXYZ`.
 
         Parameters
@@ -377,9 +382,9 @@ class Frame:
     def from_chemfiles(
         cls,
         filename,
-        frame=1,
+        frame=None,
         type_filter=-1,
-        cutoff=3.5,
+        cutoff=None,
         bonded="cutoff",
         atom_type=None,
     ):
@@ -412,6 +417,8 @@ class Frame:
         """
         if not hasattr(yoda, "readChemfiles"):
             raise RuntimeError("chemfiles is not linked in this build of seams-core")
+        if frame is None:
+            frame = config.frame()
         cloud = yoda.readChemfiles(str(filename), int(frame), int(type_filter))
         typ = atom_type
         if typ is None and cloud.nop > 0:
@@ -426,7 +433,7 @@ class Frame:
         )
 
     @classmethod
-    def from_con(cls, filename, frame=1, cutoff=3.5, bonded="cutoff", atom_type=None):
+    def from_con(cls, filename, frame=None, cutoff=None, bonded="cutoff", atom_type=None):
         """Load an eOn ``.con`` file when readcon-core is linked.
 
         Parameters
@@ -454,6 +461,8 @@ class Frame:
         """
         if not hasattr(yoda, "readCon"):
             raise RuntimeError("readcon-core is not linked in this build of seams-core")
+        if frame is None:
+            frame = config.frame()
         cloud = yoda.readCon(str(filename), int(frame))
         typ = atom_type
         if typ is None and cloud.nop > 0:
@@ -468,7 +477,7 @@ class Frame:
         )
 
     @classmethod
-    def from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
+    def from_ase(cls, atoms, select="O", cutoff=None, bonded="auto"):
         """Load an ASE ``Atoms``. ``select`` is a symbol, atomic number, or None.
 
         Parameters
