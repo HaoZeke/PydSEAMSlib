@@ -106,7 +106,7 @@ def test_ion_cloud_two_atom_com():
     table = yoda.parseSiteSpec("1=cationHead")
     ions = frame.ion_cloud(table)
     assert ions.nop == 1
-    assert ions.pts[0].type == 1
+    assert ions.pts[0].c_type == 1
     assert ions.pts[0].x == pytest.approx(0.0)
 
 
