@@ -86,6 +86,34 @@ def test_frame_cn_matches_unlike_degree():
     assert frame.cn(1, 2, cutoff=1.0, binwidth=0.1) == pytest.approx(0.0)
 
 
+def test_frame_running_cn_last_bin_matches_cn():
+    from pydseams import yoda
+
+    positions = [
+        [0.0, 0.0, 0.0],
+        [2.8, 0.0, 0.0],
+        [0.0, 2.8, 0.0],
+        [2.8, 2.8, 0.0],
+    ]
+    frame = from_arrays(positions, [30.0, 30.0, 30.0], numbers=[1, 2, 1, 2])
+    cn_run = frame.running_cn(1, 2, cutoff=3.0, binwidth=0.1)
+    assert isinstance(cn_run, list)
+    assert len(cn_run) == 30
+    assert cn_run[-1] == pytest.approx(1.0)
+    assert cn_run[0] == pytest.approx(0.0)
+    assert frame.running_cn(1, 2, cutoff=1.0, binwidth=0.1)[-1] == pytest.approx(
+        0.0
+    )
+    hist = yoda.partialRdfHist(
+        yCloud=frame.cloud, typeI=1, typeJ=2, rmax=3.0, nbins=30
+    )
+    assert hist.nJ == 2
+    assert hist.volume == pytest.approx(30.0**3)
+    assert yoda.runningCN(h=hist, rhoJ=hist.nJ / hist.volume)[-1] == pytest.approx(
+        1.0
+    )
+
+
 def test_site_table_type_one_is_not_chemistry():
     from pydseams import yoda
 
