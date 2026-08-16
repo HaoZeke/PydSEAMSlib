@@ -28,6 +28,7 @@
 #include <format>
 #include <mol_sys.hpp>
 #include <neighbours.hpp>
+#include <rdf.hpp>
 #include <rdf2d.hpp>
 #include <ring.hpp>
 #include <seams_input.hpp>
@@ -1008,4 +1009,20 @@ NB_MODULE(yoda, m) {
           nb::arg("binwidth"),
           nb::arg("firstFrame"),
           nb::arg("finalFrame"));
+    m.def(
+        "partialRdf",
+        [](const molSys::PointCloud<molSys::Point<double>, double> &yCloud,
+           int typeI,
+           int typeJ,
+           double rmax,
+           int nbins) {
+            const auto h = rdf::partialRdf(yCloud, typeI, typeJ, rmax, nbins);
+            return std::pair<std::vector<double>, std::vector<double>>(h.r, h.g);
+        },
+        "Partial 3D radial distribution function g_IJ(r). Returns (r, g).",
+        nb::arg("yCloud"),
+        nb::arg("typeI"),
+        nb::arg("typeJ"),
+        nb::arg("rmax"),
+        nb::arg("nbins"));
 }
