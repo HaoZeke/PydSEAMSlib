@@ -247,7 +247,13 @@ class Frame:
 
     @classmethod
     def from_file(
-        cls, filename, frame=None, atom_type=None, cutoff=None, bonded="auto", region=None
+        cls,
+        filename,
+        frame=None,
+        atom_type=None,
+        cutoff=None,
+        bonded="auto",
+        region=None,
     ):
         """Load a LAMMPS dump through :func:`pydseams.yoda.readLammpsTrjreduced`.
 
@@ -433,7 +439,9 @@ class Frame:
         )
 
     @classmethod
-    def from_con(cls, filename, frame=None, cutoff=None, bonded="cutoff", atom_type=None):
+    def from_con(
+        cls, filename, frame=None, cutoff=None, bonded="cutoff", atom_type=None
+    ):
         """Load an eOn ``.con`` file when readcon-core is linked.
 
         Parameters
