@@ -28,10 +28,13 @@ class IceCounts(dict):
     ``repr`` omits zero-count labels.
     """
 
+    def __missing__(self, key):
+        return 0
+
     def __getattr__(self, name):
         if name.startswith("_"):
             raise AttributeError(name)
-        return self.get(name, 0)
+        return self[name]
 
     def __repr__(self):
         parts = [f"{k}={v}" for k, v in sorted(self.items()) if v]

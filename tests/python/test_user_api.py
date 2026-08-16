@@ -42,7 +42,9 @@ def test_trajectory_alias():
     assert Trajectory is Frame
     traj = Trajectory(str(TRAJ.resolve()))
     counts = traj.classify_chill_plus()
-    assert counts["hexagonal"] == 65
+    assert counts["hexagonal"] == 0
+    assert counts["water"] == 238
+    assert counts["interClathrate"] == 12
 
 
 def test_from_arrays_roundtrip_positions():
