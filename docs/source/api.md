@@ -119,7 +119,8 @@ directly for the raw engine.
 | `neighListO` | Build a full neighbour list for a single atom type within a cutoff. |
 | `neighListPair` | I-J neighbour list (like-type reuses `neighListO`). |
 | `SiteTable` / `parseSiteSpec` | Type-to-kind map. Type 1 is not a chemistry. |
-| `ionCloud` | One COM vertex per ion `molID`, unwrapped with `relDist`. |
+| `Kind` / `Family` | Aliases of `SiteKind` / `SiteFamily`. |
+| `ionCloud` | One COM vertex per ion `molID`, unwrapped with `relDist`. Also `(src, cationType, anionType)` or `(src, typeToKind)`. |
 | `partialRdfHist` | Partial 3D RDF as `PartialRdf` (r, g, count, volume, nI, nJ). |
 | `runningCN` | Running site-site CN (`rhoJ` defaults to `nJ/volume`). |
 | `coordinationNumber` | Site-site CN to `rMax` (`rhoJ` defaults to `nJ/volume`). |

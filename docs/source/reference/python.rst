@@ -69,7 +69,9 @@ Geometry and graphs
 ``box`` is three lengths on an orthorhombic frame. Tilt dumps use dump
 H (length >= 6) once the wrap loads them.
 
-``neighListPair``, ``SiteTable``, ``parseSiteSpec``, ``ionCloud``,
+``neighListPair``, ``SiteTable``, ``parseSiteSpec``, ``Kind`` /
+``Family`` (aliases of ``SiteKind`` / ``SiteFamily``), ``ionCloud``
+(``table``, ``cationType``/``anionType``, or ``typeToKind``),
 ``partialRdfHist``, ``coordinationNumber``, ``runningCN``,
 ``populateHbondsFromDonors``, and ``donatedHydrogenBond`` are bound.
 ``Frame.rdf`` is still ``(r, g)``. ``Frame.cn``, ``Frame.running_cn``,

@@ -17,5 +17,8 @@ functions are compile-gated: ~readChemfiles~, ~readCon~,
 
 ~yoda~ binds ~neighListPair~, ~SiteTable~, ~parseSiteSpec~,
 ~ionCloud~, ~partialRdfHist~, ~coordinationNumber~, ~runningCN~,
-~populateHbondsFromDonors~, and ~donatedHydrogenBond~. ~Frame.rdf~
-is still ~(r, g)~. ~Frame.running_cn~ uses ~nJ / volume~.
+~populateHbondsFromDonors~, and ~donatedHydrogenBond~. ~yoda.Kind~
+and ~yoda.Family~ alias ~SiteKind~ and ~SiteFamily~.
+~yoda.ionCloud~ also takes ~(src, cationType, anionType)~ or
+~(src, typeToKind)~. ~Frame.rdf~ is still ~(r, g)~.
+~Frame.running_cn~ uses ~nJ / volume~.

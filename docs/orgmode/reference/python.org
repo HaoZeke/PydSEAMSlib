@@ -46,7 +46,9 @@ Package-level aliases: ~pydseams.from_ase~, ~from_arrays~,
 H (length >= 6) once the wrap loads them.
 
 ~yoda.neighListPair~, ~yoda.SiteTable~, ~yoda.parseSiteSpec~,
-~yoda.ionCloud~, ~yoda.partialRdfHist~, ~yoda.coordinationNumber~,
+~yoda.Kind~ / ~yoda.Family~ (aliases of ~SiteKind~ / ~SiteFamily~),
+~yoda.ionCloud~ (~table~, ~cationType~/~anionType~, or
+~typeToKind~), ~yoda.partialRdfHist~, ~yoda.coordinationNumber~,
 ~yoda.runningCN~, ~yoda.populateHbondsFromDonors~, and
 ~yoda.donatedHydrogenBond~ are bound. ~Frame.rdf~ is ~(r, g)~;
 ~Frame.cn~ integrates that histogram; ~Frame.running_cn~ is the
