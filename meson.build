@@ -51,10 +51,7 @@ py.install_sources(
 )
 
 py.install_sources(
-    [
-        'src/pydseams/adapters/__init__.py',
-        'src/pydseams/adapters/_ase.py',
-    ],
+    ['src/pydseams/adapters/__init__.py', 'src/pydseams/adapters/_ase.py'],
     pure: false,
     subdir: 'pydseams/adapters',
 )

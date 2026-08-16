@@ -30,6 +30,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install Eigen and BLAS for meson setup
+        run: sudo apt-get update && sudo apt-get install -y libeigen3-dev libblas-dev liblapack-dev pkg-config
+
       - name: Build sdist
         run: pipx run build --sdist
 
@@ -65,11 +68,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install cibuildwheel
-        run: uv pip install --system cibuildwheel
-
       - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse
+        run: uvx --from cibuildwheel cibuildwheel --output-dir wheelhouse
         env:
           # One CPython 3.12 build per platform. meson limited_api: '3.12'
           # tags the wheel abi3 (3.12+ GIL). Free-threaded CPython has no
