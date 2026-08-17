@@ -41,8 +41,10 @@ dependency (~pydseams[ase]~, ~pydseams[solvis]~), not a bump of the
 C++ module.
 
 ~ds.read~ looks at the suffix and calls the matching constructor.
-~yoda.readLammpsTrjreduced~ and friends stay available for callers
-that want the raw cloud.
+~Frame(..., region=(lo, hi))~ calls ~yoda.readLammpsTrjreduced~,
+which drops atoms outside the box. ~yoda.readLammpsTrjO~ keeps
+every atom of the type and sets ~inSlice~. Both stay available for
+callers that want the raw cloud.
 
 The trade-off is a thin compiled surface and a small Python
 adapter layer. Application code imports ~pydseams~ and uses

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+`Frame(..., region=(lo, hi))` calls `readLammpsTrjreduced`, which
+drops atoms outside the box. `readLammpsTrjO` keeps every atom of
+the type and sets `inSlice`. An axis with `lo == hi` is
+unconstrained.
+
 ## 2.6.0
 
 `subprojects/seams-core.wrap` is `v2.6.0`.
