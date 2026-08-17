@@ -16,6 +16,8 @@ dependencies:
   - eigen
   - libblas
   - liblapack
+  # Meson prefers FlexiBLAS when pkg-config finds it. These are the
+  # conda-forge ABI packages (that channel has no FlexiBLAS build).
   - nanobind
   - numpy
   - pip
