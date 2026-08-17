@@ -26,7 +26,7 @@ from . import yoda as cyoda
 from .frame import CageScore, Frame, IceCounts, read
 from .io import available_readers
 
-__version__ = "2.5.0"
+__version__ = "2.5.1"
 
 # Drop-in name used in the 2.0 docs and tests
 Trajectory = Frame
@@ -56,7 +56,7 @@ def from_ase(atoms, select="O", cutoff=None, bonded="auto"):
     Raises
     ------
     ImportError
-        If ASE is not installed (``pip install 'pydseams[ase]'``).
+        If ASE is not installed (``pip install 'pydseamslib[ase]'``).
     TypeError
         If ``atoms`` is not an ASE ``Atoms``.
     ValueError
@@ -196,7 +196,7 @@ def to_solvis(frame, expand_box=True):
     Raises
     ------
     ImportError
-        If solvis is not installed (``pip install 'pydseams[solvis]'``).
+        If solvis is not installed (``pip install 'pydseamslib[solvis]'``).
     """
     from .solvis import to_solvis as _to
 

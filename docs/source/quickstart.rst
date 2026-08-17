@@ -9,9 +9,9 @@ Install
 
 .. code:: bash
 
-    pip install pydseams
-    pip install 'pydseams[ase]'
-    pip install 'pydseams[solvis]'
+    pip install pydseamslib
+    pip install 'pydseamslib[ase]'
+    pip install 'pydseamslib[solvis]'
 
 ``pydseams`` is the package. The ``[ase]`` extra pulls ASE for ``from_ase``
 / ``to_ase``. The ``[solvis]`` extra pulls ASE plus solvis-tools for
@@ -21,7 +21,7 @@ With pixi, add the PyPI package:
 
 .. code:: bash
 
-    pixi add --pypi pydseams
+    pixi add --pypi pydseamslib
 
 Requires Python 3.12+. Wheels are the CPython 3.12 limited ABI (one
 ``abi3`` wheel per platform). A wheel already links the engine; do not

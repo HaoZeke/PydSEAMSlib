@@ -22,8 +22,8 @@ See `The yoda surface <../explanation/yoda-surface.rst>`_.
 What is ``pydseamslib``?
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-A compatibility alias of ``pydseams``. ``import pydseamslib`` still
-works. New code imports ``pydseams``.
+The PyPI project (``pip install pydseamslib``). ``import pydseamslib``
+is a compatibility alias of ``pydseams``. New code imports ``pydseams``.
 
 What are ``_core`` and ``cyoda``?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +35,7 @@ Aliases of ``pydseams.yoda``. ``assert ds._core is ds.yoda`` and
 Do I compile ``yoda`` to use the package?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-No. ``pip install pydseams`` installs a wheel that already links the
+No. ``pip install pydseamslib`` installs a wheel that already links the
 engine. Compile only if you develop the bindings from a checkout
 (``nix build`` / ``nix develop``).
 
@@ -89,7 +89,7 @@ species.
 How do I view a classified frame?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-solvis. ``pip install 'pydseams[solvis]'``, then ``frame.to_solvis()``.
+solvis. ``pip install 'pydseamslib[solvis]'``, then ``frame.to_solvis()``.
 That is the visualization path. See
 `View a frame in solvis <solvis.rst>`_. OVITO is not required.
 

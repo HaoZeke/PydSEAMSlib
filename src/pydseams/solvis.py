@@ -2,7 +2,7 @@
 
 solvis takes an ASE ``Atoms``. This helper is the same pattern as
 metatomic's ASE adapter: the C++ core does not know about the viewer.
-Install with ``pip install 'pydseams[solvis]'``.
+Install with ``pip install 'pydseamslib[solvis]'``.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ def _require_solvis():
     except ImportError as exc:
         raise ImportError(
             "solvis interop needs solvis-tools. "
-            "Install it with: pip install 'pydseams[solvis]'"
+            "Install it with: pip install 'pydseamslib[solvis]'"
         ) from exc
     return System
 
@@ -37,7 +37,7 @@ def to_solvis(frame, expand_box=True):
     Raises
     ------
     ImportError
-        If solvis is not installed (``pip install 'pydseams[solvis]'``).
+        If solvis is not installed (``pip install 'pydseamslib[solvis]'``).
     """
     System = _require_solvis()
     return System(frame.to_ase(), expand_box=expand_box)

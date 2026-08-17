@@ -10,7 +10,7 @@ same configuration, then an ~Atoms~ back with those arrays.
 * Install the extra
 
 #+begin_src bash
-pip install 'pydseams[ase]'
+pip install 'pydseamslib[ase]'
 #+end_src
 
 Without it, ~from_ase~ / ~to_ase~ raise ~ImportError~ and name that

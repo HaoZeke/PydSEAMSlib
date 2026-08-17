@@ -10,23 +10,23 @@ The package is not installed in the active interpreter.
 
 #+begin_src bash
 python -c "import sys; print(sys.executable)"
-python -m pip install pydseams
+python -m pip install pydseamslib
 #+end_src
 
-** ~ImportError~ naming ~pip install 'pydseams[ase]'~
+** ~ImportError~ naming ~pip install 'pydseamslib[ase]'~
 
 ASE is not installed. The extra is optional:
 
 #+begin_src bash
-pip install 'pydseams[ase]'
+pip install 'pydseamslib[ase]'
 #+end_src
 
-** ~ImportError~ naming ~pip install 'pydseams[solvis]'~
+** ~ImportError~ naming ~pip install 'pydseamslib[solvis]'~
 
 solvis-tools is not installed:
 
 #+begin_src bash
-pip install 'pydseams[solvis]'
+pip install 'pydseamslib[solvis]'
 #+end_src
 
 * Loading frames
@@ -89,8 +89,8 @@ histogram.
 
 | Error | Cause | Action |
 |-------+-------+--------|
-| ~No module named 'pydseams'~ | Wrong interpreter | ~python -m pip install pydseams~ |
-| ~pip install 'pydseams[ase]'~ | ASE extra missing | install the extra |
+| ~No module named 'pydseams'~ | Wrong interpreter | ~python -m pip install pydseamslib~ |
+| ~pip install 'pydseamslib[ase]'~ | ASE extra missing | install the extra |
 | ~orthorhombic cell~ | General ASE cell | three box lengths only |
 | ~Hydrogen-bond analysis needs hydrogens~ | No H cloud | ~bonded="cutoff"~ or pass H |
 | ~chemfiles is not linked~ | Optional reader | check ~available_readers()~ |

@@ -11,7 +11,7 @@ Prerequisites
 
 - Python 3.12+
 
-- ``pydseams`` installed: ``pip install pydseams``
+- ``pydseams`` installed: ``pip install pydseamslib``
 
 - The engine fixture dump, either:
 
@@ -47,7 +47,7 @@ Step 1: Install pydseams
 
 .. code:: bash
 
-    pip install pydseams
+    pip install pydseamslib
 
 ``pydseams`` is the Python package. ``import pydseamslib`` is a
 compatibility alias of ``pydseams``. Requires Python 3.12+.
@@ -165,7 +165,7 @@ Install into the active interpreter:
 
 .. code:: bash
 
-    python -m pip install pydseams
+    python -m pip install pydseamslib
 
 ``FileNotFoundError`` on the dump
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
