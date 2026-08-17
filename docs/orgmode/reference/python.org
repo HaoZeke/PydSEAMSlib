@@ -134,6 +134,11 @@ Common kwargs: ~frame~ (1-indexed), ~cutoff~ (Angstroms, default
 ~region~. ~bonded="auto"~ uses hydrogen bonds when hydrogens are
 available.
 
+~region~ is ~(lo, hi)~ passed to ~yoda.readLammpsTrjreduced~.
+~nop~ is the kept count. An axis with ~lo == hi~ is unconstrained,
+so ~([0, 0, 0], [50, 0, 0])~ slices ~x~ only. ~yoda.readLammpsTrjO~
+keeps every atom of the type and only sets ~inSlice~.
+
 Builds without chemfiles or readcon raise ~RuntimeError~ when those
 suffixes are used.
 

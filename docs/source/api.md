@@ -96,11 +96,11 @@ directly for the raw engine.
 | name | role |
 |------|------|
 | `readXYZ` | Read atom coordinates from an XYZ file. |
-| `readLammpsTrjreduced` | Read a LAMMPS trajectory frame, keeping only atoms of the given type. |
-| `readLammpsTrjO` | Read a LAMMPS trajectory frame, keeping only oxygen atoms. |
-| `readLammpsTrj` | Read a LAMMPS trajectory frame with all atom types. |
+| `readLammpsTrjreduced` | One LAMMPS frame, one type. With `isSlice`, drops atoms outside `(coordLow, coordHigh)`. `nop` is the kept count. An axis with `lo == hi` is unconstrained. |
+| `readLammpsTrjO` | One LAMMPS frame, one type (the `O` is historical). With `isSlice`, sets `inSlice` and does not drop. `nop` is the type-filtered count. |
+| `readLammpsTrj` | One LAMMPS frame, every atom type. |
 | `readBonds` | Read bond connectivity from a formatted bond file. |
-| `atomInSlice` | Check whether a point `(x, y, z)` lies within a volume slice. |
+| `atomInSlice` | True when each component is in the closed interval, or that axis has `lo == hi`. |
 | `readChemfiles` | Read any trajectory format supported by chemfiles (PDB, GRO, DCD, ...). Linked when `SEAMS_HAS_CHEMFILES`. |
 | `readCon` | Read a `.con` file (eOn saddle-point search trajectories). Linked when `SEAMS_HAS_READCON`. |
 | `writeDump` | Write a LAMMPS dump file for the current point cloud. |

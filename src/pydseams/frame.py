@@ -159,8 +159,10 @@ class Frame:
         Graph for rings. ``"auto"`` uses hydrogen bonds when hydrogens
         are available, otherwise the cutoff neighbour list.
     region : ((xlo, ylo, zlo), (xhi, yhi, zhi)) or None, optional
-        Optional rectangular slice passed to
-        :func:`pydseams.yoda.readLammpsTrjreduced`.
+        Rectangular slice passed to
+        :func:`pydseams.yoda.readLammpsTrjreduced`. An axis with
+        ``lo == hi`` is unconstrained. The cloud's ``nop`` is the
+        kept count.
 
     Raises
     ------

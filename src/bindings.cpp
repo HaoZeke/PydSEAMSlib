@@ -141,7 +141,8 @@ NB_MODULE(yoda, m) {
             return sinp::readLammpsTrjreduced(
                 filename, targetFrame, yCloud, typeI, isSlice, coordLow, coordHigh);
         },
-        "Read a LAMMPS trajectory frame, keeping only atoms of the given type.",
+        "One LAMMPS frame, one type. isSlice drops atoms outside the box. "
+        "nop is the kept count. An axis with lo == hi is unconstrained.",
         nb::arg("filename"),
         nb::arg("targetFrame"),
         nb::arg("typeI"),
@@ -160,7 +161,8 @@ NB_MODULE(yoda, m) {
             return sinp::readLammpsTrjO(
                 filename, targetFrame, yCloud, typeO, isSlice, coordLow, coordHigh);
         },
-        "Read a LAMMPS trajectory frame, keeping only oxygen atoms.",
+        "One LAMMPS frame, one type (the O is historical). isSlice sets "
+        "inSlice and does not drop. nop is the type-filtered count.",
         nb::arg("filename"),
         nb::arg("targetFrame"),
         nb::arg("typeO"),
@@ -190,7 +192,7 @@ NB_MODULE(yoda, m) {
           nb::arg("filename"));
     m.def("atomInSlice",
           &sinp::atomInSlice,
-          "Check whether a point (x, y, z) lies within a volume slice.",
+          "True when each component is in [lo, hi], or that axis has lo == hi.",
           nb::arg("x"),
           nb::arg("y"),
           nb::arg("z"),
