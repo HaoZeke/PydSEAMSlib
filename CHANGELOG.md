@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.6.0
+
+`subprojects/seams-core.wrap` is `v2.6.0`.
+
 ## 2.5.1
 
 The PyPI distribution name is `pydseamslib`, the project that
