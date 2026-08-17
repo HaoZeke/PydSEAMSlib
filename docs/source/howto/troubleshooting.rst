@@ -17,25 +17,25 @@ The package is not installed in the active interpreter.
 .. code:: bash
 
     python -c "import sys; print(sys.executable)"
-    python -m pip install pydseams
+    python -m pip install pydseamslib
 
-``ImportError`` naming ``pip install 'pydseams[ase]'``
+``ImportError`` naming ``pip install 'pydseamslib[ase]'``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ASE is not installed. The extra is optional:
 
 .. code:: bash
 
-    pip install 'pydseams[ase]'
+    pip install 'pydseamslib[ase]'
 
-``ImportError`` naming ``pip install 'pydseams[solvis]'``
+``ImportError`` naming ``pip install 'pydseamslib[solvis]'``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 solvis-tools is not installed:
 
 .. code:: bash
 
-    pip install 'pydseams[solvis]'
+    pip install 'pydseamslib[solvis]'
 
 Loading frames
 --------------
@@ -112,9 +112,9 @@ Common messages
     +--------------------------------------------+-------------------+------------------------------------+
     | Error                                      | Cause             | Action                             |
     +============================================+===================+====================================+
-    | ``No module named 'pydseams'``             | Wrong interpreter | ``python -m pip install pydseams`` |
+    | ``No module named 'pydseams'``             | Wrong interpreter | ``python -m pip install pydseamslib`` |
     +--------------------------------------------+-------------------+------------------------------------+
-    | ``pip install 'pydseams[ase]'``            | ASE extra missing | install the extra                  |
+    | ``pip install 'pydseamslib[ase]'``            | ASE extra missing | install the extra                  |
     +--------------------------------------------+-------------------+------------------------------------+
     | ``orthorhombic cell``                      | General ASE cell  | three box lengths only             |
     +--------------------------------------------+-------------------+------------------------------------+

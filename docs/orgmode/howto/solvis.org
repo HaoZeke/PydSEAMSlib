@@ -9,7 +9,7 @@ You have a ~Frame~ and want a solvis ~System~ for a PyVista view.
 * Install the extra
 
 #+begin_src bash
-pip install 'pydseams[solvis]'
+pip install 'pydseamslib[solvis]'
 #+end_src
 
 The extra pulls ASE as well. Without it, ~to_solvis~ raises

@@ -16,9 +16,9 @@ Neighbour search is [`linkcell`](https://github.com/d-SEAMS/linkcell).
 Do not grow a second engine here. `import pydseamslib` still works.
 
 ```bash
-pip install pydseams
-pip install 'pydseams[ase]'      # ASE Atoms
-pip install 'pydseams[solvis]'   # solvis / PyVista
+pip install pydseamslib
+pip install 'pydseamslib[ase]'      # ASE Atoms
+pip install 'pydseamslib[solvis]'   # solvis / PyVista
 ```
 
 Nix flake:

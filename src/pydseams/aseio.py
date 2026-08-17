@@ -1,6 +1,6 @@
 """ASE ``Atoms`` in and out of a :class:`~pydseams.frame.Frame`.
 
-Optional extra: ``pip install 'pydseams[ase]'``. The compiled engine
+Optional extra: ``pip install 'pydseamslib[ase]'``. The compiled engine
 does not import ASE; this module is the adapter.
 """
 
@@ -15,7 +15,7 @@ def _require_ase():
     except ImportError as exc:
         raise ImportError(
             "ASE interop needs the ase package. "
-            "Install it with: pip install 'pydseams[ase]'"
+            "Install it with: pip install 'pydseamslib[ase]'"
         ) from exc
     return ase, Atoms, chemical_symbols
 

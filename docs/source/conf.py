@@ -22,7 +22,7 @@ autodoc_member_order = "bysource"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "pydseams"
-release = "2.5.0"
+release = "2.5.1"
 copyright = "2023--present, d-SEAMS developers"
 author = "Ruhila S"
 

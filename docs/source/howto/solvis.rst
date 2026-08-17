@@ -14,7 +14,7 @@ Install the extra
 
 .. code:: bash
 
-    pip install 'pydseams[solvis]'
+    pip install 'pydseamslib[solvis]'
 
 The extra pulls ASE as well. Without it, ``to_solvis`` raises
 ``ImportError`` and names that command.

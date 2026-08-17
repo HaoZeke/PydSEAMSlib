@@ -142,7 +142,7 @@ suffixes are used.
 ~pydseams.from_ase~ / ~Frame.from_ase~ build a ~Frame~ from an ASE
 ~Atoms~. ~Frame.to_ase~ is the inverse.
 
-Install: ~pip install 'pydseams[ase]'~. The cell must be
+Install: ~pip install 'pydseamslib[ase]'~. The cell must be
 orthorhombic. ~select~ is a symbol, an atomic number, or ~None~
 (every atom). Default ~select="O"~.
 
@@ -156,7 +156,7 @@ Implementation autodoc is the ASE helpers section of
 [[file:../howto/ase.org][ASE how-to]].
 
 ~pydseams.to_solvis~ wraps the same ~Atoms~. Install:
-~pip install 'pydseams[solvis]'~.
+~pip install 'pydseamslib[solvis]'~.
 
 * Package names
 

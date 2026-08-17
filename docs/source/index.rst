@@ -56,7 +56,7 @@ module is ``yoda``. Helpers (``Frame``, ``read``, ASE, solvis) sit on that
 surface. ``import pydseamslib`` still works.
 
 Primary author: Ruhila S. The project started as PSF GSoC 2023
-(``pyseams``; the PyPI name became ``pydseams``). Helpers stay in
+(``pyseams``; the PyPI name is ``pydseamslib``). Helpers stay in
 Python so the C++ ABI does not grow a second I/O layer.
 
 The engine and the ``seams`` CLI live in

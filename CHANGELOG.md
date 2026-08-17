@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2.5.1
+
+The PyPI distribution name is `pydseamslib`, the project that
+already has 0.0.1 / 0.0.2. `import pydseams` is unchanged.
+`pip install pydseamslib` is the install line.
+
 ## 2.5.0
 
 `subprojects/seams-core.wrap` is `v2.5.0`. The Python surface

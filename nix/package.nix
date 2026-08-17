@@ -29,7 +29,7 @@ let
   };
 in
 python3.pkgs.buildPythonPackage {
-  pname = "pydseams";
+  pname = "pydseamslib";
   version = "2.2.0";
   pyproject = true;
 

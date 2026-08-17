@@ -15,7 +15,7 @@ Install the extra
 
 .. code:: bash
 
-    pip install 'pydseams[ase]'
+    pip install 'pydseamslib[ase]'
 
 Without it, ``from_ase`` / ``to_ase`` raise ``ImportError`` and name that
 command.

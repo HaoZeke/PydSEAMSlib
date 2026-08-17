@@ -50,7 +50,7 @@ monolayer, and {meth}`~pydseams.frame.Frame.rdf_2d` do.
 
 Implementation of {func}`~pydseams.from_ase` and
 {meth}`~pydseams.frame.Frame.to_ase`. Optional extra:
-`pip install 'pydseams[ase]'`.
+`pip install 'pydseamslib[ase]'`.
 
 ```{eval-rst}
 .. automodule:: pydseams.aseio
@@ -62,7 +62,7 @@ Implementation of {func}`~pydseams.from_ase` and
 
 Implementation of {func}`~pydseams.to_solvis` and
 {meth}`~pydseams.frame.Frame.to_solvis`. Optional extra:
-`pip install 'pydseams[solvis]'`.
+`pip install 'pydseamslib[solvis]'`.
 
 ```{eval-rst}
 .. automodule:: pydseams.solvis

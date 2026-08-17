@@ -8,7 +8,7 @@ them to cage membership on the same frame.
 * Prerequisites
 
 - Python 3.12+
-- ~pydseams~ installed: =pip install pydseams=
+- ~pydseams~ installed: =pip install pydseamslib=
 - The engine fixture dump, either:
   - from a PydSEAMSlib checkout: =tests/data/exampleTraj.lammpstrj=
   - from [[https://github.com/d-SEAMS/seams-core][seams-core]]:
@@ -34,7 +34,7 @@ By the end of this tutorial you will be able to:
 * Step 1: Install pydseams
 
 #+begin_src bash
-pip install pydseams
+pip install pydseamslib
 #+end_src
 
 ~pydseams~ is the Python package. ~import pydseamslib~ is a
@@ -145,7 +145,7 @@ for the command-line and Lua workflows. Stay on ~Frame~ for Python.
 Install into the active interpreter:
 
 #+begin_src bash
-python -m pip install pydseams
+python -m pip install pydseamslib
 #+end_src
 
 ** =FileNotFoundError= on the dump

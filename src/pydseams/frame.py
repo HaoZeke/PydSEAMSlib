@@ -538,7 +538,7 @@ class Frame:
 
         Notes
         -----
-        Optional extra: ``pip install 'pydseams[solvis]'``.
+        Optional extra: ``pip install 'pydseamslib[solvis]'``.
         """
         from .solvis import to_solvis
 

@@ -28,20 +28,20 @@ pip
 
 .. code:: bash
 
-    pip install pydseams
-    pip install 'pydseams[ase]'
-    pip install 'pydseams[solvis]'
+    pip install pydseamslib
+    pip install 'pydseamslib[ase]'
+    pip install 'pydseamslib[solvis]'
 
 .. table::
 
     +------------------------------------+--------------------------------+
     | extra                              | provides                       |
     +====================================+================================+
-    | ``pip install pydseams``           | ``Frame``, ``read``, ``yoda``  |
+    | ``pip install pydseamslib``           | ``Frame``, ``read``, ``yoda``  |
     +------------------------------------+--------------------------------+
-    | ``pip install 'pydseams[ase]'``    | ``from_ase``, ``Frame.to_ase`` |
+    | ``pip install 'pydseamslib[ase]'``    | ``from_ase``, ``Frame.to_ase`` |
     +------------------------------------+--------------------------------+
-    | ``pip install 'pydseams[solvis]'`` | ``to_solvis`` (pulls ASE)      |
+    | ``pip install 'pydseamslib[solvis]'`` | ``to_solvis`` (pulls ASE)      |
     +------------------------------------+--------------------------------+
 
 The ``[solvis]`` extra installs ASE as well. Without an extra,
@@ -55,14 +55,14 @@ Add the PyPI package to a pixi project:
 
 .. code:: bash
 
-    pixi add --pypi pydseams
+    pixi add --pypi pydseamslib
 
 Extras:
 
 .. code:: bash
 
-    pixi add --pypi 'pydseams[ase]'
-    pixi add --pypi 'pydseams[solvis]'
+    pixi add --pypi 'pydseamslib[ase]'
+    pixi add --pypi 'pydseamslib[solvis]'
 
 Verify
 ------
