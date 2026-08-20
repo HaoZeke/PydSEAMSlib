@@ -389,6 +389,57 @@ def test_from_ase_preserves_mol_id_for_hydrogen_donors():
     assert [point.molID for point in frame._h_cloud.pts] == [10, 10, 20, 20]
 
 
+def test_to_ase_exports_chill_plus_labels():
+    pytest.importorskip("ase")
+    from ase import Atoms
+    from pydseams import from_ase
+
+    atoms = Atoms(
+        "OOOO",
+        positions=[
+            [1.0, 1.0, 1.0],
+            [2.8, 1.0, 1.0],
+            [1.0, 2.8, 1.0],
+            [2.8, 2.8, 1.0],
+        ],
+        cell=[12.0, 12.0, 12.0],
+        pbc=True,
+    )
+    frame = from_ase(atoms, bonded="cutoff")
+
+    frame.chill_plus()
+    labelled = frame.to_ase()
+
+    assert list(labelled.arrays["ice_type"]) == [
+        point.iceType.name for point in frame.cloud.pts
+    ]
+
+
+def test_to_ase_exports_cage_flags():
+    pytest.importorskip("ase")
+    from ase import Atoms
+    from pydseams import from_ase
+
+    atoms = Atoms(
+        "OOOO",
+        positions=[
+            [1.0, 1.0, 1.0],
+            [2.8, 1.0, 1.0],
+            [1.0, 2.8, 1.0],
+            [2.8, 2.8, 1.0],
+        ],
+        cell=[12.0, 12.0, 12.0],
+        pbc=True,
+    )
+    frame = from_ase(atoms, bonded="cutoff")
+
+    score = frame.cages(seeded=False)
+    labelled = frame.to_ase()
+
+    assert list(labelled.arrays["hc"]) == score.hc
+    assert list(labelled.arrays["ddc"]) == score.ddc
+
+
 def test_from_ase_roundtrips_general_periodic_cell():
     np = pytest.importorskip("numpy")
     pytest.importorskip("ase")

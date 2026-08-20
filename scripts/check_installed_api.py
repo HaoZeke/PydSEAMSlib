@@ -104,6 +104,49 @@ def _check_ase() -> None:
     np.testing.assert_allclose(restored.cell.array, atoms.cell.array, atol=1.0e-12)
     np.testing.assert_allclose(restored.positions, atoms.positions, atol=1.0e-12)
 
+    water = Atoms(
+        "OHHOHH",
+        positions=[
+            [5.0, 5.0, 5.0],
+            [4.0, 5.0, 5.0],
+            [5.0, 4.0, 5.0],
+            [7.8, 5.0, 5.0],
+            [6.8, 5.0, 5.0],
+            [7.8, 6.0, 5.0],
+        ],
+        cell=[20.0, 20.0, 20.0],
+        pbc=True,
+    )
+    water_frame = ds.from_ase(water)
+    assert water_frame.hbonds == [[1, 2], [2, 1]]
+
+    water.new_array("mol-id", np.array([10, 10, 10, 20, 20, 20]))
+    identified = ds.from_ase(water)
+    assert [point.molID for point in identified.cloud.pts] == [10, 20]
+    assert [point.molID for point in identified._h_cloud.pts] == [10, 10, 20, 20]
+
+    label_atoms = Atoms(
+        "OOOO",
+        positions=[
+            [1.0, 1.0, 1.0],
+            [2.8, 1.0, 1.0],
+            [1.0, 2.8, 1.0],
+            [2.8, 2.8, 1.0],
+        ],
+        cell=[12.0, 12.0, 12.0],
+        pbc=True,
+    )
+    label_frame = ds.from_ase(label_atoms, bonded="cutoff")
+    label_frame.chill_plus()
+    labelled = label_frame.to_ase()
+    assert list(labelled.arrays["ice_type"]) == [
+        point.iceType.name for point in label_frame.cloud.pts
+    ]
+    score = label_frame.cages(seeded=False)
+    caged = label_frame.to_ase()
+    assert list(caged.arrays["hc"]) == score.hc
+    assert list(caged.arrays["ddc"]) == score.ddc
+
 
 def main() -> None:
     assert pydseamslib.__version__ == ds.__version__
