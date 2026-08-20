@@ -107,7 +107,9 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
     -----
     Hydrogens stay in a side cloud so the analysed species remain the
     CHILL / ring particles. General cells are rotated into LAMMPS restricted
-    form for analysis and restored by :func:`frame_to_ase`.
+    form for analysis and restored by :func:`frame_to_ase`. An ASE
+    ``mol-id`` array supplies molecule ownership. Without it, each hydrogen
+    belongs to the nearest selected atom under the minimum-image convention.
     """
     _, Atoms, _ = _require_ase()
     if not hasattr(atoms, "get_positions"):

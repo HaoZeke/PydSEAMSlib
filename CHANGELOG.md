@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+ASE hydrogen-bond adapters preserve an explicit ``mol-id`` array. Without
+molecule metadata, each hydrogen is assigned to its nearest selected atom
+under periodic minimum-image distance. Installed-package checks cover donor
+ownership and exported CHILL+/cage arrays.
+
 `Frame(..., region=(lo, hi))` calls `readLammpsTrjreduced`, which
 drops atoms outside the box. `readLammpsTrjO` keeps every atom of
 the type and sets `inSlice`. An axis with `lo == hi` is

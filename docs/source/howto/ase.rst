@@ -61,6 +61,12 @@ no hydrogens:
 side cloud so the analysed species remain the CHILL / ring
 particles.
 
+If ``atoms.arrays["mol-id"]`` exists, its molecule IDs associate each
+hydrogen with its selected donor atom. Otherwise, ``from_ase`` assigns
+each hydrogen to the nearest selected atom using ASE's periodic
+minimum-image distance. Ordinary ``O H H`` water ordering does not need
+extra metadata.
+
 Labels on the way back
 ----------------------
 

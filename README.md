@@ -60,7 +60,9 @@ site-resolved density, ion-pair, and connected-domain analyses as the CLI.
 Use `ds.read(..., all_atoms=True)` when a site analysis needs every LAMMPS
 type; `atom_type` still selects the species used by neighbour and ice methods.
 ASE adapters accept nonsingular cells periodic in all three directions and
-preserve cell orientation and displacement on roundtrip.
+preserve cell orientation and displacement on roundtrip. Hydrogen donors use
+an ASE ``mol-id`` array when present and periodic nearest-atom ownership
+otherwise.
 
 Cutoff, frame, and *k* follow the same twelve-factor table as
 `seams`: `SEAMS_CONFIG` or `./seams.env`, then the environment, then
