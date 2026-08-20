@@ -261,10 +261,7 @@ def test_low_level_workflow_bindings():
     assert yoda.mutualNearestUnlike(frame.cloud, 1, 2) == [(0, 1)]
 
     by_index = yoda.getNewNeighbourListByIndex(frame.cloud, 2.0)
-    by_id = [
-        [frame.cloud.pts[index].atomID for index in row]
-        for row in by_index
-    ]
+    by_id = [[frame.cloud.pts[index].atomID for index in row] for row in by_index]
     domain = yoda.largestDomain(frame.cloud, by_id, [True, True])
     assert isinstance(domain, yoda.Domain)
     assert domain.subset == 2
