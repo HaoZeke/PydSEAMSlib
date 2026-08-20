@@ -126,6 +126,11 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
     positions = [xyz for xyz, yes in zip(transformed, keep) if yes]
     numbers = [int(z) for z, yes in zip(atoms.numbers, keep) if yes]
     symbols = [s for s, yes in zip(atoms.get_chemical_symbols(), keep) if yes]
+    selected_hydrogen = any(symbol == "H" for symbol in symbols)
+    if bonded == "hbond" and selected_hydrogen:
+        raise ValueError(
+            'bonded="hbond" requires a heavy-atom selection that excludes H'
+        )
     from .frame import _cloud_from_positions
 
     source_mol_ids = atoms.get_array("mol-id") if atoms.has("mol-id") else None
@@ -162,7 +167,7 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
             mol_ids=h_mol_ids,
         )
     if bonded == "auto":
-        bonded = "hbond" if h_cloud is not None else "cutoff"
+        bonded = "hbond" if h_cloud is not None and not selected_hydrogen else "cutoff"
     return cls(
         atom_type=int(numbers[0]),
         cutoff=cutoff,
