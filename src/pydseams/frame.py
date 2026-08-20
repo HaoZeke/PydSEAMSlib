@@ -221,6 +221,10 @@ class Frame:
         :func:`pydseams.yoda.readLammpsTrjreduced`. An axis with
         ``lo == hi`` is unconstrained. The cloud's ``nop`` is the
         kept count.
+    all_atoms : bool, optional
+        Keep every LAMMPS atom type instead of filtering to
+        ``atom_type``. ``atom_type`` still selects the species used by
+        neighbour and ice analyses. Cannot be combined with ``region``.
 
     Raises
     ------
@@ -245,6 +249,7 @@ class Frame:
         cutoff=None,
         bonded="auto",
         region=None,
+        all_atoms=False,
         *,
         cloud=None,
         h_cloud=None,
@@ -253,6 +258,8 @@ class Frame:
     ):
         if bonded not in ("hbond", "cutoff", "auto"):
             raise ValueError('bonded must be "hbond", "cutoff", or "auto"')
+        if all_atoms and region is not None:
+            raise ValueError("all_atoms and region cannot be combined")
         if frame is None:
             frame = config.frame()
         if cutoff is None:
@@ -261,6 +268,7 @@ class Frame:
         self.filename = str(Path(filename).resolve()) if filename is not None else None
         self.frame = frame
         self.cutoff = cutoff
+        self.all_atoms = bool(all_atoms)
         self._h_cloud = h_cloud
         self._symbols = symbols
         self._cell_rotation = cell_rotation
@@ -276,7 +284,16 @@ class Frame:
             self.cloud = cloud
             self.atom_type = atom_type
         elif self.filename is not None:
-            if atom_type is None:
+            if self.all_atoms:
+                self.cloud = yoda.readLammpsTrj(self.filename, frame)
+                if self.cloud.nop == 0:
+                    raise ValueError(f"{self.filename} frame {frame} has no atoms")
+                self.atom_type = (
+                    int(atom_type)
+                    if atom_type is not None
+                    else int(self.cloud.pts[0].c_type)
+                )
+            elif atom_type is None:
                 self.cloud, self.atom_type = _guess_lammps_type(
                     self.filename, frame, region
                 )
@@ -297,6 +314,8 @@ class Frame:
         return self.filename is not None and self.atom_type == 2
 
     def _read(self, frame):
+        if self.all_atoms:
+            return yoda.readLammpsTrj(self.filename, frame)
         low, high = self.region if self.region is not None else ([0, 0, 0], [0, 0, 0])
         return yoda.readLammpsTrjreduced(
             filename=self.filename,
@@ -316,8 +335,9 @@ class Frame:
         cutoff=None,
         bonded="auto",
         region=None,
+        all_atoms=False,
     ):
-        """Load a LAMMPS dump through :func:`pydseams.yoda.readLammpsTrjreduced`.
+        """Load a LAMMPS dump.
 
         Parameters
         ----------
@@ -333,11 +353,25 @@ class Frame:
             Graph for rings.
         region : ((xlo, ylo, zlo), (xhi, yhi, zhi)) or None, optional
             Optional rectangular slice.
+        all_atoms : bool, optional
+            Keep every LAMMPS atom type. ``atom_type`` still selects the
+            species used by neighbour and ice analyses. Cannot be combined
+            with ``region``.
 
         Returns
         -------
         Frame
         """
+        if all_atoms:
+            return cls(
+                filename,
+                frame=frame,
+                atom_type=atom_type,
+                cutoff=cutoff,
+                bonded=bonded,
+                region=region,
+                all_atoms=True,
+            )
         return (
             cls(
                 filename,

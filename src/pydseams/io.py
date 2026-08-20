@@ -28,7 +28,8 @@ def read(path, frame=1, **kwargs):
     **kwargs
         Forwarded to the matching :class:`~pydseams.frame.Frame`
         constructor (``cutoff``, ``bonded``, ``atom_type``,
-        ``region``, ...).
+        ``region``, ``all_atoms``, ...). ``all_atoms=True`` retains every
+        LAMMPS type for mixed-site analyses such as ionic pairs and domains.
 
     Returns
     -------
