@@ -37,6 +37,10 @@ import pydseams as ds
 frame = ds.read("water.lammpstrj")   # also .xyz, .pdb, .gro, .dcd, .con
 print(frame.chill_plus())
 print(frame.cages())
+print(frame.density(bins=100, axis="z"))
+
+sites = ds.yoda.parseSiteSpec("1=polar,2=apolar")
+print(frame.domain(sites, ds.yoda.Kind.polar))
 
 frame = ds.from_ase(atoms)
 atoms = frame.to_ase()
@@ -46,6 +50,11 @@ system = frame.to_solvis()           # optional extra
 `ds.read` picks the engine reader from the suffix. `yoda` is the compiled
 surface. Helpers (`Frame`, `io`, ASE, solvis) stay in Python.
 `_core` and `cyoda` still name the same module.
+
+`Frame.density`, `Frame.pairs`, and `Frame.domain` expose the same
+site-resolved density, ion-pair, and connected-domain analyses as the CLI.
+ASE adapters accept nonsingular cells periodic in all three directions and
+preserve cell orientation and displacement on roundtrip.
 
 Cutoff, frame, and *k* follow the same twelve-factor table as
 `seams`: `SEAMS_CONFIG` or `./seams.env`, then the environment, then

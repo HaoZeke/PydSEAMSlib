@@ -554,7 +554,8 @@ class Frame:
         Parameters
         ----------
         atoms : ase.Atoms
-            Configuration with an orthorhombic cell.
+            Configuration with a nonsingular cell periodic in all three
+            directions.
         select : str or int, optional
             Chemical symbol or atomic number of the species to analyse.
             Default ``"O"``. ``None`` keeps every atom.
@@ -614,9 +615,10 @@ class Frame:
 
     @property
     def box(self):
-        """Orthorhombic box lengths ``[lx, ly, lz]``.
+        """Engine box as lengths or LAMMPS restricted-triclinic values.
 
-        Tilt dumps use dump H (length >= 6) once the wrap loads them.
+        Orthorhombic boxes have three lengths. Triclinic boxes have dump
+        bound spans followed by ``xy``, ``xz``, and ``yz`` tilts.
         """
         return list(self.cloud.box)
 

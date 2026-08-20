@@ -2,7 +2,10 @@
 
 Napoleon autodoc of the Python helpers. Human lookup of
 {class}`~pydseams.frame.Frame`, {class}`~pydseams.frame.IceCounts`,
-{class}`~pydseams.frame.CageScore`, {func}`~pydseams.io.read`, and
+{class}`~pydseams.frame.CageScore`,
+{class}`~pydseams.frame.DensityProfile`,
+{class}`~pydseams.frame.ContactPairs`,
+{class}`~pydseams.frame.DomainStats`, {func}`~pydseams.io.read`, and
 ASE is the [Python surface](reference/python) page.
 
 The public constructors live on the {mod}`pydseams` package:
@@ -25,7 +28,7 @@ monolayer, and {meth}`~pydseams.frame.Frame.rdf_2d` do.
 .. automodule:: pydseams
    :members:
    :imported-members:
-   :exclude-members: Frame, IceCounts, CageScore, read, available_readers, yoda, _core, cyoda
+   :exclude-members: Frame, IceCounts, CageScore, DensityProfile, ContactPairs, DomainStats, read, available_readers, yoda, _core, cyoda
 ```
 
 ## Frame
@@ -74,8 +77,9 @@ Implementation of {func}`~pydseams.to_solvis` and
 
 `yoda` is mocked in the Sphinx build (`autodoc_mock_imports`), so
 automodule cannot list live signatures. The tables below are every
-public name registered in `src/bindings.cpp`: 111 names (98
-functions, 13 types). Four functions are compile-gated and absent
+public name registered in `src/bindings.cpp`: 134 names (113
+functions, 19 types, and the `Kind` / `Family` type aliases). Four
+functions are compile-gated and absent
 from builds that did not link the extra:
 `readChemfiles` (`SEAMS_HAS_CHEMFILES`), `readCon`
 (`SEAMS_HAS_READCON`), `ira_match` and `sofi_point_group`
@@ -120,7 +124,10 @@ directly for the raw engine.
 | `neighListPair` | I-J neighbour list (like-type reuses `neighListO`). |
 | `SiteTable` / `parseSiteSpec` | Type-to-kind map. Type 1 is not a chemistry. |
 | `Kind` / `Family` | Aliases of `SiteKind` / `SiteFamily`. |
+| `indicesOf` | Cloud indices whose mapped site kind matches, including polar/apolar unions. |
+| `lammpsTypeOfKind` | Unique LAMMPS type mapped to a site kind. |
 | `ionCloud` | One COM vertex per ion `molID`, unwrapped with `relDist`. Also `(src, cationType, anionType)` or `(src, typeToKind)`. |
+| `mutualNearestUnlike` | Mutual nearest pairs between two particle types under periodic boundaries. |
 | `partialRdfHist` | Partial 3D RDF as `PartialRdf` (r, g, count, volume, nI, nJ). |
 | `runningCN` | Running site-site CN (`rhoJ` defaults to `nJ/volume`). |
 | `coordinationNumber` | Site-site CN to `rMax` (`rhoJ` defaults to `nJ/volume`). |
@@ -260,6 +267,8 @@ directly for the raw engine.
 | `rdf2Danalysis_AA` | 2D radial distribution function for identical atom types. |
 | `partialRdf` | Partial 3D RDF ``g_IJ(r)``. Returns ``(r, g)``. |
 | `runningCN` | Running CN `4 pi rho_J int s^2 g ds`. Returns a list. |
+| `densityZ` | Cartesian number-density histogram by particle type or mapped site kind and axis. |
+| `largestDomain` | Size and fraction of the largest connected component in a selected subset. |
 
 ### Types
 
@@ -275,3 +284,5 @@ directly for the raw engine.
 | `CrystalKind` | Crystal template kind: `other`, `sc`, `fcc`, `hcp`, `bcc`. |
 | `TemplateHit` | IRA/Horn overlay hit: `kind`, `rmsd`, `name`. |
 | `VoronoiWeights` | Facet-sharing neighbours and facet-area weights of one particle. |
+| `DensityZ` | Number-density result: bin centres `z`, values `rho`, and selected `type`. |
+| `Domain` | Connected-domain result: subset size, largest component, and percolation fraction. |

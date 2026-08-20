@@ -38,11 +38,16 @@ The dump has neither, or ~atom_type~ does not match the file.
 Pass ~atom_type~ explicitly, or use ~from_ase~ / ~from_arrays~
 when the types are not 1/2.
 
-** ~ValueError: from_ase needs an orthorhombic cell~
+** ~ValueError: from_ase requires a cell periodic in all three directions~
 
-The engine box is three lengths. Make the ~Atoms~ cell
-orthorhombic, or build the frame with ~from_arrays~ from
-positions and ~[lx, ly, lz]~.
+Set periodic boundary conditions on all three ASE cell directions.
+Partially periodic configurations do not define the three-dimensional
+periodic geometry required by the engine.
+
+** ~ValueError: from_ase cannot convert a singular cell~
+
+Supply a cell with nonzero volume. Orthorhombic and general triclinic
+cells are accepted when they are nonsingular and fully periodic.
 
 ** ~ValueError: no atoms matched select=...~
 
@@ -91,7 +96,8 @@ histogram.
 |-------+-------+--------|
 | ~No module named 'pydseams'~ | Wrong interpreter | ~python -m pip install pydseamslib~ |
 | ~pip install 'pydseamslib[ase]'~ | ASE extra missing | install the extra |
-| ~orthorhombic cell~ | General ASE cell | three box lengths only |
+| ~periodic in all three directions~ | Partial ASE periodicity | set all three PBC flags or use a compatible input geometry |
+| ~cannot convert a singular cell~ | Zero-volume ASE cell | supply a nonsingular cell |
 | ~Hydrogen-bond analysis needs hydrogens~ | No H cloud | ~bonded="cutoff"~ or pass H |
 | ~chemfiles is not linked~ | Optional reader | check ~available_readers()~ |
 
