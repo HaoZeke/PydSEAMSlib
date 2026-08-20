@@ -389,6 +389,39 @@ def test_from_ase_preserves_mol_id_for_hydrogen_donors():
     assert [point.molID for point in frame._h_cloud.pts] == [10, 10, 20, 20]
 
 
+def test_from_ase_all_atom_auto_uses_cutoff_bonding():
+    pytest.importorskip("ase")
+    from ase import Atoms
+    from pydseams import from_ase
+
+    atoms = Atoms(
+        "OH",
+        positions=[[1.0, 1.0, 1.0], [1.9, 1.0, 1.0]],
+        cell=[10.0, 10.0, 10.0],
+        pbc=True,
+    )
+
+    frame = from_ase(atoms, select=None)
+
+    assert frame.bonded == "cutoff"
+
+
+def test_from_ase_hbond_rejects_selected_hydrogens():
+    pytest.importorskip("ase")
+    from ase import Atoms
+    from pydseams import from_ase
+
+    atoms = Atoms(
+        "OH",
+        positions=[[1.0, 1.0, 1.0], [1.9, 1.0, 1.0]],
+        cell=[10.0, 10.0, 10.0],
+        pbc=True,
+    )
+
+    with pytest.raises(ValueError, match="heavy-atom selection"):
+        from_ase(atoms, select=None, bonded="hbond")
+
+
 def test_to_ase_exports_chill_plus_labels():
     pytest.importorskip("ase")
     from ase import Atoms
