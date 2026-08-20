@@ -2,12 +2,21 @@ name: Build wheels
 
 on:
   push:
+    branches: [main]
     tags: ["v*"]
+    paths:
+      - '.github/workflows/build_wheels.yml'
+      - 'pyproject.toml'
+      - 'meson.build'
+      - 'scripts/check_installed_api.py'
+      - 'src/**'
+      - 'subprojects/*.wrap'
   pull_request:
     paths:
       - '.github/workflows/build_wheels.yml'
       - 'pyproject.toml'
       - 'meson.build'
+      - 'scripts/check_installed_api.py'
       - 'src/**'
       - 'subprojects/*.wrap'
   workflow_dispatch:
@@ -35,6 +44,12 @@ jobs:
 
       - name: Build sdist
         run: pipx run build --sdist
+
+      - name: Test installed sdist API
+        run: |
+          python -m pip install 'ase>=3.23'
+          python -m pip install dist/*.tar.gz
+          python scripts/check_installed_api.py
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -91,9 +106,9 @@ jobs:
             brew install eigen
           CIBW_BEFORE_BUILD: >
             pip install meson-python meson ninja nanobind numpy
-          CIBW_TEST_REQUIRES: pytest numpy
+          CIBW_TEST_REQUIRES: numpy ase
           CIBW_TEST_COMMAND: >
-            python -c "import pydseamslib; print(pydseamslib.__version__)"
+            python {project}/scripts/check_installed_api.py
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
