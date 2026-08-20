@@ -362,6 +362,33 @@ def test_from_ase_auto_assigns_hydrogens_to_nearest_oxygen():
     assert frame.hbonds == [[1, 2], [2, 1]]
 
 
+def test_from_ase_preserves_mol_id_for_hydrogen_donors():
+    np = pytest.importorskip("numpy")
+    pytest.importorskip("ase")
+    from ase import Atoms
+    from pydseams import from_ase
+
+    atoms = Atoms(
+        "OHHOHH",
+        positions=[
+            [5.0, 5.0, 5.0],
+            [4.0, 5.0, 5.0],
+            [5.0, 4.0, 5.0],
+            [7.8, 5.0, 5.0],
+            [6.8, 5.0, 5.0],
+            [7.8, 6.0, 5.0],
+        ],
+        cell=[20.0, 20.0, 20.0],
+        pbc=True,
+    )
+    atoms.new_array("mol-id", np.array([10, 10, 10, 20, 20, 20]))
+
+    frame = from_ase(atoms)
+
+    assert [point.molID for point in frame.cloud.pts] == [10, 20]
+    assert [point.molID for point in frame._h_cloud.pts] == [10, 10, 20, 20]
+
+
 def test_from_ase_roundtrips_general_periodic_cell():
     np = pytest.importorskip("numpy")
     pytest.importorskip("ase")
