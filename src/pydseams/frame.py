@@ -603,7 +603,9 @@ class Frame:
             Neighbour cutoff in Angstroms. Default ``3.5``.
         bonded : {"auto", "hbond", "cutoff"}, optional
             Graph for rings. ``"auto"`` uses hydrogen bonds when the
-            ``Atoms`` contain H.
+            ``Atoms`` contain H and the selected analysis cloud excludes H;
+            otherwise it uses the cutoff neighbour list. Explicit
+            ``"hbond"`` also requires a heavy-atom selection.
 
         Returns
         -------

@@ -51,6 +51,8 @@ print(frame.cages())
 
 ~ds.read~ picks the engine reader from the suffix and returns a
 ~Frame~. ~chill_plus~ and ~cages~ do not write files.
+Pass ~all_atoms=True~ for mixed-type site analyses such as
+~Frame.pairs~ and ~Frame.domain~.
 
 ~yoda~ is the compiled module. ~_core~ and ~cyoda~ are aliases of
 ~yoda~. Helpers (~Frame~, ~read~, ASE, solvis) stay in Python.

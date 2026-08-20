@@ -54,7 +54,9 @@ def from_ase(atoms, select="O", cutoff=None, bonded="auto"):
         Neighbour cutoff in Angstroms. Default ``SEAMS_CUTOFF`` or ``3.5``.
     bonded : {"auto", "hbond", "cutoff"}, optional
         Graph for rings. ``"auto"`` uses hydrogen bonds when the
-        ``Atoms`` contain H, otherwise the cutoff neighbour list.
+        ``Atoms`` contain H and the selected analysis cloud excludes H;
+        otherwise it uses the cutoff neighbour list. Explicit ``"hbond"``
+        also requires a heavy-atom selection.
 
     Returns
     -------
@@ -69,7 +71,7 @@ def from_ase(atoms, select="O", cutoff=None, bonded="auto"):
         If ``atoms`` is not an ASE ``Atoms``.
     ValueError
         If the cell is singular, is not fully periodic, or ``select`` matches
-        no atom.
+        no atom, or if ``bonded="hbond"`` selects hydrogen.
     """
     return Frame.from_ase(
         atoms,

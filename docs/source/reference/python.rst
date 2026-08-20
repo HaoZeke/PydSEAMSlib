@@ -238,8 +238,9 @@ Common kwargs: ``frame`` (1-indexed), ``cutoff`` (Angstroms, default
 3.5), ``bonded`` (``"auto"``, ``"hbond"``, ``"cutoff"``), ``atom_type``,
 ``region``, and ``all_atoms``. ``all_atoms=True`` retains every LAMMPS type
 for mixed-site analyses; ``atom_type`` still selects the species used by
-neighbour and ice methods. It cannot be combined with ``region``.
-``bonded="auto"`` uses hydrogen bonds when hydrogens are available.
+neighbour and ice methods. It cannot be combined with ``region``. For
+LAMMPS readers, ``bonded="auto"`` uses hydrogen bonds when hydrogens are
+available.
 
 ``region`` is ``(lo, hi)`` passed to ``yoda.readLammpsTrjreduced``.
 ``nop`` is the kept count. An axis with ``lo == hi`` is unconstrained,
@@ -261,6 +262,11 @@ rotated into LAMMPS restricted-triclinic form for analysis;
 ``to_ase`` restores the imported cell orientation and displacement.
 ``select`` is a symbol, an atomic number, or ``None`` (every atom).
 Default ``select="O"``.
+
+For ASE input, ``bonded="auto"`` uses hydrogen bonds only when the
+input contains ``H`` and the selected analysis cloud excludes ``H``.
+Thus ``select=None`` uses cutoff bonding. Explicit ``bonded="hbond"``
+requires a heavy-atom selection such as ``select="O"``.
 
 ``to_ase`` writes ``arrays["ice_type"]`` after CHILL and
 ``arrays["hc"]`` / ``arrays["ddc"]`` after ``cages()``. A frame loaded

@@ -7,6 +7,10 @@ molecule metadata, each hydrogen is assigned to its nearest selected atom
 under periodic minimum-image distance. Installed-package checks cover donor
 ownership and exported CHILL+/cage arrays.
 
+ASE all-atom imports use cutoff bonding. Hydrogen-bond topology requires a
+selection that excludes hydrogen; forcing ``bonded="hbond"`` on a mixed
+selection raises a clear error.
+
 `Frame(..., region=(lo, hi))` calls `readLammpsTrjreduced`, which
 drops atoms outside the box. `readLammpsTrjO` keeps every atom of
 the type and sets `inSlice`. An axis with `lo == hi` is

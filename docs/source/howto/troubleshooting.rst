@@ -67,6 +67,13 @@ cells are accepted when they are nonsingular and fully periodic.
 ``from_ase(..., select="O")`` found no oxygen. Pass the symbol or
 atomic number that is present, or ``select=None``.
 
+``ValueError: bonded="hbond" requires a heavy-atom selection that excludes H``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ASE analysis selection contains hydrogen. Use ``select="O"`` (or
+another heavy species) for hydrogen-bond topology, or use
+``bonded="cutoff"`` for an all-atom frame.
+
 ``ValueError: Hydrogen-bond analysis needs hydrogens``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

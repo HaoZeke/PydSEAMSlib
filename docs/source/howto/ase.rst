@@ -49,17 +49,20 @@ Pass a symbol, an atomic number, or ``None`` (every atom):
     frame = ds.from_ase(atoms, select=8)
     frame = ds.from_ase(atoms, select=None)
 
-``bonded="auto"`` uses hydrogen bonds when the ``Atoms`` include ``H``,
-otherwise the cutoff neighbour list. Single-site models (mW) have
-no hydrogens:
+``bonded="auto"`` uses hydrogen bonds only when the ``Atoms`` include ``H``
+and the selected analysis cloud excludes ``H``. The default oxygen
+selection on molecular water therefore uses hydrogen bonds, while
+``select=None`` uses the cutoff neighbour list. Single-site models (mW)
+also use the cutoff neighbour list:
 
 .. code:: python
 
     frame = ds.from_ase(atoms, select="O", bonded="cutoff")
 
-``bonded`` is ``"auto"``, ``"hbond"``, or ``"cutoff"``. Hydrogens stay in a
-side cloud so the analysed species remain the CHILL / ring
-particles.
+``bonded`` is ``"auto"``, ``"hbond"``, or ``"cutoff"``. Explicit
+``bonded="hbond"`` requires a heavy-atom selection such as ``select="O"``.
+For that selection, hydrogens stay in a side cloud so the analysed
+species remain the CHILL / ring particles.
 
 If ``atoms.arrays["mol-id"]`` exists, its molecule IDs associate each
 hydrogen with its selected donor atom. Otherwise, ``from_ase`` assigns

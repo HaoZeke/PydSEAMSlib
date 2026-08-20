@@ -85,7 +85,9 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
         Neighbour cutoff in Angstroms. Default ``3.5``.
     bonded : {"auto", "hbond", "cutoff"}, optional
         Graph for rings. ``"auto"`` becomes ``"hbond"`` when the
-        ``Atoms`` contain hydrogen, otherwise ``"cutoff"``.
+        ``Atoms`` contain hydrogen and the selected analysis cloud
+        excludes hydrogen; otherwise it becomes ``"cutoff"``. Explicit
+        ``"hbond"`` also requires a heavy-atom selection.
 
     Returns
     -------
@@ -101,15 +103,16 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
         If ``atoms`` has no ``get_positions``.
     ValueError
         If the cell is singular, is not fully periodic, or ``select`` matches
-        no atom.
+        no atom, or if ``bonded="hbond"`` selects hydrogen.
 
     Notes
     -----
-    Hydrogens stay in a side cloud so the analysed species remain the
-    CHILL / ring particles. General cells are rotated into LAMMPS restricted
-    form for analysis and restored by :func:`frame_to_ase`. An ASE
-    ``mol-id`` array supplies molecule ownership. Without it, each hydrogen
-    belongs to the nearest selected atom under the minimum-image convention.
+    For a heavy-atom selection, hydrogens stay in a side cloud so the
+    analysed species remain the CHILL / ring particles. General cells are
+    rotated into LAMMPS restricted form for analysis and restored by
+    :func:`frame_to_ase`. An ASE ``mol-id`` array supplies molecule
+    ownership. Without it, each hydrogen belongs to the nearest selected atom
+    under the minimum-image convention.
     """
     _, Atoms, _ = _require_ase()
     if not hasattr(atoms, "get_positions"):
