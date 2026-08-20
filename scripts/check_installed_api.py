@@ -148,6 +148,10 @@ def _check_ase() -> None:
     label_frame = ds.from_ase(label_atoms, bonded="cutoff")
     label_frame.chill_plus()
     labelled = label_frame.to_ase()
+    np.testing.assert_allclose(
+        labelled.cell.array, label_atoms.cell.array, atol=1.0e-12
+    )
+    np.testing.assert_allclose(labelled.positions, label_atoms.positions, atol=1.0e-12)
     assert list(labelled.arrays["ice_type"]) == [
         point.iceType.name for point in label_frame.cloud.pts
     ]

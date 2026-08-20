@@ -319,6 +319,7 @@ def test_to_solvis_optional():
 
 
 def test_from_ase_optional():
+    np = pytest.importorskip("numpy")
     pytest.importorskip("ase")
     from ase import Atoms
     from pydseams import from_ase
@@ -334,7 +335,9 @@ def test_from_ase_optional():
     assert frame.n_atoms == 250
     back = frame.to_ase()
     assert len(back) == 250
-    assert back.get_chemical_symbols()[0] == "O"
+    np.testing.assert_allclose(back.cell.array, atoms.cell.array, atol=1.0e-12)
+    np.testing.assert_allclose(back.positions, atoms.positions, atol=1.0e-12)
+    assert back.get_chemical_symbols() == atoms.get_chemical_symbols()
 
 
 def test_from_ase_auto_assigns_hydrogens_to_nearest_oxygen():
