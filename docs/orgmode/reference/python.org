@@ -10,7 +10,8 @@ autodoc of every signature is
 
 ~pydseams.frame.Frame~ is the one-frame handle. Load a LAMMPS dump,
 an ASE ~Atoms~, or raw arrays, then call classification, density,
-pairing, or domain methods. Classification does not write files. Prefer ~pydseams.io.read~,
+pairing, or domain methods. Classification does not write files.
+Prefer ~pydseams.io.read~,
 ~Frame.from_ase~, or ~Frame.from_arrays~ over constructing ~Frame~
 by filename.
 
@@ -48,7 +49,7 @@ dump bound spans followed by ~xy~, ~xz~, and ~yz~ tilts.
 
 ~yoda.neighListPair~, ~yoda.SiteTable~, ~yoda.parseSiteSpec~,
 ~yoda.Kind~ / ~yoda.Family~ (aliases of ~SiteKind~ / ~SiteFamily~),
-~yoda.ionCloud~ (~table~, ~cationType~/~anionType~, or
+~yoda.ionCloud~ (~table~, ~cationType~ / ~anionType~, or
 ~typeToKind~), ~yoda.partialRdfHist~, ~yoda.coordinationNumber~,
 ~yoda.runningCN~, ~yoda.populateHbondsFromDonors~, and
 ~yoda.donatedHydrogenBond~ are bound. ~yoda.densityZ~,

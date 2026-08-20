@@ -59,7 +59,8 @@ particles.
 
 ~to_ase~ rebuilds an ~Atoms~ with the analysed positions and the
 imported cell orientation and displacement (~pbc=True~). General cells
-are represented internally in LAMMPS restricted-triclinic form. After ~chill_plus~ / ~chill~,
+are represented internally in LAMMPS restricted-triclinic form. After
+~chill_plus~ / ~chill~,
 ~atoms.arrays["ice_type"]~ holds the per-atom names. After
 ~cages()~, ~atoms.arrays["hc"]~ and ~atoms.arrays["ddc"]~ hold the
 last ~CageScore~. ~atoms.info["dseams_n_atoms"]~ is the analysed
