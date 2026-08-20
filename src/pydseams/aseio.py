@@ -120,22 +120,37 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
         )
     cell, rotation, transformed, origin = _restricted_cell(atoms)
     box, box_low = _dump_box(cell, origin)
+    selected_indices = [i for i, yes in enumerate(keep) if yes]
     positions = [xyz for xyz, yes in zip(transformed, keep) if yes]
     numbers = [int(z) for z, yes in zip(atoms.numbers, keep) if yes]
     symbols = [s for s, yes in zip(atoms.get_chemical_symbols(), keep) if yes]
     from .frame import _cloud_from_positions
 
-    cloud = _cloud_from_positions(positions, box, numbers, box_low=box_low)
-    h_pos = [
-        xyz for xyz, s in zip(transformed, atoms.get_chemical_symbols()) if s == "H"
+    mol_ids = list(range(1, len(selected_indices) + 1))
+    cloud = _cloud_from_positions(
+        positions,
+        box,
+        numbers,
+        box_low=box_low,
+        mol_ids=mol_ids,
+    )
+    h_indices = [
+        i for i, symbol in enumerate(atoms.get_chemical_symbols()) if symbol == "H"
     ]
+    h_pos = [transformed[i] for i in h_indices]
     h_cloud = None
     if h_pos:
+        h_mol_ids = []
+        for h_index in h_indices:
+            distances = atoms.get_distances(h_index, selected_indices, mic=True)
+            nearest = min(range(len(selected_indices)), key=distances.__getitem__)
+            h_mol_ids.append(mol_ids[nearest])
         h_cloud = _cloud_from_positions(
             h_pos,
             box,
             [1] * len(h_pos),
             box_low=box_low,
+            mol_ids=h_mol_ids,
         )
     if bonded == "auto":
         bonded = "hbond" if h_cloud is not None else "cutoff"

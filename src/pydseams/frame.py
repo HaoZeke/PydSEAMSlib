@@ -142,7 +142,7 @@ def _dump_geometry(box, box_low):
     return cell, origin
 
 
-def _cloud_from_positions(positions, cell, numbers, box_low=None):
+def _cloud_from_positions(positions, cell, numbers, box_low=None, mol_ids=None):
     n = len(positions)
     if n == 0:
         raise ValueError("no atoms to load")
@@ -167,7 +167,7 @@ def _cloud_from_positions(positions, cell, numbers, box_low=None):
         pt.z = float(xyz[2])
         pt.c_type = int(numbers[i]) if numbers is not None else 1
         pt.atomID = i + 1
-        pt.molID = i + 1
+        pt.molID = int(mol_ids[i]) if mol_ids is not None else i + 1
         pt.inSlice = True
         pts.append(pt)
         id_map[i + 1] = i
