@@ -55,6 +55,15 @@ def test_chill_plus_no_tempdir(tmp_path, monkeypatch):
     assert leftover == []
 
 
+def test_chill_plus_replaces_chill_classification():
+    frame = read(TRAJ)
+    frame.chill()
+    counts = frame.chill_plus()
+    assert counts.interClathrate == 12
+    assert counts.water == 238
+    assert sum(counts.values()) == frame.n_atoms
+
+
 def test_cages_seeded_on_mixed_water():
     frame = read(TRAJ, bonded="cutoff")
     score = frame.cages(seeded=True)
