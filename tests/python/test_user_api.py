@@ -4,7 +4,17 @@ from pathlib import Path
 
 import pytest
 
-from pydseams import CageScore, Frame, IceCounts, Trajectory, from_arrays, read
+from pydseams import (
+    CageScore,
+    ContactPairs,
+    DensityProfile,
+    DomainStats,
+    Frame,
+    IceCounts,
+    Trajectory,
+    from_arrays,
+    read,
+)
 
 TRAJ = Path(__file__).resolve().parents[1] / "data" / "exampleTraj.lammpstrj"
 
@@ -161,6 +171,107 @@ def test_ion_cloud_type_to_kind_dict():
     assert sorted(p.c_type for p in ions.pts) == [1, 2]
 
 
+def test_density_profile_by_type():
+    positions = [
+        [1.0, 1.0, 1.0],
+        [2.0, 2.0, 3.0],
+        [3.0, 3.0, 7.0],
+    ]
+    frame = from_arrays(positions, [10.0, 10.0, 10.0], numbers=[1, 1, 2])
+    profile = frame.density(bins=2, axis="z", atom_type=1)
+    assert isinstance(profile, DensityProfile)
+    assert profile.axis == "z"
+    assert profile.atom_type == 1
+    assert profile.centres == pytest.approx((2.5, 7.5))
+    assert profile.rho == pytest.approx((0.004, 0.0))
+
+
+def test_density_profile_by_site_kind():
+    from pydseams import yoda
+
+    positions = [
+        [1.0, 1.0, 1.0],
+        [2.0, 2.0, 3.0],
+        [3.0, 3.0, 7.0],
+    ]
+    frame = from_arrays(positions, [10.0, 10.0, 10.0], numbers=[1, 1, 2])
+    table = yoda.parseSiteSpec("1=polar,2=apolar")
+    profile = frame.density(
+        bins=2,
+        axis="z",
+        table=table,
+        kind=yoda.Kind.polar,
+    )
+    assert isinstance(profile, DensityProfile)
+    assert profile.site_kind == "polar"
+    assert profile.centres == pytest.approx((2.5, 7.5))
+    assert profile.rho == pytest.approx((0.004, 0.0))
+
+
+def test_contact_pairs_match_mutual_nearest_unlike():
+    from pydseams import yoda
+
+    positions = [
+        [1.0, 0.0, 0.0],
+        [2.0, 0.0, 0.0],
+        [7.0, 0.0, 0.0],
+        [8.0, 0.0, 0.0],
+    ]
+    frame = from_arrays(positions, [10.0, 10.0, 10.0], numbers=[1, 2, 2, 1])
+    table = yoda.parseSiteSpec("1=cationHead,2=anion")
+    result = frame.pairs(table)
+    assert isinstance(result, ContactPairs)
+    assert result.count == 2
+    assert result.n_cation == 2
+    assert result.n_anion == 2
+    assert result.pairs == ((0, 1), (3, 2))
+
+
+def test_largest_site_domain():
+    from pydseams import yoda
+
+    positions = [
+        [1.0, 1.0, 1.0],
+        [2.0, 1.0, 1.0],
+        [3.0, 1.0, 1.0],
+        [12.0, 1.0, 1.0],
+        [15.0, 1.0, 1.0],
+    ]
+    frame = from_arrays(positions, [20.0, 20.0, 20.0], numbers=[1, 1, 1, 1, 2])
+    table = yoda.parseSiteSpec("1=polar,2=apolar")
+    result = frame.domain(table, yoda.Kind.polar, cutoff=1.1)
+    assert isinstance(result, DomainStats)
+    assert result.site_kind == "polar"
+    assert result.n == 4
+    assert result.largest == 3
+    assert result.percolation == pytest.approx(0.75)
+
+
+def test_low_level_workflow_bindings():
+    from pydseams import yoda
+
+    frame = from_arrays(
+        [[1.0, 0.0, 1.0], [2.0, 0.0, 2.0]],
+        [10.0, 10.0, 10.0],
+        numbers=[1, 2],
+    )
+    density = yoda.densityZ(frame.cloud, 0, 2, 2)
+    assert isinstance(density, yoda.DensityZ)
+    assert sum(density.rho) == pytest.approx(0.004)
+    assert yoda.mutualNearestUnlike(frame.cloud, 1, 2) == [(0, 1)]
+
+    by_index = yoda.getNewNeighbourListByIndex(frame.cloud, 2.0)
+    by_id = [
+        [frame.cloud.pts[index].atomID for index in row]
+        for row in by_index
+    ]
+    domain = yoda.largestDomain(frame.cloud, by_id, [True, True])
+    assert isinstance(domain, yoda.Domain)
+    assert domain.subset == 2
+    assert domain.largest == 2
+    assert domain.percolation == pytest.approx(1.0)
+
+
 def test_available_readers():
     from pydseams import available_readers
 
@@ -202,3 +313,60 @@ def test_from_ase_optional():
     back = frame.to_ase()
     assert len(back) == 250
     assert back.get_chemical_symbols()[0] == "O"
+
+
+def test_from_ase_roundtrips_general_periodic_cell():
+    np = pytest.importorskip("numpy")
+    pytest.importorskip("ase")
+    from ase import Atoms
+    from pydseams import from_ase
+
+    angle = np.deg2rad(31.0)
+    rotation = np.array(
+        [
+            [np.cos(angle), -np.sin(angle), 0.0],
+            [np.sin(angle), np.cos(angle), 0.0],
+            [0.0, 0.0, 1.0],
+        ]
+    )
+    restricted = np.array(
+        [
+            [4.0, 0.0, 0.0],
+            [1.0, 5.0, 0.0],
+            [0.5, 1.5, 6.0],
+        ]
+    )
+    cell = restricted @ rotation
+    scaled = np.array([[0.1, 0.2, 0.3], [0.7, 0.6, 0.5]])
+    atoms = Atoms(
+        symbols=["O", "Na"],
+        scaled_positions=scaled,
+        cell=cell,
+        pbc=True,
+    )
+    atoms.set_celldisp([0.4, -0.3, 0.2])
+
+    frame = from_ase(atoms, select=None, bonded="cutoff")
+    assert len(frame.box) == 6
+    back = frame.to_ase()
+    np.testing.assert_allclose(back.cell.array, cell, atol=1.0e-12)
+    np.testing.assert_allclose(back.positions, atoms.positions, atol=1.0e-12)
+    np.testing.assert_allclose(back.get_celldisp(), atoms.get_celldisp(), atol=1.0e-12)
+    assert back.get_chemical_symbols() == atoms.get_chemical_symbols()
+
+
+@pytest.mark.parametrize(
+    "cell,pbc,match",
+    [
+        ([10.0, 10.0, 10.0], [True, True, False], "periodic in all three"),
+        ([[10.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 10.0]], True, "singular"),
+    ],
+)
+def test_from_ase_rejects_unsupported_periodicity(cell, pbc, match):
+    pytest.importorskip("ase")
+    from ase import Atoms
+    from pydseams import from_ase
+
+    atoms = Atoms("O", positions=[[0.0, 0.0, 0.0]], cell=cell, pbc=pbc)
+    with pytest.raises(ValueError, match=match):
+        from_ase(atoms, bonded="cutoff")
