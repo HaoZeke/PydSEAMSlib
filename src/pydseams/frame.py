@@ -9,6 +9,7 @@ hydrogens are available, otherwise the cutoff neighbour list).
 from __future__ import annotations
 
 from collections import Counter
+from dataclasses import dataclass
 from pathlib import Path
 
 from . import config
@@ -86,16 +87,73 @@ class CageScore:
         return f"CageScore(n_ih={self.n_ih}, n_ic={self.n_ic}, n_water={self.n_water})"
 
 
+@dataclass(frozen=True)
+class DensityProfile:
+    """Cartesian number-density profile returned by :meth:`Frame.density`."""
+
+    centres: tuple[float, ...]
+    rho: tuple[float, ...]
+    axis: str
+    atom_type: int | None = None
+    site_kind: str | None = None
+
+
+@dataclass(frozen=True)
+class ContactPairs:
+    """Mutual nearest unlike ion pairs returned by :meth:`Frame.pairs`."""
+
+    pairs: tuple[tuple[int, int], ...]
+    count: int
+    n_cation: int
+    n_anion: int
+
+
+@dataclass(frozen=True)
+class DomainStats:
+    """Largest connected site domain returned by :meth:`Frame.domain`."""
+
+    site_kind: str
+    n: int
+    largest: int
+    percolation: float
+
+
+def _dump_geometry(box, box_low):
+    """Return restricted-triclinic cell rows and the true cell origin."""
+    if len(box) not in (3, 6):
+        raise ValueError(
+            "cell must be three box lengths or six LAMMPS bound spans and tilts"
+        )
+    xspan, yspan, zspan = (float(value) for value in box[:3])
+    xlo_b, ylo_b, zlo_b = (float(value) for value in box_low[:3])
+    xy, xz, yz = (
+        (float(value) for value in box[3:6]) if len(box) == 6 else (0.0, 0.0, 0.0)
+    )
+    xmin = min(0.0, xy, xz, xy + xz)
+    xmax = max(0.0, xy, xz, xy + xz)
+    ymin = min(0.0, yz)
+    ymax = max(0.0, yz)
+    cell = (
+        (xspan - xmax + xmin, 0.0, 0.0),
+        (xy, yspan - ymax + ymin, 0.0),
+        (xz, yz, zspan),
+    )
+    origin = (xlo_b - xmin, ylo_b - ymin, zlo_b)
+    return cell, origin
+
+
 def _cloud_from_positions(positions, cell, numbers, box_low=None):
     n = len(positions)
     if n == 0:
         raise ValueError("no atoms to load")
-    if len(cell) != 3:
-        raise ValueError("cell must be three box lengths [lx, ly, lz]")
+    if len(cell) not in (3, 6):
+        raise ValueError(
+            "cell must be three box lengths or six LAMMPS bound spans and tilts"
+        )
     cloud = yoda.PointCloudDouble()
     cloud.nop = n
     cloud.currentFrame = 1
-    cloud.box = [float(cell[0]), float(cell[1]), float(cell[2])]
+    cloud.box = [float(value) for value in cell]
     if box_low is None:
         cloud.boxLow = [0.0, 0.0, 0.0]
     else:
@@ -191,6 +249,7 @@ class Frame:
         cloud=None,
         h_cloud=None,
         symbols=None,
+        cell_rotation=None,
     ):
         if bonded not in ("hbond", "cutoff", "auto"):
             raise ValueError('bonded must be "hbond", "cutoff", or "auto"')
@@ -204,6 +263,7 @@ class Frame:
         self.cutoff = cutoff
         self._h_cloud = h_cloud
         self._symbols = symbols
+        self._cell_rotation = cell_rotation
         self._nlist = None
         self._hbonds = None
         self._rings = None
@@ -309,14 +369,15 @@ class Frame:
     def from_arrays(
         cls, positions, cell, numbers=None, cutoff=None, bonded="cutoff", box_low=None
     ):
-        """Build a frame from ``(N, 3)`` positions and three box lengths.
+        """Build a frame from ``(N, 3)`` positions and a periodic box.
 
         Parameters
         ----------
         positions : sequence of (x, y, z)
             Cartesian coordinates.
         cell : sequence of float
-            Orthorhombic box lengths ``[lx, ly, lz]``.
+            Orthorhombic lengths ``[lx, ly, lz]`` or LAMMPS restricted
+            triclinic bound spans and tilts ``[xspan, yspan, zspan, xy, xz, yz]``.
         numbers : sequence of int, optional
             Per-atom type codes stored as ``c_type``. Default ``1``.
         cutoff : float, optional
@@ -333,7 +394,7 @@ class Frame:
         Raises
         ------
         ValueError
-            If ``positions`` is empty or ``cell`` is not three lengths.
+            If ``positions`` is empty or ``cell`` is not three or six values.
         """
         n = len(positions)
         nums = list(numbers) if numbers is not None else [1] * n
@@ -959,6 +1020,63 @@ class Frame:
         rho_j = (hist.nJ / hist.volume) if hist.volume > 0.0 else 0.0
         return yoda.runningCN(h=hist, rhoJ=rho_j)
 
+    def density(self, bins=None, axis="z", atom_type=0, *, table=None, kind=None):
+        """Cartesian number density by particle type or mapped site kind.
+
+        Parameters
+        ----------
+        bins : int or None, optional
+            Number of equal-width slabs. ``None`` uses about 0.1 Angstrom
+            spacing along the selected restricted-cell axis.
+        axis : {"x", "y", "z", 0, 1, 2}, optional
+            Profile axis. Default ``"z"``.
+        atom_type : int, optional
+            Particle type to count; ``0`` counts every particle. Ignored when
+            ``table`` and ``kind`` are supplied.
+        table, kind : optional
+            A :class:`pydseams.yoda.SiteTable` and matching
+            :class:`pydseams.yoda.SiteKind` for a chemistry-resolved profile.
+
+        Returns
+        -------
+        DensityProfile
+        """
+        axis_names = ("x", "y", "z")
+        if isinstance(axis, str):
+            try:
+                axis_index = axis_names.index(axis.lower())
+            except ValueError as exc:
+                raise ValueError('axis must be "x", "y", "z", 0, 1, or 2') from exc
+        else:
+            axis_index = int(axis)
+            if axis_index not in (0, 1, 2):
+                raise ValueError('axis must be "x", "y", "z", 0, 1, or 2')
+
+        if (table is None) != (kind is None):
+            raise ValueError("table and kind must be supplied together")
+        if bins is None:
+            cell, _ = _dump_geometry(self.cloud.box, self.cloud.boxLow)
+            bins = max(1, round(abs(cell[axis_index][axis_index]) / 0.1))
+        bins = int(bins)
+        if bins < 1:
+            raise ValueError("bins must be positive")
+
+        site_kind = None
+        selected_type = int(atom_type)
+        if table is None:
+            raw = yoda.densityZ(self.cloud, selected_type, bins, axis_index)
+        else:
+            raw = yoda.densityZ(self.cloud, table, kind, bins, axis_index)
+            selected_type = None
+            site_kind = getattr(kind, "name", str(kind).rsplit(".", 1)[-1])
+        return DensityProfile(
+            centres=tuple(raw.z),
+            rho=tuple(raw.rho),
+            axis=axis_names[axis_index],
+            atom_type=selected_type,
+            site_kind=site_kind,
+        )
+
     def ion_cloud(self, table):
         """One COM vertex per ion molecule.
 
@@ -969,6 +1087,48 @@ class Frame:
             anions to type 2.
         """
         return yoda.ionCloud(src=self.cloud, table=table)
+
+    def pairs(self, table):
+        """Mutual nearest cation-anion pairs in an ion COM cloud.
+
+        Pair indices refer to the ion cloud returned by :meth:`ion_cloud`.
+        """
+        ions = self.ion_cloud(table)
+        pairs = tuple(
+            (int(cation), int(anion))
+            for cation, anion in yoda.mutualNearestUnlike(ions, 1, 2)
+        )
+        n_cation = sum(1 for point in ions.pts if point.c_type == 1)
+        n_anion = sum(1 for point in ions.pts if point.c_type == 2)
+        return ContactPairs(
+            pairs=pairs,
+            count=len(pairs),
+            n_cation=n_cation,
+            n_anion=n_anion,
+        )
+
+    def domain(self, table, kind, cutoff=None):
+        """Largest cutoff-connected component of a mapped site subset."""
+        if isinstance(kind, str):
+            try:
+                kind = getattr(yoda.Kind, kind)
+            except AttributeError as exc:
+                raise ValueError(f"unknown site kind {kind!r}") from exc
+        selected = set(yoda.indicesOf(self.cloud, table, kind))
+        mask = [index in selected for index in range(self.n_atoms)]
+        by_index = yoda.getNewNeighbourListByIndex(
+            self.cloud,
+            self.cutoff if cutoff is None else float(cutoff),
+        )
+        by_id = [[self.cloud.pts[index].atomID for index in row] for row in by_index]
+        raw = yoda.largestDomain(self.cloud, by_id, mask)
+        site_kind = getattr(kind, "name", str(kind).rsplit(".", 1)[-1])
+        return DomainStats(
+            site_kind=site_kind,
+            n=int(raw.subset),
+            largest=int(raw.largest),
+            percolation=float(raw.percolation),
+        )
 
     def hbonds_from_donors(self, donor_hs, h_cloud=None, dist=2.42, angle=30.0):
         """Hydrogen-bond network from an explicit donor-H index list.

@@ -11,6 +11,7 @@
 #include <bulkTUM.hpp>
 #include <cage_affiliation.hpp>
 #include <cluster.hpp>
+#include <density.hpp>
 #include <franzblau.hpp>
 #include <ira_sofi.hpp>
 
@@ -232,6 +233,23 @@ NB_MODULE(yoda, m) {
           "Build a neighbour list by index using a distance cutoff.",
           nb::arg("yCloud"),
           nb::arg("cutoff"));
+    m.def("mutualNearestUnlike",
+          &nneigh::mutualNearestUnlike,
+          "Mutual nearest unlike cloud-index pairs.",
+          nb::arg("yCloud"),
+          nb::arg("typeI"),
+          nb::arg("typeJ"));
+    nb::class_<clump::Domain>(
+        m, "Domain", "Largest connected component statistics for a site mask.")
+        .def_ro("largest", &clump::Domain::largest)
+        .def_ro("subset", &clump::Domain::subset)
+        .def_ro("percolation", &clump::Domain::percolation);
+    m.def("largestDomain",
+          &clump::largestDomain,
+          "Largest connected component of a Boolean site mask.",
+          nb::arg("yCloud"),
+          nb::arg("nList"),
+          nb::arg("mask"));
     m.def("kNearestNeighbourList",
           &nneigh::kNearestNeighbourList,
           "Exact k-nearest bonded graph, union- or mutually-symmetrized "
@@ -1156,6 +1174,34 @@ NB_MODULE(yoda, m) {
           nb::arg("kind"));
     m.attr("Kind") = m.attr("SiteKind");
     m.attr("Family") = m.attr("SiteFamily");
+    nb::class_<site::DensityZ>(m, "DensityZ", "Cartesian number-density histogram.")
+        .def_ro("z", &site::DensityZ::z)
+        .def_ro("rho", &site::DensityZ::rho)
+        .def_ro("type", &site::DensityZ::type);
+    m.def(
+        "densityZ",
+        [](const molSys::PointCloud<molSys::Point<double>, double> &yCloud,
+           int typeI,
+           int nbin,
+           int axis) { return site::densityZ(yCloud, typeI, nbin, axis); },
+        "Type-resolved Cartesian number-density histogram.",
+        nb::arg("yCloud"),
+        nb::arg("typeI"),
+        nb::arg("nbin"),
+        nb::arg("axis"));
+    m.def(
+        "densityZ",
+        [](const molSys::PointCloud<molSys::Point<double>, double> &yCloud,
+           const site::Table &table,
+           site::Kind kind,
+           int nbin,
+           int axis) { return site::densityZ(yCloud, table, kind, nbin, axis); },
+        "Site-kind-resolved Cartesian number-density histogram.",
+        nb::arg("yCloud"),
+        nb::arg("table"),
+        nb::arg("kind"),
+        nb::arg("nbin"),
+        nb::arg("axis"));
     m.def("ionCloud",
           &site::ionCloud,
           "One COM vertex per ion molID, unwrapped with relDist. "

@@ -23,7 +23,15 @@ from . import config
 from . import yoda
 from . import yoda as _core
 from . import yoda as cyoda
-from .frame import CageScore, Frame, IceCounts, read
+from .frame import (
+    CageScore,
+    ContactPairs,
+    DensityProfile,
+    DomainStats,
+    Frame,
+    IceCounts,
+    read,
+)
 from .io import available_readers
 
 __version__ = "2.6.0"
@@ -38,7 +46,7 @@ def from_ase(atoms, select="O", cutoff=None, bonded="auto"):
     Parameters
     ----------
     atoms : ase.Atoms
-        Configuration with an orthorhombic cell.
+        Configuration with a nonsingular cell periodic in all three directions.
     select : str or int, optional
         Chemical symbol or atomic number of the species to analyse.
         Default ``"O"``. ``None`` keeps every atom.
@@ -60,7 +68,8 @@ def from_ase(atoms, select="O", cutoff=None, bonded="auto"):
     TypeError
         If ``atoms`` is not an ASE ``Atoms``.
     ValueError
-        If the cell is not orthorhombic, or ``select`` matches no atom.
+        If the cell is singular, is not fully periodic, or ``select`` matches
+        no atom.
     """
     return Frame.from_ase(
         atoms,
@@ -78,7 +87,8 @@ def from_arrays(positions, cell, numbers=None, cutoff=None, bonded="cutoff"):
     positions : sequence of (x, y, z)
         Cartesian coordinates, shape ``(N, 3)``.
     cell : sequence of float
-        Three orthorhombic box lengths ``[lx, ly, lz]``.
+        Three orthorhombic box lengths or six LAMMPS restricted-triclinic
+        bound spans and tilts.
     numbers : sequence of int, optional
         Per-atom type codes stored as ``c_type``. Default ``1`` for
         every particle.
@@ -95,7 +105,7 @@ def from_arrays(positions, cell, numbers=None, cutoff=None, bonded="cutoff"):
     Raises
     ------
     ValueError
-        If ``positions`` is empty or ``cell`` is not three lengths.
+        If ``positions`` is empty or ``cell`` is not three or six values.
     """
     return Frame.from_arrays(
         positions,
@@ -208,6 +218,9 @@ __all__ = [
     "Trajectory",
     "IceCounts",
     "CageScore",
+    "DensityProfile",
+    "ContactPairs",
+    "DomainStats",
     "read",
     "from_ase",
     "from_arrays",

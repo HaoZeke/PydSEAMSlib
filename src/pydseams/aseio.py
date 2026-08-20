@@ -29,11 +29,44 @@ def _mask(atoms, select):
     return [int(z) == number for z in atoms.numbers]
 
 
-def _cell_lengths(atoms):
+def _restricted_cell(atoms):
+    """Canonicalize an ASE cell to LAMMPS restricted-triclinic form."""
+    import numpy as np
+
+    if not bool(np.all(atoms.get_pbc())):
+        raise ValueError("from_ase requires a cell periodic in all three directions")
     cell = atoms.get_cell()
-    if hasattr(cell, "orthorhombic") and not cell.orthorhombic:
-        raise ValueError("from_ase needs an orthorhombic cell; got a general cell")
-    return [float(cell[0, 0]), float(cell[1, 1]), float(cell[2, 2])]
+    matrix = np.asarray(cell, dtype=float)
+    scale = max(1.0, float(np.linalg.norm(matrix)))
+    if abs(float(np.linalg.det(matrix))) <= np.finfo(float).eps * scale**3:
+        raise ValueError("from_ase cannot convert a singular cell")
+    restricted, rotation = cell.standard_form("lower")
+    restricted = np.asarray(restricted, dtype=float)
+    rotation = np.asarray(rotation, dtype=float)
+    if np.any(np.diag(restricted) < 0.0):
+        restricted = -restricted
+        rotation = -rotation
+    positions = np.asarray(atoms.get_positions(), dtype=float) @ rotation.T
+    origin = np.asarray(atoms.get_celldisp(), dtype=float).reshape(3) @ rotation.T
+    return restricted, rotation, positions, origin
+
+
+def _dump_box(cell, origin):
+    """Encode restricted cell rows as LAMMPS bound spans and tilts."""
+    lx = float(cell[0, 0])
+    xy, ly = float(cell[1, 0]), float(cell[1, 1])
+    xz, yz, lz = float(cell[2, 0]), float(cell[2, 1]), float(cell[2, 2])
+    xmin = min(0.0, xy, xz, xy + xz)
+    xmax = max(0.0, xy, xz, xy + xz)
+    ymin = min(0.0, yz)
+    ymax = max(0.0, yz)
+    box = [lx + xmax - xmin, ly + ymax - ymin, lz, xy, xz, yz]
+    box_low = [
+        float(origin[0]) + xmin,
+        float(origin[1]) + ymin,
+        float(origin[2]),
+    ]
+    return box, box_low
 
 
 def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
@@ -44,7 +77,7 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
     cls : type
         :class:`~pydseams.frame.Frame` or a subclass.
     atoms : ase.Atoms
-        Configuration with an orthorhombic cell.
+        Configuration with a nonsingular cell periodic in all three directions.
     select : str or int, optional
         Chemical symbol or atomic number kept for analysis. Default
         ``"O"``. ``None`` keeps every atom.
@@ -67,12 +100,14 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
     TypeError
         If ``atoms`` has no ``get_positions``.
     ValueError
-        If the cell is not orthorhombic, or ``select`` matches no atom.
+        If the cell is singular, is not fully periodic, or ``select`` matches
+        no atom.
 
     Notes
     -----
     Hydrogens stay in a side cloud so the analysed species remain the
-    CHILL / ring particles. Cell origin follows ``atoms.get_celldisp()``.
+    CHILL / ring particles. General cells are rotated into LAMMPS restricted
+    form for analysis and restored by :func:`frame_to_ase`.
     """
     _, Atoms, _ = _require_ase()
     if not hasattr(atoms, "get_positions"):
@@ -83,27 +118,24 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
             f"no atoms matched select={select!r}; "
             f"symbols={sorted(set(atoms.get_chemical_symbols()))}"
         )
-    positions = [xyz for xyz, yes in zip(atoms.get_positions(), keep) if yes]
+    cell, rotation, transformed, origin = _restricted_cell(atoms)
+    box, box_low = _dump_box(cell, origin)
+    positions = [xyz for xyz, yes in zip(transformed, keep) if yes]
     numbers = [int(z) for z, yes in zip(atoms.numbers, keep) if yes]
     symbols = [s for s, yes in zip(atoms.get_chemical_symbols(), keep) if yes]
-    origin = atoms.get_celldisp().reshape(3)
     from .frame import _cloud_from_positions
 
-    cloud = _cloud_from_positions(
-        positions, _cell_lengths(atoms), numbers, box_low=origin
-    )
+    cloud = _cloud_from_positions(positions, box, numbers, box_low=box_low)
     h_pos = [
-        xyz
-        for xyz, s in zip(atoms.get_positions(), atoms.get_chemical_symbols())
-        if s == "H"
+        xyz for xyz, s in zip(transformed, atoms.get_chemical_symbols()) if s == "H"
     ]
     h_cloud = None
     if h_pos:
         h_cloud = _cloud_from_positions(
             h_pos,
-            _cell_lengths(atoms),
+            box,
             [1] * len(h_pos),
-            box_low=origin,
+            box_low=box_low,
         )
     if bonded == "auto":
         bonded = "hbond" if h_cloud is not None else "cutoff"
@@ -114,6 +146,7 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
         cloud=cloud,
         h_cloud=h_cloud,
         symbols=symbols,
+        cell_rotation=rotation,
     )
 
 
@@ -128,7 +161,7 @@ def frame_to_ase(frame):
     Returns
     -------
     ase.Atoms
-        Orthorhombic cell, ``pbc=True``. Symbols come from the ASE
+        Periodic cell in its imported orientation. Symbols come from the ASE
         import when present; LAMMPS-only frames fall back to ``O``.
 
     Notes
@@ -140,7 +173,11 @@ def frame_to_ase(frame):
     ``atoms.arrays['ddc']`` hold the cage flags.
     ``atoms.info['dseams_n_atoms']`` is the analysed particle count.
     """
+    import numpy as np
+
     _, Atoms, _ = _require_ase()
+    from .frame import _dump_geometry
+
     n = frame.n_atoms
     if frame._symbols is not None:
         symbols = list(frame._symbols)
@@ -149,12 +186,21 @@ def frame_to_ase(frame):
         # from a water dump is not. Prefer O for the analysed species.
         fallback = "O"
         symbols = [fallback] * n
+    restricted, origin = _dump_geometry(frame.cloud.box, frame.cloud.boxLow)
+    rotation = getattr(frame, "_cell_rotation", None)
+    if rotation is None:
+        rotation = np.eye(3)
+    rotation = np.asarray(rotation, dtype=float)
+    positions = np.asarray(frame.positions, dtype=float) @ rotation
+    cell = np.asarray(restricted, dtype=float) @ rotation
+    celldisp = np.asarray(origin, dtype=float) @ rotation
     atoms = Atoms(
         symbols=symbols,
-        positions=frame.positions,
-        cell=frame.box,
+        positions=positions,
+        cell=cell,
         pbc=True,
     )
+    atoms.set_celldisp(celldisp)
     ice = [pt.iceType.name for pt in frame.cloud.pts]
     if any(name != "unclassified" for name in ice):
         atoms.arrays["ice_type"] = ice
