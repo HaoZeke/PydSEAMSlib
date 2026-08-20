@@ -285,7 +285,7 @@ class Frame:
             self.atom_type = atom_type
         elif self.filename is not None:
             if self.all_atoms:
-                self.cloud = yoda.readLammpsTrj(self.filename, frame)
+                self.cloud = self._read(frame)
                 if self.cloud.nop == 0:
                     raise ValueError(f"{self.filename} frame {frame} has no atoms")
                 self.atom_type = (
@@ -315,7 +315,13 @@ class Frame:
 
     def _read(self, frame):
         if self.all_atoms:
-            return yoda.readLammpsTrj(self.filename, frame)
+            return yoda.readLammpsTrj(
+                filename=self.filename,
+                targetFrame=frame,
+                isSlice=False,
+                coordLow=[0.0, 0.0, 0.0],
+                coordHigh=[0.0, 0.0, 0.0],
+            )
         low, high = self.region if self.region is not None else ([0, 0, 0], [0, 0, 0])
         return yoda.readLammpsTrjreduced(
             filename=self.filename,
