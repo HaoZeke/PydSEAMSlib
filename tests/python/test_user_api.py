@@ -337,6 +337,31 @@ def test_from_ase_optional():
     assert back.get_chemical_symbols()[0] == "O"
 
 
+def test_from_ase_auto_assigns_hydrogens_to_nearest_oxygen():
+    pytest.importorskip("ase")
+    from ase import Atoms
+    from pydseams import from_ase
+
+    atoms = Atoms(
+        "OHHOHH",
+        positions=[
+            [5.0, 5.0, 5.0],
+            [4.0, 5.0, 5.0],
+            [5.0, 4.0, 5.0],
+            [7.8, 5.0, 5.0],
+            [6.8, 5.0, 5.0],
+            [7.8, 6.0, 5.0],
+        ],
+        cell=[20.0, 20.0, 20.0],
+        pbc=True,
+    )
+
+    frame = from_ase(atoms)
+
+    assert frame.bonded == "hbond"
+    assert frame.hbonds == [[1, 2], [2, 1]]
+
+
 def test_from_ase_roundtrips_general_periodic_cell():
     np = pytest.importorskip("numpy")
     pytest.importorskip("ase")
