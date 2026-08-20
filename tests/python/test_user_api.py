@@ -25,6 +25,22 @@ def test_read_guesses_oxygen():
     assert frame.atom_type == 2
 
 
+def test_read_all_atoms_keeps_mixed_lammps_types():
+    frame = read(TRAJ, all_atoms=True, atom_type=2)
+    assert frame.n_atoms == 750
+    assert frame.atom_type == 2
+    assert {point.c_type for point in frame.cloud.pts} == {1, 2}
+
+
+def test_read_all_atoms_rejects_coordinate_slice():
+    with pytest.raises(ValueError, match="all_atoms and region"):
+        read(
+            TRAJ,
+            all_atoms=True,
+            region=([0.0, 0.0, 0.0], [1.0, 1.0, 1.0]),
+        )
+
+
 def test_chill_plus_no_tempdir(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     frame = read(TRAJ.resolve())
