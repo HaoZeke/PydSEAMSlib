@@ -120,6 +120,15 @@ def _check_ase() -> None:
     water_frame = ds.from_ase(water)
     assert water_frame.hbonds == [[1, 2], [2, 1]]
 
+    mixed = ds.from_ase(water, select=None)
+    assert mixed.bonded == "cutoff"
+    try:
+        ds.from_ase(water, select=None, bonded="hbond")
+    except ValueError as exc:
+        assert "heavy-atom selection" in str(exc)
+    else:
+        raise AssertionError("bonded=\"hbond\" accepted an all-atom selection")
+
     water.new_array("mol-id", np.array([10, 10, 10, 20, 20, 20]))
     identified = ds.from_ase(water)
     assert [point.molID for point in identified.cloud.pts] == [10, 20]
