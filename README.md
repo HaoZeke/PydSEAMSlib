@@ -39,8 +39,12 @@ print(frame.chill_plus())
 print(frame.cages())
 print(frame.density(bins=100, axis="z"))
 
+mixed = ds.read("ions.lammpstrj", all_atoms=True, atom_type=1)
 sites = ds.yoda.parseSiteSpec("1=polar,2=apolar")
-print(frame.domain(sites, ds.yoda.Kind.polar))
+print(mixed.domain(sites, ds.yoda.Kind.polar))
+
+ions = ds.yoda.parseSiteSpec("1=cationHead,2=anion")
+print(mixed.pairs(ions))
 
 frame = ds.from_ase(atoms)
 atoms = frame.to_ase()
@@ -53,6 +57,8 @@ surface. Helpers (`Frame`, `io`, ASE, solvis) stay in Python.
 
 `Frame.density`, `Frame.pairs`, and `Frame.domain` expose the same
 site-resolved density, ion-pair, and connected-domain analyses as the CLI.
+Use `ds.read(..., all_atoms=True)` when a site analysis needs every LAMMPS
+type; `atom_type` still selects the species used by neighbour and ice methods.
 ASE adapters accept nonsingular cells periodic in all three directions and
 preserve cell orientation and displacement on roundtrip.
 

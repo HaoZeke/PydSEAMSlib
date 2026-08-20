@@ -205,6 +205,7 @@ Use a site table when the analysis is chemistry-resolved:
 
 .. code:: python
 
+    frame = ds.read("ions.lammpstrj", all_atoms=True, atom_type=1)
     sites = ds.yoda.parseSiteSpec("1=polar,2=apolar")
     profile = frame.density(table=sites, kind=ds.yoda.Kind.polar)
     domain = frame.domain(sites, ds.yoda.Kind.polar)
@@ -235,8 +236,10 @@ build linked.
 
 Common kwargs: ``frame`` (1-indexed), ``cutoff`` (Angstroms, default
 3.5), ``bonded`` (``"auto"``, ``"hbond"``, ``"cutoff"``), ``atom_type``,
-``region``. ``bonded="auto"`` uses hydrogen bonds when hydrogens are
-available.
+``region``, and ``all_atoms``. ``all_atoms=True`` retains every LAMMPS type
+for mixed-site analyses; ``atom_type`` still selects the species used by
+neighbour and ice methods. It cannot be combined with ``region``.
+``bonded="auto"`` uses hydrogen bonds when hydrogens are available.
 
 ``region`` is ``(lo, hi)`` passed to ``yoda.readLammpsTrjreduced``.
 ``nop`` is the kept count. An axis with ``lo == hi`` is unconstrained,
