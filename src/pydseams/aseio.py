@@ -126,7 +126,11 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
     symbols = [s for s, yes in zip(atoms.get_chemical_symbols(), keep) if yes]
     from .frame import _cloud_from_positions
 
-    mol_ids = list(range(1, len(selected_indices) + 1))
+    source_mol_ids = atoms.get_array("mol-id") if atoms.has("mol-id") else None
+    if source_mol_ids is None:
+        mol_ids = list(range(1, len(selected_indices) + 1))
+    else:
+        mol_ids = [int(source_mol_ids[i]) for i in selected_indices]
     cloud = _cloud_from_positions(
         positions,
         box,
@@ -140,11 +144,16 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
     h_pos = [transformed[i] for i in h_indices]
     h_cloud = None
     if h_pos:
-        h_mol_ids = []
-        for h_index in h_indices:
-            distances = atoms.get_distances(h_index, selected_indices, mic=True)
-            nearest = min(range(len(selected_indices)), key=distances.__getitem__)
-            h_mol_ids.append(mol_ids[nearest])
+        if source_mol_ids is None:
+            h_mol_ids = []
+            for h_index in h_indices:
+                distances = atoms.get_distances(h_index, selected_indices, mic=True)
+                nearest = min(
+                    range(len(selected_indices)), key=distances.__getitem__
+                )
+                h_mol_ids.append(mol_ids[nearest])
+        else:
+            h_mol_ids = [int(source_mol_ids[i]) for i in h_indices]
         h_cloud = _cloud_from_positions(
             h_pos,
             box,
