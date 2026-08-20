@@ -127,7 +127,7 @@ def _check_ase() -> None:
     except ValueError as exc:
         assert "heavy-atom selection" in str(exc)
     else:
-        raise AssertionError("bonded=\"hbond\" accepted an all-atom selection")
+        raise AssertionError('bonded="hbond" accepted an all-atom selection')
 
     water.new_array("mol-id", np.array([10, 10, 10, 20, 20, 20]))
     identified = ds.from_ase(water)
