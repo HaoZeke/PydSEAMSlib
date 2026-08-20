@@ -70,11 +70,13 @@ Does classification write files?
 ``chill_plus``, ``chill``, and ``cages`` do not write files. Prism,
 monolayer, and RDF helpers do.
 
-Why must the ASE cell be orthorhombic?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Can the ASE cell be triclinic?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The engine box is three lengths ``[lx, ly, lz]``. ``from_ase`` rejects
-a general cell.
+Yes. ``from_ase`` rotates any nonsingular, fully periodic ASE cell into
+the engine's LAMMPS restricted-triclinic representation. ``to_ase``
+restores the imported cell orientation, positions, and cell
+displacement. Partially periodic and singular cells are rejected.
 
 How do I keep every atom, not just oxygen?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

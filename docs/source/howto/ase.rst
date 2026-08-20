@@ -33,8 +33,10 @@ Classify ASE Atoms
     print(frame.chill_plus())
     labelled = frame.to_ase()
 
-``from_ase`` is ``Frame.from_ase``. The cell must be orthorhombic.
-``from_ase`` keeps oxygen by default (``select="O"``).
+``from_ase`` is ``Frame.from_ase``. The cell must be nonsingular and
+periodic in all three directions. Orthorhombic and general triclinic
+cells are supported. ``from_ase`` keeps oxygen by default
+(``select="O"``).
 
 Select and bonding
 ------------------
@@ -62,8 +64,10 @@ particles.
 Labels on the way back
 ----------------------
 
-``to_ase`` rebuilds an ``Atoms`` with the analysed positions and an
-orthorhombic cell (``pbc=True``). After ``chill_plus`` / ``chill``,
+``to_ase`` rebuilds an ``Atoms`` with the analysed positions and the
+imported cell orientation and displacement (``pbc=True``). General cells
+are represented internally in LAMMPS restricted-triclinic form. After
+``chill_plus`` / ``chill``,
 ``atoms.arrays["ice_type"]`` holds the per-atom names. After
 ``cages()``, ``atoms.arrays["hc"]`` and ``atoms.arrays["ddc"]`` hold the
 last ``CageScore``. ``atoms.info["dseams_n_atoms"]`` is the analysed
@@ -82,4 +86,4 @@ See also
     ``read`` / ``chill_plus`` / ``cages``
 
 `Troubleshooting <troubleshooting.rst>`_
-    non-orthorhombic cell, missing H
+    periodicity, singular cells, missing H

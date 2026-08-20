@@ -3,16 +3,18 @@ Python surface
 ==============
 
 
-Human lookup of ``Frame``, ``IceCounts``, ``CageScore``, ``read``, and the
-ASE helpers. Napoleon autodoc of every signature is
+Human lookup of ``Frame``, ``IceCounts``, ``CageScore``, ``DensityProfile``,
+``ContactPairs``, ``DomainStats``, ``read``, and the ASE helpers. Napoleon
+autodoc of every signature is
 `api.md <../../source/api.md>`_.
 
 Frame
 -----
 
 ``pydseams.frame.Frame`` is the one-frame handle. Load a LAMMPS dump,
-an ASE ``Atoms``, or raw arrays, then call ``chill_plus`` or ``cages``.
-Classification does not write files. Prefer ``pydseams.io.read``,
+an ASE ``Atoms``, or raw arrays, then call classification, density,
+pairing, or domain methods. Classification does not write files.
+Prefer ``pydseams.io.read``,
 ``Frame.from_ase``, or ``Frame.from_arrays`` over constructing ``Frame``
 by filename.
 
@@ -48,37 +50,41 @@ Geometry and graphs
 
 .. table::
 
-    +-------------------+---------------------------------------------+
-    | name              | role                                        |
-    +===================+=============================================+
-    | ``n_atoms``       | analysed particle count (``cloud.nop``)     |
-    +-------------------+---------------------------------------------+
-    | ``box``           | orthorhombic box lengths ``[lx, ly, lz]``   |
-    +-------------------+---------------------------------------------+
-    | ``positions``     | list of ``(x, y, z)``                       |
-    +-------------------+---------------------------------------------+
-    | ``neighbor_list`` | cutoff neighbour list (``yoda.neighListO``) |
-    +-------------------+---------------------------------------------+
-    | ``hbonds``        | hydrogen-bond neighbour list                |
-    +-------------------+---------------------------------------------+
-    | ``rings``         | primitive rings up to size 6                |
-    +-------------------+---------------------------------------------+
-    | ``load_frame``    | reload a later frame from the same file     |
-    +-------------------+---------------------------------------------+
+    +-------------------+---------------------------------------------------------+
+    | name              | role                                                    |
+    +===================+=========================================================+
+    | ``n_atoms``       | analysed particle count (``cloud.nop``)                 |
+    +-------------------+---------------------------------------------------------+
+    | ``box``           | three lengths or six LAMMPS restricted-triclinic values |
+    +-------------------+---------------------------------------------------------+
+    | ``positions``     | list of ``(x, y, z)``                                   |
+    +-------------------+---------------------------------------------------------+
+    | ``neighbor_list`` | cutoff neighbour list (``yoda.neighListO``)             |
+    +-------------------+---------------------------------------------------------+
+    | ``hbonds``        | hydrogen-bond neighbour list                            |
+    +-------------------+---------------------------------------------------------+
+    | ``rings``         | primitive rings up to size 6                            |
+    +-------------------+---------------------------------------------------------+
+    | ``load_frame``    | reload a later frame from the same file                 |
+    +-------------------+---------------------------------------------------------+
 
-``box`` is three lengths on an orthorhombic frame. Tilt dumps use dump
-H (length >= 6) once the wrap loads them.
+``box`` is three lengths for an orthorhombic frame. Triclinic frames use
+dump bound spans followed by ``xy``, ``xz``, and ``yz`` tilts.
 
-``neighListPair``, ``SiteTable``, ``parseSiteSpec``, ``Kind`` /
-``Family`` (aliases of ``SiteKind`` / ``SiteFamily``), ``ionCloud``
-(``table``, ``cationType``/``anionType``, or ``typeToKind``),
-``partialRdfHist``, ``coordinationNumber``, ``runningCN``,
-``populateHbondsFromDonors``, and ``donatedHydrogenBond`` are bound.
-``Frame.rdf`` is still ``(r, g)``. ``Frame.cn``, ``Frame.running_cn``,
-``Frame.ion_cloud``, and ``Frame.hbonds_from_donors`` call those
-symbols. Ice-score ``--family``, contact pairs, polar/apolar
-domains, and type-resolved ``rho(z)`` are the ``seams`` CLI in
-seams-core 2.5.0, not ``Frame`` methods.
+``yoda.neighListPair``, ``yoda.SiteTable``, ``yoda.parseSiteSpec``,
+``yoda.Kind`` / ``yoda.Family`` (aliases of ``SiteKind`` / ``SiteFamily``),
+``yoda.ionCloud`` (``table``, ``cationType`` / ``anionType``, or
+``typeToKind``), ``yoda.partialRdfHist``, ``yoda.coordinationNumber``,
+``yoda.runningCN``, ``yoda.populateHbondsFromDonors``, and
+``yoda.donatedHydrogenBond`` are bound. ``yoda.densityZ``,
+``yoda.mutualNearestUnlike``, and ``yoda.largestDomain`` provide the raw
+site-analysis primitives. ``Frame.rdf`` is ``(r, g)``;
+``Frame.cn`` integrates that histogram; ``Frame.running_cn`` is the
+running integral with ``rho_J = nJ / volume``; ``Frame.ion_cloud``
+and ``Frame.hbonds_from_donors`` wrap the site and donor-H paths.
+``Frame.density``, ``Frame.pairs``, and ``Frame.domain`` expose
+type/site-resolved density, mutual cation--anion pairing, and the
+largest connected site domain.
 
 Classification
 ~~~~~~~~~~~~~~
@@ -108,25 +114,35 @@ Export and descriptors
 
 .. table::
 
-    +----------------------+-----------------------------------------------+
-    | name                 | role                                          |
-    +======================+===============================================+
-    | ``to_ase``           | ASE ``Atoms``; needs ``pydseams[ase]``        |
-    +----------------------+-----------------------------------------------+
-    | ``to_solvis``        | solvis ``System``; needs ``pydseams[solvis]`` |
-    +----------------------+-----------------------------------------------+
-    | ``steinhardt``       | local and neighbour-averaged ``ql``           |
-    +----------------------+-----------------------------------------------+
-    | ``soap``             | SOAP power spectrum                           |
-    +----------------------+-----------------------------------------------+
-    | ``voronoi_features`` | per-atom ``[q4, q6, q8]``                     |
-    +----------------------+-----------------------------------------------+
-    | ``rdf``              | in-memory 3D RDF (``yoda.partialRdf``)        |
-    +----------------------+-----------------------------------------------+
-    | ``cn``               | site-site CN to a cutoff                     |
-    +----------------------+-----------------------------------------------+
-    | ``running_cn``       | running site-site CN (``yoda.runningCN``)    |
-    +----------------------+-----------------------------------------------+
+    +------------------------+--------------------------------------------------------+
+    | name                   | role                                                   |
+    +========================+========================================================+
+    | ``to_ase``             | ASE ``Atoms``; needs ``pydseams[ase]``                 |
+    +------------------------+--------------------------------------------------------+
+    | ``to_solvis``          | solvis ``System``; needs ``pydseams[solvis]``          |
+    +------------------------+--------------------------------------------------------+
+    | ``steinhardt``         | local and neighbour-averaged ``ql``                    |
+    +------------------------+--------------------------------------------------------+
+    | ``soap``               | SOAP power spectrum                                    |
+    +------------------------+--------------------------------------------------------+
+    | ``voronoi_features``   | per-atom ``[q4, q6, q8]``                              |
+    +------------------------+--------------------------------------------------------+
+    | ``rdf``                | in-memory partial 3D RDF (``yoda.partialRdf``)         |
+    +------------------------+--------------------------------------------------------+
+    | ``cn``                 | site-site CN to a cutoff (``yoda.coordinationNumber``) |
+    +------------------------+--------------------------------------------------------+
+    | ``running_cn``         | running site-site CN (``yoda.runningCN``)              |
+    +------------------------+--------------------------------------------------------+
+    | ``density``            | Cartesian number density by particle type or site kind |
+    +------------------------+--------------------------------------------------------+
+    | ``ion_cloud``          | ion COM vertices (``yoda.ionCloud``)                   |
+    +------------------------+--------------------------------------------------------+
+    | ``pairs``              | mutual nearest unlike ion pairs                        |
+    +------------------------+--------------------------------------------------------+
+    | ``domain``             | largest cutoff-connected component of a site kind      |
+    +------------------------+--------------------------------------------------------+
+    | ``hbonds_from_donors`` | H-bond net from an explicit H-index list               |
+    +------------------------+--------------------------------------------------------+
 
 Prism, monolayer, and ``rdf_2d`` write engine output. ``Frame.rdf``
 does not. See the Frame autodoc on `api.md <../../source/api.md>`_.
@@ -167,6 +183,35 @@ A molecule in an HC is ice Ih; a molecule in a DDC is ice Ic.
     | ``n_water`` | number of atoms in neither cage   |
     +-------------+-----------------------------------+
 
+Site-analysis records
+---------------------
+
+``DensityProfile``, ``ContactPairs``, and ``DomainStats`` are immutable
+records returned by ``Frame.density``, ``Frame.pairs``, and ``Frame.domain``.
+
+.. table::
+
+    +--------------------+--------------------------------------------------------------+
+    | record             | fields                                                       |
+    +====================+==============================================================+
+    | ``DensityProfile`` | ``centres``, ``rho``, ``axis``, ``atom_type``, ``site_kind`` |
+    +--------------------+--------------------------------------------------------------+
+    | ``ContactPairs``   | ``pairs``, ``count``, ``n_cation``, ``n_anion``              |
+    +--------------------+--------------------------------------------------------------+
+    | ``DomainStats``    | ``site_kind``, ``n``, ``largest``, ``percolation``           |
+    +--------------------+--------------------------------------------------------------+
+
+Use a site table when the analysis is chemistry-resolved:
+
+.. code:: python
+
+    sites = ds.yoda.parseSiteSpec("1=polar,2=apolar")
+    profile = frame.density(table=sites, kind=ds.yoda.Kind.polar)
+    domain = frame.domain(sites, ds.yoda.Kind.polar)
+
+    ions = ds.yoda.parseSiteSpec("1=cationHead,2=anion")
+    pairs = frame.pairs(ions)
+
 read
 ----
 
@@ -195,9 +240,8 @@ available.
 
 ``region`` is ``(lo, hi)`` passed to ``yoda.readLammpsTrjreduced``.
 ``nop`` is the kept count. An axis with ``lo == hi`` is unconstrained,
-so ``([0, 0, 0], [50, 0, 0])`` slices ``x`` only.
-``yoda.readLammpsTrjO`` keeps every atom of the type and only sets
-``inSlice``.
+so ``([0, 0, 0], [50, 0, 0])`` slices ``x`` only. ``yoda.readLammpsTrjO``
+keeps every atom of the type and only sets ``inSlice``.
 
 Builds without chemfiles or readcon raise ``RuntimeError`` when those
 suffixes are used.
@@ -209,8 +253,11 @@ ASE
 ``Atoms``. ``Frame.to_ase`` is the inverse.
 
 Install: ``pip install 'pydseamslib[ase]'``. The cell must be
-orthorhombic. ``select`` is a symbol, an atomic number, or ``None``
-(every atom). Default ``select="O"``.
+nonsingular and periodic in all three directions. General cells are
+rotated into LAMMPS restricted-triclinic form for analysis;
+``to_ase`` restores the imported cell orientation and displacement.
+``select`` is a symbol, an atomic number, or ``None`` (every atom).
+Default ``select="O"``.
 
 ``to_ase`` writes ``arrays["ice_type"]`` after CHILL and
 ``arrays["hc"]`` / ``arrays["ddc"]`` after ``cages()``. A frame loaded
