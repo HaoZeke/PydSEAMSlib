@@ -139,6 +139,7 @@ framework.
    howto/install
    howto/ase
    howto/solvis
+   howto/features
    howto/faq
    howto/troubleshooting
 
