@@ -117,7 +117,7 @@ def test_ion_without_water_shell_is_liquid():
 
 
 def test_from_ase_sequence_select_keeps_ions_for_ion_environment():
-    ase = pytest.importorskip("ase")
+    pytest.importorskip("ase")
     from ase import Atoms
 
     from pydseams.frame import Frame
