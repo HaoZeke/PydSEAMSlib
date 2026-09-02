@@ -10,6 +10,7 @@
 #include <bop.hpp>
 #include <bulkTUM.hpp>
 #include <cage_affiliation.hpp>
+#include <cage_enum.hpp>
 #include <cluster.hpp>
 #include <density.hpp>
 #include <franzblau.hpp>
@@ -398,6 +399,28 @@ NB_MODULE(yoda, m) {
         "Order-free per-ring cage classification: (hc, ddc) flag vectors.",
         nb::arg("rings"),
         nb::arg("nList"));
+    m.def(
+        "findBySignature",
+        [](const std::vector<std::vector<int>> &rings,
+           const std::vector<std::vector<int>> &nList,
+           const std::string &spec) {
+            const auto sig = cage::Signature::parse(spec);
+            const auto found = cage::findBySignature(rings, nList, sig);
+            nb::list out;
+            for (const auto &c : found) {
+                nb::dict row;
+                row["signature"] = c.signature.str();
+                row["faces"] = c.faces;
+                row["vertices"] = c.vertices;
+                row["certificate"] = c.certificate;
+                out.append(row);
+            }
+            return out;
+        },
+        "Closed polyhedra matching a ring-size census or named table entry.",
+        nb::arg("rings"),
+        nb::arg("nList"),
+        nb::arg("spec"));
     nb::class_<ring::AffiliationUpdater>(m, "AffiliationUpdater")
         .def(nb::init<>())
         .def(

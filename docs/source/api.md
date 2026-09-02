@@ -168,6 +168,7 @@ directly for the raw engine.
 | `countAllRingsFromIndex` | Find all possible rings (including non-shortest-path) up to `maxDepth`. |
 | `ringNetwork` | Find all primitive (shortest-path) rings up to `maxDepth`. |
 | `cageAffiliation` | Order-free per-ring cage classification: `(hc, ddc)` flag vectors. |
+| `findBySignature` | Closed polyhedra matching a ring-size census or named table entry. |
 | `seededCageAffiliation` | Seeded (hysteresis) per-atom cage flags: strict-graph seeds, permissive-graph completion. `ringAdjacentCompletion` fills the last vertex of a six-ring whose other vertices carry a label. |
 | `RingUpdater` | Exact incremental primitive rings for a neighbour list. |
 | `AffiliationUpdater` | Exact incremental per-ring cage classification for one frame. |

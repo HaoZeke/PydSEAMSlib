@@ -64,6 +64,33 @@ def test_chill_plus_replaces_chill_classification():
     assert sum(counts.values()) == frame.n_atoms
 
 
+def test_find_by_signature_hex_prism():
+    from pydseams import yoda
+
+    rings = [
+        [0, 1, 2, 3, 4, 5],
+        [6, 7, 8, 9, 10, 11],
+        [0, 1, 7, 6],
+        [1, 2, 8, 7],
+        [2, 3, 9, 8],
+        [3, 4, 10, 9],
+        [4, 5, 11, 10],
+        [5, 0, 6, 11],
+    ]
+    n_list = [[] for _ in range(12)]
+    found = yoda.findBySignature(rings, n_list, "4:6,6:2")
+    assert len(found) == 1
+    assert found[0]["signature"] == "4:6,6:2"
+    assert len(found[0]["vertices"]) == 12
+    assert len(found[0]["faces"]) == 8
+
+
+def test_cages_by_signature_on_mixed_water():
+    frame = read(TRAJ, bonded="cutoff")
+    found = frame.cages_by_signature("hc")
+    assert isinstance(found, list)
+
+
 def test_cages_seeded_on_mixed_water():
     frame = read(TRAJ, bonded="cutoff")
     score = frame.cages(seeded=True)

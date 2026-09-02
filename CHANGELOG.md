@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- `Frame.cages_by_signature` and `yoda.findBySignature`: closed
+  polyhedra from a ring-size census (`sodalite`, `4:6,6:8`, named
+  `hc` / `ddc` through the TUM finders). Engine wrap follows
+  seams-core `884bed86`.
 - `Frame.classify_topology` takes a sequence of libraries built at
   different hop counts and names each atom by the deepest that knows it;
   `LibraryMatch.depth` records which one did (`yoda.matchLibraries`).

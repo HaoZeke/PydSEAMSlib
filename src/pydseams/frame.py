@@ -868,6 +868,29 @@ class Frame:
         self._cages = score
         return score
 
+    def cages_by_signature(self, signature, max_ring_size=None):
+        """Closed polyhedra matching a ring-size census.
+
+        Parameters
+        ----------
+        signature : str
+            Comma list (``4:6,6:8``) or named table entry
+            (``sodalite``, ``alpha``, ``512``, ``51262``, ``hc``,
+            ``ddc``). Named ``hc`` and ``ddc`` use the TUM finders.
+        max_ring_size : int or None, optional
+            Franzblau depth. ``None`` uses 8, or the largest size in a
+            comma list.
+
+        Returns
+        -------
+        list of dict
+            Each dict has ``signature``, ``faces``, ``vertices``, and
+            ``certificate``.
+        """
+        depth = 8 if max_ring_size is None else int(max_ring_size)
+        rings = yoda.ringNetwork(self.bonds_by_index, depth)
+        return yoda.findBySignature(rings, self.bonds_by_index, str(signature))
+
     def cage_affiliation(self):
         """Order-free per-ring HC/DDC flags on this frame's six-rings.
 
