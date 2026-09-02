@@ -196,6 +196,9 @@ Next Steps
 `Classify ASE Atoms <../howto/ase.rst>`_
     ``from_ase`` / ``to_ase``
 
+`Features and ions <../howto/features.rst>`_
+    ``IceFeaturizer`` / ``ion_environment``
+
 `View a frame in solvis <../howto/solvis.rst>`_
     optional extra
 

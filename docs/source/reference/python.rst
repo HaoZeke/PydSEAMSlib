@@ -4,8 +4,8 @@ Python surface
 
 
 Human lookup of ``Frame``, ``IceCounts``, ``CageScore``, ``DensityProfile``,
-``ContactPairs``, ``DomainStats``, ``read``, and the ASE helpers. Napoleon
-autodoc of every signature is
+``ContactPairs``, ``DomainStats``, ``read``, the ASE helpers, and
+``pydseams.features``. Napoleon autodoc of every signature is
 `api.md <../../source/api.md>`_.
 
 Frame
@@ -25,21 +25,21 @@ Constructors
 
 .. table::
 
-    +--------------------------+--------------------------------------------+
-    | name                     | role                                       |
-    +==========================+============================================+
-    | ``Frame.from_file``      | LAMMPS dump; guesses type 2 then type 1    |
-    +--------------------------+--------------------------------------------+
-    | ``Frame.from_ase``       | ASE ``Atoms``; ``select="O"``              |
-    +--------------------------+--------------------------------------------+
-    | ``Frame.from_arrays``    | ``(N, 3)`` positions and three box lengths |
-    +--------------------------+--------------------------------------------+
-    | ``Frame.from_xyz``       | XYZ via ``yoda.readXYZ``                   |
-    +--------------------------+--------------------------------------------+
-    | ``Frame.from_chemfiles`` | PDB / GRO / DCD when chemfiles is linked   |
-    +--------------------------+--------------------------------------------+
-    | ``Frame.from_con``       | eOn ``.con`` when readcon-core is linked   |
-    +--------------------------+--------------------------------------------+
+    +--------------------------+----------------------------------------------------------+
+    | name                     | role                                                     |
+    +==========================+==========================================================+
+    | ``Frame.from_file``      | LAMMPS dump; guesses type 2 then type 1                  |
+    +--------------------------+----------------------------------------------------------+
+    | ``Frame.from_ase``       | ASE ``Atoms``; ``select="O"``, ``None``, or a sequence   |
+    +--------------------------+----------------------------------------------------------+
+    | ``Frame.from_arrays``    | ``(N, 3)`` positions and three box lengths               |
+    +--------------------------+----------------------------------------------------------+
+    | ``Frame.from_xyz``       | XYZ via ``yoda.readXYZ``                                 |
+    +--------------------------+----------------------------------------------------------+
+    | ``Frame.from_chemfiles`` | PDB / GRO / DCD when chemfiles is linked                 |
+    +--------------------------+----------------------------------------------------------+
+    | ``Frame.from_con``       | eOn ``.con`` when readcon-core is linked                 |
+    +--------------------------+----------------------------------------------------------+
 
 Package-level aliases: ``pydseams.from_ase``, ``from_arrays``,
 ``from_xyz``, ``from_chemfiles``, ``from_con``. Autodoc:
@@ -91,23 +91,31 @@ Classification
 
 .. table::
 
-    +-------------------------+------------------------------------------------+
-    | name                    | role                                           |
-    +=========================+================================================+
-    | ``chill_plus``          | CHILL+ ice labels; no files written            |
-    +-------------------------+------------------------------------------------+
-    | ``chill``               | CHILL ice labels; no files written             |
-    +-------------------------+------------------------------------------------+
-    | ``classify_chill_plus`` | alias of ``chill_plus``                        |
-    +-------------------------+------------------------------------------------+
-    | ``classify_chill``      | alias of ``chill``                             |
-    +-------------------------+------------------------------------------------+
-    | ``cages``               | HC / DDC membership (``seeded=True``, ``k=4``) |
-    +-------------------------+------------------------------------------------+
+    +-------------------------+------------------------------------------------------------------+
+    | name                    | role                                                             |
+    +=========================+==================================================================+
+    | ``chill_plus``          | CHILL+ ice labels; no files written                              |
+    +-------------------------+------------------------------------------------------------------+
+    | ``chill``               | CHILL ice labels; no files written                               |
+    +-------------------------+------------------------------------------------------------------+
+    | ``classify_chill_plus`` | alias of ``chill_plus``                                          |
+    +-------------------------+------------------------------------------------------------------+
+    | ``classify_chill``      | alias of ``chill``                                               |
+    +-------------------------+------------------------------------------------------------------+
+    | ``cages``               | hexagonal / double-diamond membership; seeded; ``k=4``           |
+    +-------------------------+------------------------------------------------------------------+
+    | ``seeded_affiliation``  | seeded flags; ``ring_adjacent`` completes six-rings              |
+    +-------------------------+------------------------------------------------------------------+
+    | ``cage_affiliation``    | cutoff-graph per-ring flags                                      |
+    +-------------------------+------------------------------------------------------------------+
+    | ``ion_environment``     | first-shell ice class of every ion                               |
+    +-------------------------+------------------------------------------------------------------+
 
-``cages(seeded=True)`` is the hysteresis construction.
-``seeded=False`` is cutoff-graph affiliation on this frame's
-six-rings.
+``cages`` with the seeded flag on is the hysteresis construction
+(``seeded_affiliation``). Cutoff-graph affiliation on this frame's
+six-rings is the other path. ``ring_adjacent`` on ``cages`` or
+``seeded_affiliation`` fills the last vertex of a six-ring whose other
+vertices carry a label. ``IceFeaturizer`` turns that flag on by default.
 
 Export and descriptors
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -182,6 +190,41 @@ A molecule in an HC is ice Ih; a molecule in a DDC is ice Ic.
     +-------------+-----------------------------------+
     | ``n_water`` | number of atoms in neither cage   |
     +-------------+-----------------------------------+
+
+Features
+--------
+
+``pydseams.features`` turns a ``Trajectory`` into per-frame vectors and
+per-molecule states for kinetic models.
+
+.. table::
+
+    +---------------------------+----------------------------------------------------+
+    | name                      | role                                               |
+    +===========================+====================================================+
+    | ``IceFeaturizer``         | per-frame vector and per-molecule states           |
+    +---------------------------+----------------------------------------------------+
+    | ``ion_environment``       | first-shell ice class of each ion                  |
+    +---------------------------+----------------------------------------------------+
+    | ``ion_features``          | per-frame ion summary                              |
+    +---------------------------+----------------------------------------------------+
+    | ``discretize_nmax``       | bin ``n_max`` for a Markov state model             |
+    +---------------------------+----------------------------------------------------+
+    | ``to_deeptime``           | time-lagged independent component analysis (TICA)  |
+    +---------------------------+----------------------------------------------------+
+    | ``to_pyemma_featurizer``  | register the vector with PyEMMA                    |
+    +---------------------------+----------------------------------------------------+
+
+The per-frame vector comes from ``IceFeaturizer``, which calls
+``Frame.seeded_affiliation`` with ring-adjacent completion on by
+default. Walkthrough:
+`features how-to <../howto/features.rst>`_. Autodoc:
+`api.md <../../source/api.md>`_.
+
+.. automodule:: pydseams.features
+   :members:
+   :member-order: bysource
+   :no-index:
 
 Site-analysis records
 ---------------------
@@ -260,8 +303,10 @@ Install: ``pip install 'pydseamslib[ase]'``. The cell must be
 nonsingular and periodic in all three directions. General cells are
 rotated into LAMMPS restricted-triclinic form for analysis;
 ``to_ase`` restores the imported cell orientation and displacement.
-``select`` is a symbol, an atomic number, or ``None`` (every atom).
-Default ``select="O"``.
+``select`` is a symbol, an atomic number, ``None`` (every atom), or a
+sequence such as ``("O", "Na", "Cl")``. Default ``select="O"``. A sequence
+keeps the listed species and analyses the first, so ions stay in the
+cloud for ``pydseams.features.ion_environment``.
 
 For ASE input, ``bonded="auto"`` uses hydrogen bonds only when the
 input contains ``H`` and the selected analysis cloud excludes ``H``.
@@ -299,6 +344,8 @@ Package names
     | ``pydseams.cyoda``      | alias of ``yoda``                   |
     +-------------------------+-------------------------------------+
     | ``pydseams.Trajectory`` | alias of ``Frame``                  |
+    +-------------------------+-------------------------------------+
+    | ``pydseams.features``   | kinetic vectors and ion environment |
     +-------------------------+-------------------------------------+
 
 Requires Python 3.12+. Wheels are the CPython 3.12 limited ABI.

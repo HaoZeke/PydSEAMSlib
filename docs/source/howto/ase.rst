@@ -41,13 +41,21 @@ cells are supported. ``from_ase`` keeps oxygen by default
 Select and bonding
 ------------------
 
-Pass a symbol, an atomic number, or ``None`` (every atom):
+Pass a symbol, an atomic number, ``None`` (every atom), or a sequence:
+
+#skip_lint_start
 
 .. code:: python
 
     frame = ds.from_ase(atoms, select="O")
     frame = ds.from_ase(atoms, select=8)
     frame = ds.from_ase(atoms, select=None)
+    frame = ds.from_ase(atoms, select=("O", "Na", "Cl"))
+
+#skip_lint_end
+
+A sequence keeps every listed species in the cloud and analyses the
+first. Ions stay in the cloud for ``pydseams.features.ion_environment``.
 
 ``bonded="auto"`` uses hydrogen bonds only when the ``Atoms`` include ``H``
 and the selected analysis cloud excludes ``H``. The default oxygen

@@ -51,7 +51,7 @@ print(frame.cages())
 
 ~ds.read~ picks the engine reader from the suffix and returns a
 ~Frame~. ~chill_plus~ and ~cages~ do not write files.
-Pass ~all_atoms=True~ for mixed-type site analyses such as
+Pass ~all_atoms~ on for mixed-type site analyses such as
 ~Frame.pairs~ and ~Frame.domain~.
 
 ~yoda~ is the compiled module. ~_core~ and ~cyoda~ are aliases of
@@ -60,3 +60,27 @@ Pass ~all_atoms=True~ for mixed-type site analyses such as
 ASE ~Atoms~: ~ds.from_ase(atoms)~. See the [[file:howto/ase.org][ASE
 how-to]]. A worked mixed ice-water dump is the
 [[file:tutorials/classify-ice.org][classify-ice tutorial]].
+
+* Seeded cages and mixed ASE selections
+
+~Frame.seeded_affiliation~ is the hysteresis construction that
+~cages~ with the seeded flag on calls. Ring-adjacent completion fills
+the last vertex of a six-ring whose other vertices carry a label:
+
+#+begin_src python
+print(frame.seeded_affiliation(ring_adjacent=True))
+print(frame.cages(seeded=True, ring_adjacent=True))
+#+end_src
+
+~IceFeaturizer~ turns the same flag on by default.
+
+Pass a sequence to ~from_ase~ when the ASE ~Atoms~ mix water and
+salt. The listed species stay in the cloud:
+
+#+begin_src python
+frame = ds.from_ase(atoms, select=("O", "Na", "Cl"))
+#+end_src
+
+The first entry is the analysed water. The other species keep their
+atomic numbers as ~c_type~ for ~ion_environment~. See the
+[[file:howto/features.org][features how-to]].

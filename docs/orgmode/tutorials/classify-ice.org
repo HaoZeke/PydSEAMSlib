@@ -171,6 +171,7 @@ and [[https://github.com/d-SEAMS/yodaStruct][yodaStruct]] for
 * Next Steps
 
 - [[file:../howto/ase.org][Classify ASE Atoms]] :: ~from_ase~ / ~to_ase~
+- [[file:../howto/features.org][Features and ions]] :: ~IceFeaturizer~ / ~ion_environment~
 - [[file:../howto/solvis.org][View a frame in solvis]] :: optional extra
 - [[file:../explanation/yoda-surface.org][The yoda surface]] :: why helpers stay in Python
 - [[file:../reference/python.org][Python surface]] :: live names

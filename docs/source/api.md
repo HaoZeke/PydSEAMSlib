@@ -5,7 +5,8 @@ Napoleon autodoc of the Python helpers. Human lookup of
 {class}`~pydseams.frame.CageScore`,
 {class}`~pydseams.frame.DensityProfile`,
 {class}`~pydseams.frame.ContactPairs`,
-{class}`~pydseams.frame.DomainStats`, {func}`~pydseams.io.read`, and
+{class}`~pydseams.frame.DomainStats`, {func}`~pydseams.io.read`,
+{mod}`pydseams.features`, and
 ASE is the [Python surface](reference/python) page.
 
 The public constructors live on the {mod}`pydseams` package:
@@ -38,6 +39,19 @@ monolayer, and {meth}`~pydseams.frame.Frame.rdf_2d` do.
    :members:
    :exclude-members: read
    :show-inheritance:
+   :member-order: bysource
+```
+
+## Features
+
+Per-frame kinetic-model vectors and ion first-shell classes.
+{mod}`pydseams.features` is the walkthrough on the
+[features how-to](howto/features). Human lookup is the
+[Python surface](reference/python) page.
+
+```{eval-rst}
+.. automodule:: pydseams.features
+   :members:
    :member-order: bysource
 ```
 
@@ -154,7 +168,7 @@ directly for the raw engine.
 | `countAllRingsFromIndex` | Find all possible rings (including non-shortest-path) up to `maxDepth`. |
 | `ringNetwork` | Find all primitive (shortest-path) rings up to `maxDepth`. |
 | `cageAffiliation` | Order-free per-ring cage classification: `(hc, ddc)` flag vectors. |
-| `seededCageAffiliation` | Seeded (hysteresis) per-atom cage flags: strict-graph seeds, permissive-graph completion. |
+| `seededCageAffiliation` | Seeded (hysteresis) per-atom cage flags: strict-graph seeds, permissive-graph completion. `ring_adjacent` fills the last vertex of a six-ring whose other vertices carry a label. |
 | `RingUpdater` | Exact incremental primitive rings for a neighbour list. |
 | `AffiliationUpdater` | Exact incremental per-ring cage classification for one frame. |
 | `populateGraphFromIndices` | Create a graph object from an index-based neighbour list. |

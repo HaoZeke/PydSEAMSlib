@@ -7,11 +7,15 @@ Quickstart
 Install
 -------
 
+#skip_lint_start
+
 .. code:: bash
 
     pip install pydseamslib
     pip install 'pydseamslib[ase]'
     pip install 'pydseamslib[solvis]'
+
+#skip_lint_end
 
 ``pydseams`` is the package. The ``[ase]`` extra pulls ASE for ``from_ase``
 / ``to_ase``. The ``[solvis]`` extra pulls ASE plus solvis-tools for
@@ -55,7 +59,7 @@ Classify a frame
 
 ``ds.read`` picks the engine reader from the suffix and returns a
 ``Frame``. ``chill_plus`` and ``cages`` do not write files.
-Pass ``all_atoms=True`` for mixed-type site analyses such as
+Pass ``all_atoms`` on for mixed-type site analyses such as
 ``Frame.pairs`` and ``Frame.domain``.
 
 ``yoda`` is the compiled module. ``_core`` and ``cyoda`` are aliases of
@@ -64,3 +68,36 @@ Pass ``all_atoms=True`` for mixed-type site analyses such as
 ASE ``Atoms``: ``ds.from_ase(atoms)``. See the `ASE
 how-to <howto/ase.rst>`_. A worked mixed ice-water dump is the
 `classify-ice tutorial <tutorials/classify-ice.rst>`_.
+
+Seeded cages and mixed ASE selections
+-------------------------------------
+
+``Frame.seeded_affiliation`` is the hysteresis construction that
+``cages`` with the seeded flag on calls. Ring-adjacent completion fills
+the last vertex of a six-ring whose other vertices carry a label:
+
+#skip_lint_start
+
+.. code:: python
+
+    print(frame.seeded_affiliation(ring_adjacent=True))
+    print(frame.cages(seeded=True, ring_adjacent=True))
+
+#skip_lint_end
+
+``IceFeaturizer`` turns the same flag on by default.
+
+Pass a sequence to ``from_ase`` when the ASE ``Atoms`` mix water and
+salt. The listed species stay in the cloud:
+
+#skip_lint_start
+
+.. code:: python
+
+    frame = ds.from_ase(atoms, select=("O", "Na", "Cl"))
+
+#skip_lint_end
+
+The first entry is the analysed water. The other species keep their
+atomic numbers as ``c_type`` for ``ion_environment``. See the
+`features how-to <howto/features.rst>`_.

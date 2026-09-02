@@ -1,16 +1,19 @@
-===================================
+====================================
 Features for kinetic models and ions
-===================================
+====================================
 
 Problem
 -------
 
 You have a nucleation trajectory and want one feature vector per frame
 for a Markov state model or a committor fit, one integer state per
-molecule per frame, and, when the system holds ions, what each ion sees.
+molecule per frame, and the first-shell class of each ion when ions
+sit in the cloud.
 
 Per-frame features
 ------------------
+
+#skip_lint_start
 
 .. code:: python
 
@@ -19,19 +22,29 @@ Per-frame features
 
     traj = Trajectory("nucleation.lammpstrj", frame=1, atom_type=2, cutoff=3.5)
     feat = IceFeaturizer(traj, ring_adjacent=True)
-    X, S = feat.transform()          # X: (n_frames, 15), S: (n_frames, n_molecules)
+    X, S = feat.transform()
     print(feat.feature_names)
 
-``X`` holds cage counts (``n_ice``, ``n_ic``, ``n_ih``, ``n_mixed``), the
+#skip_lint_end
+
+``IceFeaturizer`` calls ``Frame.seeded_affiliation`` on each frame.
+Ring-adjacent completion is the featurizer default: it fills the last
+vertex of a six-ring whose other vertices already carry a label.
+``Frame.cages`` and ``Frame.seeded_affiliation`` leave that flag off unless
+you pass it.
+
+``X`` lists cage counts (``n_ice``, ``n_ic``, ``n_ih``, ``n_mixed``), the
 largest connected cage cluster ``n_max`` and the cluster count, the
-cubicity, the CHILL+ counts on the cutoff graph, the largest CHILL+ bulk
-cluster and the six-ring count. ``S`` holds ``STATE_WATER``,
-``STATE_IC``, ``STATE_IH`` or ``STATE_MIXED`` per molecule. Both are
-plain NumPy arrays and both are deterministic: a feature file from one
-machine equals the same file from another to the last integer.
+cubicity, the ``chill_plus`` counts on the cutoff graph, the largest
+``chill_plus`` bulk cluster, and the six-ring count. ``S`` lists
+``STATE_WATER``, ``STATE_IC``, ``STATE_IH``, or ``STATE_MIXED`` per molecule.
+Both arrays are plain NumPy and both are deterministic: a feature file
+from one machine equals the same file from another to the last integer.
 
 deeptime
 --------
+
+#skip_lint_start
 
 .. code:: python
 
@@ -40,12 +53,17 @@ deeptime
     dtrajs = discretize_nmax(X[:, 1], edges=[10, 50, 150, 400])
     msm = to_deeptime(X, lagtime=5)
 
+#skip_lint_end
+
 ``discretize_nmax`` bins the largest-cluster series into integer states
-for ``deeptime.markov.msm.MaximumLikelihoodMSM``; ``to_deeptime`` fits a
-TICA on the full vector and returns the estimator.
+for ``deeptime.markov.msm.MaximumLikelihoodMSM``. ``to_deeptime`` fits a
+time-lagged independent component analysis (TICA) on the full vector
+and returns the fitted model.
 
 PyEMMA
 ------
+
+#skip_lint_start
 
 .. code:: python
 
@@ -53,15 +71,37 @@ PyEMMA
 
     featurizer = to_pyemma_featurizer(feat, topology="nucleation.pdb")
 
-The per-frame vector is registered as a custom feature. PyEMMA has been
-in maintenance mode since 2022; deeptime is its successor.
+#skip_lint_end
+
+The per-frame vector registers as a custom feature. PyEMMA is
+unmaintained; deeptime succeeds it.
 
 Ions
 ----
 
-Ions are not part of the hydrogen-bond network. The cage assignment runs
-on the water and the ions are read against it: build the frame with
+Ions sit outside the hydrogen-bond network. The cage assignment runs
+on the water and the ions are read against it. Build the frame with
 every species in the cloud and name the ion types.
+
+Pass a sequence to ``Frame.from_ase`` when the ASE ``Atoms`` mix water and
+salt. The listed species stay in the cloud. The first entry is the
+analysed water:
+
+#skip_lint_start
+
+.. code:: python
+
+    import pydseams as ds
+
+    frame = ds.from_ase(atoms, select=("O", "Na", "Cl"), bonded="cutoff")
+
+#skip_lint_end
+
+``select=("O", "Na", "Cl")`` keeps oxygen, sodium, and chlorine. The
+analysed species is oxygen (atomic number 8). Sodium and chlorine keep
+their atomic numbers as ``c_type``. ``ion_environment`` reads those codes.
+
+#skip_lint_start
 
 .. code:: python
 
@@ -69,14 +109,32 @@ every species in the cloud and name the ion types.
     from pydseams.features import ION_ICE, IceFeaturizer, ion_environment
 
     traj = Trajectory("brine.lammpstrj", frame=1, atom_type=1, all_atoms=True)
-    feat = IceFeaturizer(traj, ion_types=(3, 4))     # Na, Cl
+    feat = IceFeaturizer(traj, ion_types=(3, 4))
     x, states = feat.frame_features()
     ions, shell, fraction, ion_states = ion_environment(traj, states, (3, 4))
     trapped = ions[ion_states == ION_ICE]
 
-``ion_environment`` returns, per ion, the water count in its first
-shell (within ``cutoff``), the fraction of that shell carrying an ice
-label, and a class: ``ION_ICE`` when the whole shell is ice,
-``ION_LIQUID`` when none of it is, ``ION_FRONT`` otherwise. With
-``ion_types`` set the feature vector gains ``n_ion_ice``,
-``n_ion_front``, ``n_ion_liquid`` and the mean shell ice fraction.
+#skip_lint_end
+
+Those atomic-number codes classify each ion from its first water
+shell. The return is the water count within ``cutoff``, the ice fraction
+of that shell, and a class. ``ION_ICE`` means every neighbour in the
+shell is ice. ``ION_LIQUID`` means none of it is. ``ION_FRONT`` is the
+rest. ``ion_types`` adds ``n_ion_ice``, ``n_ion_front``, ``n_ion_liquid`` and
+the mean shell ice fraction to the feature vector.
+
+The same first-shell class is available on ``Frame`` as a compiled
+path. That method passes ``ring_adjacent`` through to
+``seeded_affiliation``.
+
+See also
+--------
+
+`Classify ice <../tutorials/classify-ice.rst>`_
+    ``cages`` / ``seeded_affiliation``
+
+`Classify ASE Atoms <ase.rst>`_
+    ``from_ase`` sequence ``select``
+
+`Python surface <../reference/python.rst>`_
+    live names
