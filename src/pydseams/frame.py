@@ -1035,7 +1035,9 @@ class Frame:
             closed are gone; the shell census measures how far the network
             survives around it.
         """
-        env = self.ion_environment(ion_types, k=k, ring_adjacent=ring_adjacent, cutoff=cutoff)
+        env = self.ion_environment(
+            ion_types, k=k, ring_adjacent=ring_adjacent, cutoff=cutoff
+        )
         rings = self.rings
         return env, [
             list(yoda.shellRingCensus(rings, list(shell), 6)) for shell in env.members
