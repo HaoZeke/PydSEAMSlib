@@ -209,6 +209,59 @@ def test_topology_library_names_a_permuted_lattice_and_not_a_vacancy():
     assert miss.counts[""] > 0
 
 
+def test_library_fallback_names_by_the_deepest_library_that_knows_an_atom():
+    from pydseams import yoda
+    from pydseams.frame import Frame
+
+    if not hasattr(yoda, "matchLibraries"):
+        pytest.skip("engine without hierarchical libraries")
+    pos, cell = _cubic_diamond(4)
+    ref = Frame.from_arrays(pos, cell, cutoff=3.5)
+    deep = ref.topology_library("Ic", hops=3)
+    shallow = ref.topology_library("Ic", hops=2)
+    assert deep.coloured is False
+    vacancy = Frame.from_arrays(np.delete(pos, 0, axis=0), cell, cutoff=3.5)
+    only3 = vacancy.classify_topology(deep, hops=3)
+    only2 = vacancy.classify_topology(shallow, hops=2)
+    assert only3.matched < only2.matched < len(pos) - 1
+    both = vacancy.classify_topology([shallow, yoda.writeLibrary(deep)])
+    assert both.matched == only2.matched
+    depth = np.asarray(both.depth)
+    assert (depth == 3).sum() == only3.matched
+    assert (depth == 2).sum() == only2.matched - only3.matched
+    assert (depth == 0).sum() == len(pos) - 1 - only2.matched
+    labels = np.asarray(both.labels)
+    assert set(labels[depth > 0]) == {"Ic"}
+    assert set(labels[depth == 0]) == {""}
+    with pytest.raises(ValueError):
+        vacancy.classify_topology([deep, deep])
+
+
+def test_guest_occupancy_places_guests_by_periodic_cage_centroids():
+    from pydseams import yoda
+    from pydseams.frame import Frame
+
+    if not hasattr(yoda, "guestOccupancy"):
+        pytest.skip("engine without guest occupancy")
+    L = 20.0
+    cube = np.array(
+        [[4.0 * (i & 1), 4.0 * ((i >> 1) & 1), 4.0 * ((i >> 2) & 1)] for i in range(8)]
+    )
+    wrapped = (cube + np.array([L - 2.0, 0.0, 0.0])) % L
+    guests = np.array([[2.0, 2.0, 2.0], [19.5, 2.0, 2.2], [10.0, 10.0, 10.0]])
+    pos = np.vstack([cube, wrapped, guests])
+    numbers = [1] * 16 + [2] * 3
+    frame = Frame.from_arrays(pos, [L, L, L], numbers=numbers, cutoff=4.5)
+    assert frame.atom_type == 1
+    centre = yoda.periodicCentroid(frame.cloud, list(range(8, 16)))
+    assert abs(centre[0] % L) < 1e-9 or abs(centre[0] % L - L) < 1e-9
+    occ = frame.guest_occupancy([range(8), range(8, 16)], guest_types=[2], radius=3.0)
+    assert list(occ.cageOfGuest) == [0, 1, -1]
+    assert list(occ.guestsPerCage) == [1, 1]
+    assert (occ.occupied, occ.multiply, occ.free) == (2, 0, 1)
+    assert occ.centreDistance[2] == -1.0
+
+
 def test_frame_ion_environment_matches_the_feature_path():
     from pydseams import yoda
     from pydseams.frame import Frame

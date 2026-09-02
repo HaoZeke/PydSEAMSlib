@@ -1006,22 +1006,69 @@ class Frame:
         return lib
 
     def classify_topology(self, library, hops=2, max_ring_size=7, colour_types=False):
-        """Name every analysed atom by a key library.
+        """Name every analysed atom by one key library, or by several at
+        different hop counts.
 
         Parameters
         ----------
-        library : pydseams.yoda.KeyLibrary or str
-            A library, or its text form from ``yoda.writeLibrary``.
+        library : pydseams.yoda.KeyLibrary, str, or a sequence of them
+            A library or its text form from ``yoda.writeLibrary``. A
+            sequence of libraries built at different ``hops`` names each
+            atom by the deepest library that holds its key, so a molecule
+            whose wide neighbourhood is disturbed still gets a name from
+            its inner shells; ``hops`` is then ignored.
+        hops, max_ring_size, colour_types
+            As in :meth:`fingerprint`; ``colour_types`` must match the
+            colouring the libraries were built with.
 
         Returns
         -------
         pydseams.yoda.LibraryMatch
             ``labels`` per atom (``""`` when no reference matches),
-            ``counts`` per label and ``matched``.
+            ``counts`` per label, ``depth`` per atom (the hops of the
+            library that named it, ``0`` when none) and ``matched``.
         """
-        lib = yoda.readLibrary(library) if isinstance(library, str) else library
-        return yoda.matchLibrary(
-            self.fingerprint(hops, max_ring_size, colour_types), lib
+
+        def as_lib(obj):
+            return yoda.readLibrary(obj) if isinstance(obj, str) else obj
+
+        if isinstance(library, (str, yoda.KeyLibrary)):
+            return yoda.matchLibrary(
+                self.fingerprint(hops, max_ring_size, colour_types), as_lib(library)
+            )
+        libs = [as_lib(item) for item in library]
+        rows = self.bonds_by_index
+        colours = (
+            [int(p.c_type) for p in self.cloud.pts][: len(rows)] if colour_types else []
+        )
+        return yoda.matchLibraries(rows, libs, int(max_ring_size), colours)
+
+    def guest_occupancy(self, cages, guest_types, radius=4.0):
+        """Place guests (methane, THF, ions) in enumerated cages.
+
+        Parameters
+        ----------
+        cages : sequence of sequences of int
+            Vertex indices into ``self.cloud.pts`` for each cage.
+        guest_types : iterable of int
+            ``c_type`` codes of the guests (LAMMPS types, or atomic
+            numbers for frames built through ASE).
+        radius : float, optional
+            A guest belongs to the nearest cage centroid within this
+            distance in Angstrom. Default ``4.0``, about the radius of a
+            5^12 cage.
+
+        Returns
+        -------
+        pydseams.yoda.GuestOccupancy
+            ``guestsPerCage``, ``cageOfGuest`` (``-1`` when free),
+            ``centreDistance`` and the counts ``occupied``, ``multiply``
+            and ``free``.
+        """
+        wanted = set(int(t) for t in guest_types)
+        guests = [i for i, p in enumerate(self.cloud.pts) if p.c_type in wanted]
+        return yoda.guestOccupancy(
+            self.cloud, [list(map(int, c)) for c in cages], guests, float(radius)
         )
 
     def find_prisms(self, output_dir="output/", max_depth=6, shape_matching=False):

@@ -1201,16 +1201,19 @@ NB_MODULE(yoda, m) {
         .def_ro("atomKeys", &topo::FrameFingerprint::atomKeys)
         .def_ro("classes", &topo::FrameFingerprint::classes)
         .def_ro("ringCensus", &topo::FrameFingerprint::ringCensus)
-        .def_ro("hops", &topo::FrameFingerprint::hops);
+        .def_ro("hops", &topo::FrameFingerprint::hops)
+        .def_ro("coloured", &topo::FrameFingerprint::coloured);
     nb::class_<topo::KeyLibrary>(
         m, "KeyLibrary", "Local keys of reference structures with their labels.")
         .def(nb::init<>())
         .def_ro("method", &topo::KeyLibrary::method)
         .def_ro("hops", &topo::KeyLibrary::hops)
+        .def_ro("coloured", &topo::KeyLibrary::coloured)
         .def_ro("labelOf", &topo::KeyLibrary::labelOf);
     nb::class_<topo::LibraryMatch>(m, "LibraryMatch", "Atoms named by a key library.")
         .def_ro("labels", &topo::LibraryMatch::labels)
         .def_ro("counts", &topo::LibraryMatch::counts)
+        .def_ro("depth", &topo::LibraryMatch::depth)
         .def_ro("matched", &topo::LibraryMatch::matched);
     m.def("addToLibrary",
           &topo::addToLibrary,
@@ -1222,9 +1225,40 @@ NB_MODULE(yoda, m) {
     m.def("readLibrary", &topo::readLibrary, "Key library from its text form.", nb::arg("text"));
     m.def("matchLibrary",
           &topo::matchLibrary,
-          "Name every atom of a fingerprint by a key library (same method and hops).",
+          "Name every atom of a fingerprint by a key library (same method, hops and "
+          "colouring).",
           nb::arg("fingerprint"),
           nb::arg("library"));
+    m.def("matchLibraries",
+          &topo::matchLibraries,
+          "Name every atom by key libraries at several hop counts: the deepest library "
+          "that holds an atom's key names it, and depth records which one did.",
+          nb::arg("rows"),
+          nb::arg("libraries"),
+          nb::arg("maxRingSize") = 7,
+          nb::arg("colours") = std::vector<int>{});
+    nb::class_<site::GuestOccupancy>(
+        m, "GuestOccupancy", "Guests placed in enumerated cages by their periodic centroids.")
+        .def_ro("guestsPerCage", &site::GuestOccupancy::guestsPerCage)
+        .def_ro("cageOfGuest", &site::GuestOccupancy::cageOfGuest)
+        .def_ro("centreDistance", &site::GuestOccupancy::centreDistance)
+        .def_ro("occupied", &site::GuestOccupancy::occupied)
+        .def_ro("multiply", &site::GuestOccupancy::multiply)
+        .def_ro("free", &site::GuestOccupancy::free);
+    m.def("guestOccupancy",
+          &site::guestOccupancy,
+          "Assign each guest to the nearest cage centroid within radius; cages are "
+          "vertex index lists into the cloud.",
+          nb::arg("yCloud"),
+          nb::arg("cages"),
+          nb::arg("guestIndices"),
+          nb::arg("radius"));
+    m.def("periodicCentroid",
+          &site::periodicCentroid,
+          "Centroid of a set of atoms with every atom unwrapped to its minimum image "
+          "about the first.",
+          nb::arg("yCloud"),
+          nb::arg("atoms"));
     m.def("localTopologyKey",
           &topo::localKey,
           "Isomorphism-class key of the rooted neighbourhood of an atom within hops bonds "

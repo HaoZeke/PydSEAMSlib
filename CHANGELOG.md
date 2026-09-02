@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- `Frame.classify_topology` takes a sequence of libraries built at
+  different hop counts and names each atom by the deepest that knows it;
+  `LibraryMatch.depth` records which one did (`yoda.matchLibraries`).
+- `Frame.guest_occupancy`, `yoda.guestOccupancy`, `yoda.periodicCentroid`:
+  guests (methane, THF, ions) placed in enumerated cages.
+- `KeyLibrary.coloured` and `FrameFingerprint.coloured` expose the
+  colouring a library was built with.
+
 ## 2.8.1 (2026-09-02)
 
 - Engine wrap pinned at seams-core v2.8.0; the 2.8.0 tag carried an empty revision.
