@@ -185,3 +185,25 @@ def test_fingerprint_colours_by_type_split_a_binary_lattice():
     assert len(coloured.classes) == 2
     assert sorted(coloured.classes.values()) == [len(pos) // 2, len(pos) // 2]
     assert coloured.key != plain.key
+
+
+def test_topology_library_names_a_permuted_lattice_and_not_a_vacancy():
+    from pydseams import yoda
+    from pydseams.frame import Frame
+
+    if not hasattr(yoda, "matchLibrary"):
+        pytest.skip("engine without key libraries")
+    pos, cell = _cubic_diamond(3)
+    ref = Frame.from_arrays(pos, cell, cutoff=3.5)
+    lib = ref.topology_library("Ic")
+    text = yoda.writeLibrary(lib)
+    assert text.startswith("# method ")
+    rng = np.random.default_rng(9)
+    shuffled = Frame.from_arrays(pos[rng.permutation(len(pos))], cell, cutoff=3.5)
+    hit = shuffled.classify_topology(text)
+    assert hit.matched == len(pos)
+    assert hit.counts == {"Ic": len(pos)}
+    vacancy = Frame.from_arrays(np.delete(pos, 0, axis=0), cell, cutoff=3.5)
+    miss = vacancy.classify_topology(lib)
+    assert miss.matched < len(pos) - 1
+    assert miss.counts[""] > 0

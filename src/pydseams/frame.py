@@ -951,6 +951,39 @@ class Frame:
         )
         return yoda.topologyFingerprint(rows, int(hops), int(max_ring_size), colours)
 
+    def topology_library(
+        self, label, hops=2, max_ring_size=7, colour_types=False, library=None
+    ):
+        """Add this frame's local keys to a key library under ``label``.
+
+        Returns the :class:`pydseams.yoda.KeyLibrary` (a new one unless
+        ``library`` is given). ``yoda.writeLibrary`` turns it into text.
+        """
+        lib = library if library is not None else yoda.KeyLibrary()
+        yoda.addToLibrary(
+            lib, self.fingerprint(hops, max_ring_size, colour_types), str(label)
+        )
+        return lib
+
+    def classify_topology(self, library, hops=2, max_ring_size=7, colour_types=False):
+        """Name every analysed atom by a key library.
+
+        Parameters
+        ----------
+        library : pydseams.yoda.KeyLibrary or str
+            A library, or its text form from ``yoda.writeLibrary``.
+
+        Returns
+        -------
+        pydseams.yoda.LibraryMatch
+            ``labels`` per atom (``""`` when no reference matches),
+            ``counts`` per label and ``matched``.
+        """
+        lib = yoda.readLibrary(library) if isinstance(library, str) else library
+        return yoda.matchLibrary(
+            self.fingerprint(hops, max_ring_size, colour_types), lib
+        )
+
     def find_prisms(self, output_dir="output/", max_depth=6, shape_matching=False):
         """Identify prism blocks and write engine output under ``output_dir``.
 

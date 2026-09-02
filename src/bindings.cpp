@@ -1202,6 +1202,29 @@ NB_MODULE(yoda, m) {
         .def_ro("classes", &topo::FrameFingerprint::classes)
         .def_ro("ringCensus", &topo::FrameFingerprint::ringCensus)
         .def_ro("hops", &topo::FrameFingerprint::hops);
+    nb::class_<topo::KeyLibrary>(
+        m, "KeyLibrary", "Local keys of reference structures with their labels.")
+        .def(nb::init<>())
+        .def_ro("method", &topo::KeyLibrary::method)
+        .def_ro("hops", &topo::KeyLibrary::hops)
+        .def_ro("labelOf", &topo::KeyLibrary::labelOf);
+    nb::class_<topo::LibraryMatch>(m, "LibraryMatch", "Atoms named by a key library.")
+        .def_ro("labels", &topo::LibraryMatch::labels)
+        .def_ro("counts", &topo::LibraryMatch::counts)
+        .def_ro("matched", &topo::LibraryMatch::matched);
+    m.def("addToLibrary",
+          &topo::addToLibrary,
+          "Add every distinct key of a fingerprint under a label.",
+          nb::arg("library"),
+          nb::arg("fingerprint"),
+          nb::arg("label"));
+    m.def("writeLibrary", &topo::writeLibrary, "Text form of a key library.", nb::arg("library"));
+    m.def("readLibrary", &topo::readLibrary, "Key library from its text form.", nb::arg("text"));
+    m.def("matchLibrary",
+          &topo::matchLibrary,
+          "Name every atom of a fingerprint by a key library (same method and hops).",
+          nb::arg("fingerprint"),
+          nb::arg("library"));
     m.def("localTopologyKey",
           &topo::localKey,
           "Isomorphism-class key of the rooted neighbourhood of an atom within hops bonds "
