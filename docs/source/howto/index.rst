@@ -20,6 +20,8 @@ Available how-tos
     +------------------------------------------+-------------------------------------------+
     | `View a frame in solvis <solvis.rst>`_   | ``to_solvis`` extra                       |
     +------------------------------------------+-------------------------------------------+
+    | `Features and ions <features.rst>`_      | ``IceFeaturizer``, deeptime, PyEMMA, ions |
+    +------------------------------------------+-------------------------------------------+
     | `FAQ <faq.rst>`_                         | Names, extras, formats                    |
     +------------------------------------------+-------------------------------------------+
     | `Troubleshooting <troubleshooting.rst>`_ | Import errors, cells, hydrogens           |
@@ -31,6 +33,7 @@ Available how-tos
    install
    ase
    solvis
+   features
    faq
    troubleshooting
 

@@ -596,9 +596,12 @@ class Frame:
         atoms : ase.Atoms
             Configuration with a nonsingular cell periodic in all three
             directions.
-        select : str or int, optional
+        select : str, int or sequence, optional
             Chemical symbol or atomic number of the species to analyse.
-            Default ``"O"``. ``None`` keeps every atom.
+            Default ``"O"``. ``None`` keeps every atom. A sequence
+            such as ``("O", "Na", "Cl")`` keeps the listed species and
+            analyses the first, so ions ride along for
+            :func:`pydseams.features.ion_environment`.
         cutoff : float, optional
             Neighbour cutoff in Angstroms. Default ``3.5``.
         bonded : {"auto", "hbond", "cutoff"}, optional
@@ -882,7 +885,7 @@ class Frame:
             "reclassified": self._affiliation_updater.lastReclassified(),
         }
 
-    def seeded_affiliation(self, k=4, candidate_cutoff=None):
+    def seeded_affiliation(self, k=4, candidate_cutoff=None, ring_adjacent=False):
         """Seeded (hysteresis) per-atom cage flags.
 
         Strict-graph seeds from a mutual k-nearest list, permissive
@@ -896,6 +899,11 @@ class Frame:
         candidate_cutoff : float or None, optional
             Candidate-list cutoff. ``None`` uses :attr:`cutoff`
             ``+ 1.5``.
+        ring_adjacent : bool, optional
+            Extend the accepted labels over union-graph six-rings that
+            share an edge with an accepted ring, repeated to a fixed
+            point. A frame with no accepted ring stays empty. Default
+            ``False``.
 
         Returns
         -------
@@ -912,7 +920,7 @@ class Frame:
         )
         six_s = [r for r in yoda.ringNetwork(strict, 6) if len(r) == 6]
         six_u = [r for r in yoda.ringNetwork(union, 6) if len(r) == 6]
-        hc, ddc = yoda.seededCageAffiliation(six_s, strict, six_u, union)
+        hc, ddc = yoda.seededCageAffiliation(six_s, strict, six_u, union, ring_adjacent)
         return CageScore(hc, ddc)
 
     def find_prisms(self, output_dir="output/", max_depth=6, shape_matching=False):

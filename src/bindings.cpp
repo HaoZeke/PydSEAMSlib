@@ -415,17 +415,24 @@ NB_MODULE(yoda, m) {
         [](const std::vector<std::vector<int>> &strictRings,
            const std::vector<std::vector<int>> &strictNList,
            const std::vector<std::vector<int>> &permissiveRings,
-           const std::vector<std::vector<int>> &permissiveNList) {
-            const auto a = ring::seededCageAffiliation(
-                strictRings, strictNList, permissiveRings, permissiveNList);
+           const std::vector<std::vector<int>> &permissiveNList,
+           bool ringAdjacentCompletion) {
+            const auto a = ring::seededCageAffiliation(strictRings,
+                                                       strictNList,
+                                                       permissiveRings,
+                                                       permissiveNList,
+                                                       ringAdjacentCompletion);
             return std::make_pair(a.hc, a.ddc);
         },
         "Seeded (hysteresis) per-atom cage flags: strict-graph seeds, "
-        "permissive-graph completion, component-gated acceptance.",
+        "permissive-graph completion, component-gated acceptance. With "
+        "ringAdjacentCompletion the accepted labels extend over permissive "
+        "six-rings that share an edge with an accepted ring.",
         nb::arg("strictRings"),
         nb::arg("strictNList"),
         nb::arg("permissiveRings"),
-        nb::arg("permissiveNList"));
+        nb::arg("permissiveNList"),
+        nb::arg("ringAdjacentCompletion") = false);
     m.def("populateGraphFromIndices",
           &primitive::populateGraphFromIndices,
           "Create a graph object from an index-based neighbour list.",
