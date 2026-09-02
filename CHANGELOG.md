@@ -13,6 +13,8 @@
   guests (methane, THF, ions) placed in enumerated cages.
 - `KeyLibrary.coloured` and `FrameFingerprint.coloured` expose the
   colouring a library was built with.
+- `IonEnvironment.members` lists each ion's shell; `Frame.hydration_shell_rings`
+  and `yoda.shellRingCensus` count the rings through it by size.
 
 ## 2.8.1 (2026-09-02)
 

@@ -237,6 +237,30 @@ def test_library_fallback_names_by_the_deepest_library_that_knows_an_atom():
         vacancy.classify_topology([deep, deep])
 
 
+def test_hydration_shell_rings_count_the_six_rings_around_an_ion():
+    from pydseams import yoda
+    from pydseams.frame import Frame
+
+    if not hasattr(yoda, "shellRingCensus"):
+        pytest.skip("engine without the shell ring census")
+    pos, cell = _cubic_diamond(4)
+    numbers = [1] * len(pos)
+    numbers[0] = 3
+    frame = Frame.from_arrays(pos, cell, numbers=numbers, cutoff=3.5)
+    env, census = frame.hydration_shell_rings((3,))
+    assert list(env.ion) == [0]
+    assert len(env.members) == 1 and len(env.members[0]) == 4
+    assert len(census) == 1 and len(census[0]) == 7
+    # a diamond lattice site belongs to twelve six-rings; the ion's own are
+    # gone and each shell molecule keeps the rest, so six-rings remain and no
+    # smaller ring appears
+    assert census[0][6] > 0
+    assert sum(census[0][:6]) == 0
+    whole = yoda.shellRingCensus(frame.rings, list(range(len(pos))), 6)
+    assert whole[6] == len(frame.rings)
+    assert census[0][6] < whole[6]
+
+
 def test_guest_occupancy_places_guests_by_periodic_cage_centroids():
     from pydseams import yoda
     from pydseams.frame import Frame

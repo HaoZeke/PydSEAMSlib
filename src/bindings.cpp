@@ -1198,6 +1198,7 @@ NB_MODULE(yoda, m) {
         .def_ro("shell", &site::IonEnvironment::shell)
         .def_ro("iceFraction", &site::IonEnvironment::iceFraction)
         .def_ro("state", &site::IonEnvironment::state)
+        .def_ro("members", &site::IonEnvironment::members)
         .def_ro("nIce", &site::IonEnvironment::nIce)
         .def_ro("nFront", &site::IonEnvironment::nFront)
         .def_ro("nLiquid", &site::IonEnvironment::nLiquid);
@@ -1210,6 +1211,14 @@ NB_MODULE(yoda, m) {
           nb::arg("ionIndices"),
           nb::arg("waterType") = 1,
           nb::arg("cutoff") = 3.5);
+    m.def("shellRingCensus",
+          &site::shellRingCensus,
+          "Census by size of the rings with at least one vertex in shell, up to "
+          "maxRingSize: the rings of the water network that pass through an ion's "
+          "first shell.",
+          nb::arg("rings"),
+          nb::arg("shell"),
+          nb::arg("maxRingSize") = 7);
     nb::class_<topo::LocalKey>(m, "LocalKey", "Key of one atom's rooted bonded neighbourhood.")
         .def_ro("key", &topo::LocalKey::key)
         .def_ro("method", &topo::LocalKey::method)

@@ -1014,6 +1014,33 @@ class Frame:
             float(self.cutoff if cutoff is None else cutoff),
         )
 
+    def hydration_shell_rings(self, ion_types, k=4, ring_adjacent=True, cutoff=None):
+        """Rings of the water network through each ion's first shell.
+
+        Parameters
+        ----------
+        ion_types : iterable of int
+            ``c_type`` codes of the ions, as in :meth:`ion_environment`.
+        k, ring_adjacent, cutoff
+            As in :meth:`ion_environment`.
+
+        Returns
+        -------
+        tuple
+            ``(env, census)``: the :class:`pydseams.yoda.IonEnvironment`
+            and a list with one row per ion, ``census[i][s]`` counting the
+            primitive rings of size ``s`` (up to six, the rings
+            :attr:`rings` keeps) with a vertex in ion ``i``'s shell. An ion
+            is not a vertex of the network, so the rings it would have
+            closed are gone; the shell census measures how far the network
+            survives around it.
+        """
+        env = self.ion_environment(ion_types, k=k, ring_adjacent=ring_adjacent, cutoff=cutoff)
+        rings = self.rings
+        return env, [
+            list(yoda.shellRingCensus(rings, list(shell), 6)) for shell in env.members
+        ]
+
     def topology_library(
         self, label, hops=2, max_ring_size=7, colour_types=False, library=None
     ):
