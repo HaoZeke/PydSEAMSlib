@@ -1205,17 +1205,21 @@ NB_MODULE(yoda, m) {
     m.def("localTopologyKey",
           &topo::localKey,
           "Isomorphism-class key of the rooted neighbourhood of an atom within hops bonds "
-          "(nauty certificate when linked, Weisfeiler-Lehman hash otherwise).",
+          "(nauty certificate when linked, Weisfeiler-Lehman hash otherwise). colours is "
+          "empty or one integer class per row; vertices of different colours never match.",
           nb::arg("rows"),
           nb::arg("atom"),
-          nb::arg("hops") = 2);
+          nb::arg("hops") = 2,
+          nb::arg("colours") = std::vector<int>{});
     m.def("topologyFingerprint",
           &topo::fingerprint,
           "Per-atom topology keys, their histogram, the primitive ring census and a "
-          "label-independent frame key over neighbour rows by index.",
+          "label-independent frame key over neighbour rows by index; colours as in "
+          "localTopologyKey.",
           nb::arg("rows"),
           nb::arg("hops") = 2,
-          nb::arg("maxRingSize") = 7);
+          nb::arg("maxRingSize") = 7,
+          nb::arg("colours") = std::vector<int>{});
     m.def(
         "parseSiteSpec",
         [](const std::string &spec) { return site::parseSiteSpec(spec); },
