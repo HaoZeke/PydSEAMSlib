@@ -22,6 +22,8 @@ Available how-tos
     +------------------------------------------+-------------------------------------------+
     | `Features and ions <features.rst>`_      | ``IceFeaturizer``, deeptime, PyEMMA, ions |
     +------------------------------------------+-------------------------------------------+
+    | `Tools: MDAnalysis, OVITO <tools.rst>`_  | ``IceStates``, ``ice_states``, Colab      |
+    +------------------------------------------+-------------------------------------------+
     | `FAQ <faq.rst>`_                         | Names, extras, formats                    |
     +------------------------------------------+-------------------------------------------+
     | `Troubleshooting <troubleshooting.rst>`_ | Import errors, cells, hydrogens           |
@@ -34,6 +36,7 @@ Available how-tos
    ase
    solvis
    features
+   tools
    faq
    troubleshooting
 

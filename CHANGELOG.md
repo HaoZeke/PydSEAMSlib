@@ -13,6 +13,9 @@
   guests (methane, THF, ions) placed in enumerated cages.
 - `KeyLibrary.coloured` and `FrameFingerprint.coloured` expose the
   colouring a library was built with.
+- `pydseams.adapters.IceStates` (MDAnalysis analysis) and
+  `pydseams.adapters.ice_states` (OVITO modifier function); a Colab
+  notebook under `notebooks/`; PyPI keywords and classifiers.
 - `IonEnvironment.members` lists each ion's shell; `Frame.hydration_shell_rings`
   and `yoda.shellRingCensus` count the rings through it by size.
 

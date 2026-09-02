@@ -1,5 +1,7 @@
 # PydSEAMSlib
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/d-SEAMS/PydSEAMSlib/blob/main/notebooks/classify_ice.ipynb)
+
 <p align="center">
   <img src="docs/source/_static/logo/pydseams-icon.png" alt="pydseams" width="96">
 </p>

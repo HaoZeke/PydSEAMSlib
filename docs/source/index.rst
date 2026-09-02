@@ -140,6 +140,7 @@ framework.
    howto/ase
    howto/solvis
    howto/features
+   howto/tools
    howto/faq
    howto/troubleshooting
 
