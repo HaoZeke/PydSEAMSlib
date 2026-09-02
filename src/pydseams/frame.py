@@ -906,10 +906,9 @@ class Frame:
             Candidate-list cutoff. ``None`` uses :attr:`cutoff`
             ``+ 1.5``.
         ring_adjacent : bool, optional
-            Extend the accepted labels over union-graph six-rings that
-            share an edge with an accepted ring, repeated to a fixed
-            point. A frame with no accepted ring stays empty. Default
-            ``False``.
+            Fill the last vertex of any union-graph six-ring whose other
+            vertices carry a label, repeated to a fixed point. A frame
+            with no accepted ring stays empty. Default ``False``.
 
         Returns
         -------

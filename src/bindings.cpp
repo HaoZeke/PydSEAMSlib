@@ -428,8 +428,8 @@ NB_MODULE(yoda, m) {
         },
         "Seeded (hysteresis) per-atom cage flags: strict-graph seeds, "
         "permissive-graph completion, component-gated acceptance. With "
-        "ringAdjacentCompletion the accepted labels extend over permissive "
-        "six-rings that share an edge with an accepted ring.",
+        "ringAdjacentCompletion a permissive six-ring whose vertices all carry a label "
+        "but one fills that last vertex, repeated to a fixed point.",
         nb::arg("strictRings"),
         nb::arg("strictNList"),
         nb::arg("permissiveRings"),
