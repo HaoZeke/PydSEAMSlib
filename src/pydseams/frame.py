@@ -964,7 +964,11 @@ class Frame:
         ion_types : iterable of int
             ``c_type`` codes of the ions (LAMMPS types, or atomic numbers
             for frames built through ASE).
-        k, ring_adjacent : passed to :meth:`seeded_affiliation`.
+        k : int, optional
+            Neighbours kept in the seeded k-nearest graphs. Default
+            ``4``.
+        ring_adjacent : bool, optional
+            Passed to :meth:`seeded_affiliation`. Default ``True``.
         cutoff : float, optional
             First-shell radius in Angstrom. Default ``self.cutoff``.
 

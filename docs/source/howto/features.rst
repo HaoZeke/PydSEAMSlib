@@ -130,8 +130,8 @@ it is. ``ION_FRONT`` is the rest. ``ion_types`` adds ``n_ion_ice``,
 feature vector.
 
 ``Frame.ion_environment`` is the compiled path for the same first-shell
-class. It passes ``ring_adjacent`` through to ``seeded_affiliation``
-(on by default).
+class. That method turns ``ring_adjacent`` on by default and passes the
+flag through to ``seeded_affiliation``.
 
 See also
 --------

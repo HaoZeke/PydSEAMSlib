@@ -115,7 +115,8 @@ Classification
 (``seeded_affiliation``). Cutoff-graph affiliation on this frame's
 six-rings is the other path. ``ring_adjacent`` on ``cages`` or
 ``seeded_affiliation`` fills the last vertex of a six-ring whose other
-vertices carry a label. ``IceFeaturizer`` turns that flag on by default.
+vertices carry a label. ``IceFeaturizer`` and ``Frame.ion_environment``
+turn that flag on by default.
 
 Export and descriptors
 ~~~~~~~~~~~~~~~~~~~~~~
