@@ -110,6 +110,12 @@ Classification
     +-------------------------+------------------------------------------------------------------+
     | ``ion_environment``     | first-shell ice class of every ion                               |
     +-------------------------+------------------------------------------------------------------+
+    | ``hydration_shell_rings``| rings of the water network through each ion's shell, by size    |
+    +-------------------------+------------------------------------------------------------------+
+    | ``guest_occupancy``     | guests placed in enumerated cages by periodic centroids          |
+    +-------------------------+------------------------------------------------------------------+
+    | ``classify_topology``   | atoms named by one key library, or by several at different hops  |
+    +-------------------------+------------------------------------------------------------------+
 
 ``cages`` with the seeded flag on is the hysteresis construction
 (``seeded_affiliation``). Cutoff-graph affiliation on this frame's
