@@ -822,7 +822,7 @@ class Frame:
         """Alias of :meth:`chill`."""
         return self.chill()
 
-    def cages(self, seeded=True, k=4, candidate_cutoff=None):
+    def cages(self, seeded=True, k=4, candidate_cutoff=None, ring_adjacent=False):
         """Ice score: HC = Ih, DDC = Ic, neither = water.
 
         Parameters
@@ -836,6 +836,10 @@ class Frame:
         k : int, optional
             Neighbours kept in the seeded k-nearest graphs. Default
             ``4``.
+        ring_adjacent : bool, optional
+            Ring completion of the seeded assignment (fill the last vertex
+            of a six-ring whose other vertices carry a label). Default
+            ``False``.
         candidate_cutoff : float or None, optional
             Candidate-list cutoff for the k-nearest graphs. ``None``
             uses :attr:`cutoff` ``+ 1.5``.
@@ -847,7 +851,9 @@ class Frame:
             :meth:`to_ase`.
         """
         if seeded:
-            score = self.seeded_affiliation(k=k, candidate_cutoff=candidate_cutoff)
+            score = self.seeded_affiliation(
+                k=k, candidate_cutoff=candidate_cutoff, ring_adjacent=ring_adjacent
+            )
         else:
             aff = self.cage_affiliation()
             n = self.n_atoms
