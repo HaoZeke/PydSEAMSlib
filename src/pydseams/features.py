@@ -42,6 +42,84 @@ FEATURE_NAMES = (
     "six_rings",
 )
 
+ION_LIQUID, ION_FRONT, ION_ICE = 0, 1, 2
+ION_STATE_NAMES = ("liquid", "front", "ice")
+ION_FEATURE_NAMES = (
+    "n_ion_ice",
+    "n_ion_front",
+    "n_ion_liquid",
+    "ion_shell_ice",
+)
+
+
+def ion_environment(frame, states, ion_types, cutoff=None):
+    """Ice content of the first water shell of every ion.
+
+    Ions are not part of the hydrogen-bond network; the cage assignment
+    runs on the water alone and the ions are read against it. A frame
+    built with ``all_atoms=True`` or :meth:`Frame.from_arrays` carries
+    every species in its cloud; ``frame.atom_type`` names the water.
+
+    Parameters
+    ----------
+    frame : Frame
+        Frame whose cloud holds water and ions.
+    states : array of int8
+        Per-atom states from :meth:`IceFeaturizer.frame_features`;
+        non-water entries are ignored.
+    ion_types : iterable of int
+        ``c_type`` codes of the ions.
+    cutoff : float, optional
+        First-shell radius in Angstrom. Default ``frame.cutoff``.
+
+    Returns
+    -------
+    (indices, shell, fraction, ion_states)
+        Cloud indices of the ions, the water count in each first shell,
+        the fraction of that shell carrying an ice label, and one of
+        ``ION_ICE`` (whole shell ice), ``ION_LIQUID`` (no ice) or
+        ``ION_FRONT`` per ion. An ion with an empty shell is liquid.
+    """
+    cut = float(frame.cutoff if cutoff is None else cutoff)
+    pts = frame.cloud.pts
+    pos = np.array([[p.x, p.y, p.z] for p in pts], dtype=float)
+    types = np.array([p.c_type for p in pts])
+    box = np.asarray(frame.box, dtype=float)[:3]
+    water = np.nonzero(types == frame.atom_type)[0]
+    ions = np.nonzero(np.isin(types, list(ion_types)))[0]
+    states = np.asarray(states)
+    ice_water = states[water] != STATE_WATER
+    shell = np.zeros(len(ions), dtype=int)
+    fraction = np.zeros(len(ions), dtype=float)
+    ion_states = np.full(len(ions), ION_LIQUID, dtype=np.int8)
+    for j, i in enumerate(ions):
+        d = pos[water] - pos[i]
+        d -= box * np.round(d / box)
+        near = np.sqrt((d ** 2).sum(axis=1)) < cut
+        shell[j] = int(near.sum())
+        if shell[j] == 0:
+            continue
+        fraction[j] = float(ice_water[near].mean())
+        if fraction[j] >= 1.0:
+            ion_states[j] = ION_ICE
+        elif fraction[j] > 0.0:
+            ion_states[j] = ION_FRONT
+    return ions, shell, fraction, ion_states
+
+
+def ion_features(frame, states, ion_types, cutoff=None):
+    """Per-frame ion summary in the order of :data:`ION_FEATURE_NAMES`."""
+    _, shell, fraction, ion_states = ion_environment(frame, states, ion_types, cutoff)
+    return np.array(
+        [
+            int((ion_states == ION_ICE).sum()),
+            int((ion_states == ION_FRONT).sum()),
+            int((ion_states == ION_LIQUID).sum()),
+            float(fraction[shell > 0].mean()) if (shell > 0).any() else 0.0,
+        ],
+        dtype=float,
+    )
+
 
 def count_frames(filename):
     """Stored frames in a LAMMPS dump (``ITEM: TIMESTEP`` headers)."""
@@ -99,17 +177,25 @@ class IceFeaturizer:
         ``True``.
     chill : bool, optional
         Also compute CHILL+ on the cutoff graph. Default ``True``.
+    ion_types : iterable of int, optional
+        ``c_type`` codes of ions present in the cloud. When given, the
+        vector gains :data:`ION_FEATURE_NAMES` from
+        :func:`ion_features`.
     """
 
-    def __init__(self, trajectory, k=4, ring_adjacent=True, chill=True):
+    def __init__(self, trajectory, k=4, ring_adjacent=True, chill=True, ion_types=()):
         self.trajectory = trajectory
         self.k = k
         self.ring_adjacent = ring_adjacent
         self.chill = chill
+        self.ion_types = tuple(int(t) for t in ion_types)
 
     @property
     def feature_names(self):
-        return list(FEATURE_NAMES)
+        names = list(FEATURE_NAMES)
+        if self.ion_types:
+            names += list(ION_FEATURE_NAMES)
+        return names
 
     def frame_features(self):
         """Feature vector and per-molecule states of the loaded frame.
@@ -117,7 +203,7 @@ class IceFeaturizer:
         Returns
         -------
         (features, states)
-            ``features`` is a float array of length ``len(FEATURE_NAMES)``;
+            ``features`` is a float array of length ``len(self.feature_names)``;
             ``states`` an ``int8`` array with one of ``STATE_*`` per
             molecule.
         """
@@ -164,6 +250,8 @@ class IceFeaturizer:
             ],
             dtype=float,
         )
+        if self.ion_types:
+            features = np.concatenate([features, ion_features(t, states, self.ion_types)])
         return features, states
 
     def transform(self, frames=None):
@@ -178,7 +266,7 @@ class IceFeaturizer:
         Returns
         -------
         (X, S)
-            ``X`` has shape ``(n_frames, len(FEATURE_NAMES))``; ``S`` has
+            ``X`` has shape ``(n_frames, len(self.feature_names))``; ``S`` has
             shape ``(n_frames, n_molecules)`` with ``int8`` states.
         """
         t = self.trajectory
