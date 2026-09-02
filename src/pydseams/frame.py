@@ -923,6 +923,29 @@ class Frame:
         hc, ddc = yoda.seededCageAffiliation(six_s, strict, six_u, union, ring_adjacent)
         return CageScore(hc, ddc)
 
+    def fingerprint(self, hops=2, max_ring_size=7):
+        """Label-independent topology keys of the bonded graph.
+
+        Parameters
+        ----------
+        hops : int, optional
+            Bonds from the centre in each local key. Default ``2``.
+        max_ring_size : int, optional
+            Largest primitive ring counted in the census. Default ``7``.
+
+        Returns
+        -------
+        pydseams.yoda.FrameFingerprint
+            ``key`` names the frame (same for any relabelling of the same
+            bonded graph), ``atomKeys`` one class per atom, ``classes`` the
+            histogram, ``ringCensus[s]`` the primitive rings of size ``s``.
+            ``method`` is ``"nauty"`` when the engine links nauty, else
+            ``"wl"``.
+        """
+        return yoda.topologyFingerprint(
+            self.bonds_by_index, int(hops), int(max_ring_size)
+        )
+
     def find_prisms(self, output_dir="output/", max_depth=6, shape_matching=False):
         """Identify prism blocks and write engine output under ``output_dir``.
 

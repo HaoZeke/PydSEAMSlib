@@ -58,7 +58,10 @@ def ion_environment(frame, states, ion_types, cutoff=None):
     Ions are not part of the hydrogen-bond network; the cage assignment
     runs on the water alone and the ions are read against it. A frame
     built with ``all_atoms=True`` or :meth:`Frame.from_arrays` carries
-    every species in its cloud; ``frame.atom_type`` names the water.
+    every species in its cloud; ``frame.atom_type`` names the water. The
+    engine's ``ionEnvironment`` does the work when the compiled module
+    exposes it; the NumPy path below gives the same answer on older
+    engines.
 
     Parameters
     ----------
@@ -82,12 +85,37 @@ def ion_environment(frame, states, ion_types, cutoff=None):
     """
     cut = float(frame.cutoff if cutoff is None else cutoff)
     pts = frame.cloud.pts
-    pos = np.array([[p.x, p.y, p.z] for p in pts], dtype=float)
     types = np.array([p.c_type for p in pts])
-    box = np.asarray(frame.box, dtype=float)[:3]
-    water = np.nonzero(types == frame.atom_type)[0]
     ions = np.nonzero(np.isin(types, list(ion_types)))[0]
     states = np.asarray(states)
+    if hasattr(yoda, "ionEnvironment"):
+        env = yoda.ionEnvironment(
+            frame.cloud,
+            [bool(s != STATE_WATER) for s in states],
+            [int(i) for i in ions],
+            int(frame.atom_type),
+            cut,
+        )
+        ion_states = np.array(
+            [
+                ION_ICE
+                if s == yoda.IonState.ice
+                else ION_FRONT
+                if s == yoda.IonState.front
+                else ION_LIQUID
+                for s in env.state
+            ],
+            dtype=np.int8,
+        )
+        return (
+            np.asarray(env.ion, dtype=int),
+            np.asarray(env.shell, dtype=int),
+            np.asarray(env.iceFraction, dtype=float),
+            ion_states,
+        )
+    pos = np.array([[p.x, p.y, p.z] for p in pts], dtype=float)
+    box = np.asarray(frame.box, dtype=float)[:3]
+    water = np.nonzero(types == frame.atom_type)[0]
     ice_water = states[water] != STATE_WATER
     shell = np.zeros(len(ions), dtype=int)
     fraction = np.zeros(len(ions), dtype=float)

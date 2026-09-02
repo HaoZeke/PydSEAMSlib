@@ -39,6 +39,7 @@
 #include <selection.hpp>
 #include <site.hpp>
 #include <structure_desc.hpp>
+#include <topo_fingerprint.hpp>
 #include <topo_one_dim.hpp>
 #include <topo_two_dim.hpp>
 #include <voronoi_qlm.hpp>
@@ -1163,6 +1164,57 @@ NB_MODULE(yoda, m) {
         .def_rw("atomOverride", &site::Table::atomOverride)
         .def("of", &site::Table::of, nb::arg("p"))
         .def("ofType", &site::Table::ofType, nb::arg("typeId"));
+    nb::enum_<site::IonState>(m, "IonState", "An ion by its first water shell.")
+        .value("liquid", site::IonState::liquid)
+        .value("front", site::IonState::front)
+        .value("ice", site::IonState::ice);
+    nb::class_<site::IonEnvironment>(
+        m, "IonEnvironment", "Ions read against a per-atom ice assignment.")
+        .def_ro("ion", &site::IonEnvironment::ion)
+        .def_ro("shell", &site::IonEnvironment::shell)
+        .def_ro("iceFraction", &site::IonEnvironment::iceFraction)
+        .def_ro("state", &site::IonEnvironment::state)
+        .def_ro("nIce", &site::IonEnvironment::nIce)
+        .def_ro("nFront", &site::IonEnvironment::nFront)
+        .def_ro("nLiquid", &site::IonEnvironment::nLiquid);
+    m.def("ionEnvironment",
+          &site::ionEnvironment,
+          "Class each ion by its first water shell against iceFlag: every "
+          "shell molecule labelled is ice, none is liquid, otherwise front.",
+          nb::arg("yCloud"),
+          nb::arg("iceFlag"),
+          nb::arg("ionIndices"),
+          nb::arg("waterType") = 1,
+          nb::arg("cutoff") = 3.5);
+    nb::class_<topo::LocalKey>(m, "LocalKey", "Key of one atom's rooted bonded neighbourhood.")
+        .def_ro("key", &topo::LocalKey::key)
+        .def_ro("method", &topo::LocalKey::method)
+        .def_ro("vertices", &topo::LocalKey::vertices)
+        .def_ro("edges", &topo::LocalKey::edges);
+    nb::class_<topo::FrameFingerprint>(
+        m,
+        "FrameFingerprint",
+        "Local keys of every atom, their histogram, the ring census, one frame key.")
+        .def_ro("key", &topo::FrameFingerprint::key)
+        .def_ro("method", &topo::FrameFingerprint::method)
+        .def_ro("atomKeys", &topo::FrameFingerprint::atomKeys)
+        .def_ro("classes", &topo::FrameFingerprint::classes)
+        .def_ro("ringCensus", &topo::FrameFingerprint::ringCensus)
+        .def_ro("hops", &topo::FrameFingerprint::hops);
+    m.def("localTopologyKey",
+          &topo::localKey,
+          "Isomorphism-class key of the rooted neighbourhood of an atom within hops bonds "
+          "(nauty certificate when linked, Weisfeiler-Lehman hash otherwise).",
+          nb::arg("rows"),
+          nb::arg("atom"),
+          nb::arg("hops") = 2);
+    m.def("topologyFingerprint",
+          &topo::fingerprint,
+          "Per-atom topology keys, their histogram, the primitive ring census and a "
+          "label-independent frame key over neighbour rows by index.",
+          nb::arg("rows"),
+          nb::arg("hops") = 2,
+          nb::arg("maxRingSize") = 7);
     m.def(
         "parseSiteSpec",
         [](const std::string &spec) { return site::parseSiteSpec(spec); },

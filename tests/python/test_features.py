@@ -146,3 +146,24 @@ def test_from_ase_sequence_select_keeps_ions_for_ion_environment():
     assert shell.tolist() == [4, 4]
     assert ion_states.tolist() == [ION_ICE, ION_ICE]
     assert names["n_ion_ice"] == 2
+
+
+def test_fingerprint_is_label_independent_and_sees_a_vacancy():
+    from pydseams import yoda
+    from pydseams.frame import Frame
+
+    if not hasattr(yoda, "topologyFingerprint"):
+        pytest.skip("engine without topology fingerprints")
+    pos, cell = _cubic_diamond(3)
+    frame = Frame.from_arrays(pos, cell, cutoff=3.5)
+    fp = frame.fingerprint(hops=2)
+    assert len(fp.classes) == 1
+    assert fp.ringCensus[6] == 2 * len(pos)
+    rng = np.random.default_rng(3)
+    perm = rng.permutation(len(pos))
+    shuffled = Frame.from_arrays(pos[perm], cell, cutoff=3.5)
+    assert shuffled.fingerprint(hops=2).key == fp.key
+    vacancy = Frame.from_arrays(np.delete(pos, 0, axis=0), cell, cutoff=3.5)
+    fpv = vacancy.fingerprint(hops=2)
+    assert fpv.key != fp.key
+    assert len(fpv.classes) > 1
