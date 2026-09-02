@@ -923,7 +923,7 @@ class Frame:
         hc, ddc = yoda.seededCageAffiliation(six_s, strict, six_u, union, ring_adjacent)
         return CageScore(hc, ddc)
 
-    def fingerprint(self, hops=2, max_ring_size=7):
+    def fingerprint(self, hops=2, max_ring_size=7, colour_types=False):
         """Label-independent topology keys of the bonded graph.
 
         Parameters
@@ -932,6 +932,9 @@ class Frame:
             Bonds from the centre in each local key. Default ``2``.
         max_ring_size : int, optional
             Largest primitive ring counted in the census. Default ``7``.
+        colour_types : bool, optional
+            Colour vertices by ``c_type`` (atom type or atomic number), so
+            species never match across types. Default ``False``.
 
         Returns
         -------
@@ -942,9 +945,11 @@ class Frame:
             ``method`` is ``"nauty"`` when the engine links nauty, else
             ``"wl"``.
         """
-        return yoda.topologyFingerprint(
-            self.bonds_by_index, int(hops), int(max_ring_size)
+        rows = self.bonds_by_index
+        colours = (
+            [int(p.c_type) for p in self.cloud.pts][: len(rows)] if colour_types else []
         )
+        return yoda.topologyFingerprint(rows, int(hops), int(max_ring_size), colours)
 
     def find_prisms(self, output_dir="output/", max_depth=6, shape_matching=False):
         """Identify prism blocks and write engine output under ``output_dir``.

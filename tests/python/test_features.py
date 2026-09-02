@@ -167,3 +167,21 @@ def test_fingerprint_is_label_independent_and_sees_a_vacancy():
     fpv = vacancy.fingerprint(hops=2)
     assert fpv.key != fp.key
     assert len(fpv.classes) > 1
+
+
+def test_fingerprint_colours_by_type_split_a_binary_lattice():
+    from pydseams import yoda
+    from pydseams.frame import Frame
+
+    if not hasattr(yoda, "topologyFingerprint"):
+        pytest.skip("engine without topology fingerprints")
+    pos, cell = _cubic_diamond(3)
+    # zincblende: the two sublattices carry two species
+    numbers = [1 if i % 8 < 4 else 2 for i in range(len(pos))]
+    frame = Frame.from_arrays(pos, cell, numbers=numbers, cutoff=3.5)
+    plain = frame.fingerprint(hops=2)
+    coloured = frame.fingerprint(hops=2, colour_types=True)
+    assert len(plain.classes) == 1
+    assert len(coloured.classes) == 2
+    assert sorted(coloured.classes.values()) == [len(pos) // 2, len(pos) // 2]
+    assert coloured.key != plain.key
