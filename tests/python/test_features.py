@@ -108,3 +108,30 @@ def test_ion_without_water_shell_is_liquid():
     assert shell.tolist() == [0]
     assert ion_states.tolist() == [ION_LIQUID]
     assert ION_FRONT not in ion_states
+
+
+def test_from_ase_sequence_select_keeps_ions_for_ion_environment():
+    ase = pytest.importorskip("ase")
+    from ase import Atoms
+
+    from pydseams.frame import Frame
+
+    pos, cell = _cubic_diamond(4)
+    symbols = ["O"] * len(pos)
+    symbols[5] = "Na"
+    symbols[40] = "Cl"
+    # a hydrogen far from everything, to be dropped by the selection
+    atoms = Atoms(symbols + ["H"], positions=np.vstack([pos, [[0.3, 0.3, 0.3]]]), cell=cell, pbc=True)
+    frame = Frame.from_ase(atoms, select=("O", "Na", "Cl"), bonded="cutoff")
+    assert frame.atom_type == 8
+    assert frame.n_atoms == len(pos)
+    types = sorted(set(p.c_type for p in frame.cloud.pts))
+    assert types == [8, 11, 17]
+    feat = IceFeaturizer(frame, chill=False, ion_types=(11, 17))
+    x, states = feat.frame_features()
+    names = dict(zip(feat.feature_names, x))
+    ions, shell, fraction, ion_states = ion_environment(frame, states, (11, 17))
+    assert sorted(ions.tolist()) == [5, 40]
+    assert shell.tolist() == [4, 4]
+    assert ion_states.tolist() == [ION_ICE, ION_ICE]
+    assert names["n_ion_ice"] == 2

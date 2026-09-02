@@ -25,8 +25,29 @@ def _mask(atoms, select):
         return [True] * len(atoms)
     if isinstance(select, str):
         return [sym == select for sym in atoms.get_chemical_symbols()]
+    if isinstance(select, (list, tuple, set, frozenset)):
+        wanted = set()
+        for item in select:
+            wanted.add(item if isinstance(item, str) else int(item))
+        return [
+            sym in wanted or int(z) in wanted
+            for sym, z in zip(atoms.get_chemical_symbols(), atoms.numbers)
+        ]
     number = int(select)
     return [int(z) == number for z in atoms.numbers]
+
+
+def _analysed_number(atoms, select, numbers):
+    """Atomic number of the analysed species: the first entry of a
+    sequence, the sole selection otherwise."""
+    if isinstance(select, (list, tuple)) and select:
+        first = select[0]
+        if isinstance(first, str):
+            for sym, z in zip(atoms.get_chemical_symbols(), atoms.numbers):
+                if sym == first:
+                    return int(z)
+        return int(first)
+    return int(numbers[0])
 
 
 def _restricted_cell(atoms):
@@ -78,9 +99,13 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
         :class:`~pydseams.frame.Frame` or a subclass.
     atoms : ase.Atoms
         Configuration with a nonsingular cell periodic in all three directions.
-    select : str or int, optional
+    select : str, int or sequence, optional
         Chemical symbol or atomic number kept for analysis. Default
-        ``"O"``. ``None`` keeps every atom.
+        ``"O"``. ``None`` keeps every atom. A sequence such as
+        ``("O", "Na", "Cl")`` keeps every listed species in the cloud
+        and analyses the first; the others stay as their atomic
+        numbers in ``c_type``, which is what
+        :func:`pydseams.features.ion_environment` reads.
     cutoff : float, optional
         Neighbour cutoff in Angstroms. Default ``3.5``.
     bonded : {"auto", "hbond", "cutoff"}, optional
@@ -172,7 +197,7 @@ def frame_from_ase(cls, atoms, select="O", cutoff=3.5, bonded="auto"):
     if bonded == "auto":
         bonded = "hbond" if h_cloud is not None and not selected_hydrogen else "cutoff"
     return cls(
-        atom_type=int(numbers[0]),
+        atom_type=_analysed_number(atoms, select, numbers),
         cutoff=cutoff,
         bonded=bonded,
         cloud=cloud,
