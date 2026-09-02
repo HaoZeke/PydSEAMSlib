@@ -1,5 +1,5 @@
 [wrap-git]
 directory = seams-core
 url = https://github.com/d-SEAMS/seams-core.git
-revision = f275be07839f790baeed20d539da35b3a53ab9d4
+revision = 
 depth = 1

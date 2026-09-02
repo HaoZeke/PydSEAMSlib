@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.8.0 (2026-09-02)
+
+- Topology keys: `Frame.fingerprint(hops, max_ring_size, colour_types)`,
+  `Frame.topology_library`, `Frame.classify_topology`; `yoda.topologyFingerprint`,
+  `yoda.localTopologyKey`, `yoda.KeyLibrary`, `yoda.matchLibrary`.
+- Ions: `Frame.ion_environment`, engine-backed `pydseams.features.ion_environment`
+  and `yoda.ionEnvironment`; `Frame.cages(ring_adjacent=...)`.
+- The CON reader is embedded (readcon-core v0.14.10 through the engine);
+  docs for features, ions and sequence selection; autodoc names the
+  last-vertex completion rule.
+- Engine pinned at seams-core v2.8.0.
+
 ## 2.7.0 (2026-09-02)
 
 - `Frame.seeded_affiliation(ring_adjacent=...)` exposes the engine's ring
