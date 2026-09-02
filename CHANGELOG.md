@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 2.9.0 (2026-09-02)
+
+- `Frame.cages_by_signature` and `yoda.findBySignature`: closed polyhedra by
+  ring-size census.
+- Engine pinned at seams-core v2.9.0.
 
 - `Frame.cages_by_signature` and `yoda.findBySignature`: closed
   polyhedra from a ring-size census (`sodalite`, `4:6,6:8`, named
@@ -48,7 +52,7 @@
 - How-to `docs/source/howto/features.rst`. Engine pinned at seams-core
   v2.7.0; the test environment stays on CPython 3.12 or 3.13.
 
-## Unreleased
+## 2.9.0 (2026-09-02)
 
 ASE hydrogen-bond adapters preserve an explicit ``mol-id`` array. Without
 molecule metadata, each hydrogen is assigned to its nearest selected atom
