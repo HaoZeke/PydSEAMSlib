@@ -417,9 +417,11 @@ NB_MODULE(yoda, m) {
            const std::vector<std::vector<int>> &permissiveRings,
            const std::vector<std::vector<int>> &permissiveNList,
            bool ringAdjacentCompletion) {
-            const auto a = ring::seededCageAffiliation(
-                strictRings, strictNList, permissiveRings, permissiveNList,
-                ringAdjacentCompletion);
+            const auto a = ring::seededCageAffiliation(strictRings,
+                                                       strictNList,
+                                                       permissiveRings,
+                                                       permissiveNList,
+                                                       ringAdjacentCompletion);
             return std::make_pair(a.hc, a.ddc);
         },
         "Seeded (hysteresis) per-atom cage flags: strict-graph seeds, "
