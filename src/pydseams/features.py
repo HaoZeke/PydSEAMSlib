@@ -95,7 +95,7 @@ def ion_environment(frame, states, ion_types, cutoff=None):
     for j, i in enumerate(ions):
         d = pos[water] - pos[i]
         d -= box * np.round(d / box)
-        near = np.sqrt((d ** 2).sum(axis=1)) < cut
+        near = np.sqrt((d**2).sum(axis=1)) < cut
         shell[j] = int(near.sum())
         if shell[j] == 0:
             continue
@@ -231,27 +231,51 @@ class IceFeaturizer:
         six = sum(1 for r in yoda.ringNetwork(union, 6) if len(r) == 6)
 
         chill = dict.fromkeys(
-            ("cubic", "hexagonal", "interfacial", "clathrate", "interClathrate", "water"), 0
+            (
+                "cubic",
+                "hexagonal",
+                "interfacial",
+                "clathrate",
+                "interClathrate",
+                "water",
+            ),
+            0,
         )
         chill_max = 0
         if self.chill:
             counts = t.chill_plus()
             for key in chill:
                 chill[key] = int(counts.get(key, 0))
-            bulk = [pt.iceType.name in ("cubic", "hexagonal", "reCubic", "reHex") for pt in cloud.pts]
+            bulk = [
+                pt.iceType.name in ("cubic", "hexagonal", "reCubic", "reHex")
+                for pt in cloud.pts
+            ]
             chill_max, _ = _components(bulk, t.bonds_by_index)
 
         features = np.array(
             [
-                n_ice, n_max, n_clusters, n_ic, n_ih, n_mixed, cubicity,
-                chill["cubic"], chill["hexagonal"], chill["interfacial"],
-                chill["clathrate"], chill["interClathrate"], chill["water"],
-                chill_max, six,
+                n_ice,
+                n_max,
+                n_clusters,
+                n_ic,
+                n_ih,
+                n_mixed,
+                cubicity,
+                chill["cubic"],
+                chill["hexagonal"],
+                chill["interfacial"],
+                chill["clathrate"],
+                chill["interClathrate"],
+                chill["water"],
+                chill_max,
+                six,
             ],
             dtype=float,
         )
         if self.ion_types:
-            features = np.concatenate([features, ion_features(t, states, self.ion_types)])
+            features = np.concatenate(
+                [features, ion_features(t, states, self.ion_types)]
+            )
         return features, states
 
     def transform(self, frames=None):
@@ -300,7 +324,9 @@ def discretize_nmax(n_max, edges):
         A discrete trajectory for :class:`deeptime.markov.msm.MaximumLikelihoodMSM`
         or ``pyemma.msm.estimate_markov_model``.
     """
-    return np.searchsorted(np.asarray(edges, dtype=float), np.asarray(n_max, dtype=float), side="right").astype(int)
+    return np.searchsorted(
+        np.asarray(edges, dtype=float), np.asarray(n_max, dtype=float), side="right"
+    ).astype(int)
 
 
 def to_pyemma_featurizer(featurizer, topology):
@@ -319,7 +345,9 @@ def to_pyemma_featurizer(featurizer, topology):
         X, _ = featurizer.transform(range(1, traj.n_frames + 1))
         return X.astype(np.float32)
 
-    feat.add_custom_func(_fn, dim=len(FEATURE_NAMES), description=",".join(FEATURE_NAMES))
+    feat.add_custom_func(
+        _fn, dim=len(FEATURE_NAMES), description=",".join(FEATURE_NAMES)
+    )
     return feat
 
 

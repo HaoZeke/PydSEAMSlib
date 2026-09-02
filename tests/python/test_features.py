@@ -37,7 +37,9 @@ def test_features_are_consistent_counts():
     assert int((states != STATE_WATER).sum()) == names["n_ice"]
     assert names["n_max"] <= names["n_ice"]
     assert (names["n_clusters"] == 0) == (names["n_ice"] == 0)
-    chill = sum(names[k] for k in FEATURE_NAMES if k.startswith("chill_") and k != "chill_max")
+    chill = sum(
+        names[k] for k in FEATURE_NAMES if k.startswith("chill_") and k != "chill_max"
+    )
     assert chill == traj.n_atoms
     # the mixed TIP4P example: CHILL+ finds interfacial clathrate, the cages find nothing
     assert names["n_ice"] == 0
@@ -92,7 +94,11 @@ def test_ion_in_ice_sees_an_ice_shell():
     assert shell.tolist() == [4]
     assert fraction[0] == 1.0
     assert ion_states.tolist() == [ION_ICE]
-    assert names["n_ion_ice"] == 1 and names["n_ion_front"] == 0 and names["n_ion_liquid"] == 0
+    assert (
+        names["n_ion_ice"] == 1
+        and names["n_ion_front"] == 0
+        and names["n_ion_liquid"] == 0
+    )
     assert names["ion_shell_ice"] == 1.0
 
 
@@ -121,7 +127,12 @@ def test_from_ase_sequence_select_keeps_ions_for_ion_environment():
     symbols[5] = "Na"
     symbols[40] = "Cl"
     # a hydrogen far from everything, to be dropped by the selection
-    atoms = Atoms(symbols + ["H"], positions=np.vstack([pos, [[0.3, 0.3, 0.3]]]), cell=cell, pbc=True)
+    atoms = Atoms(
+        symbols + ["H"],
+        positions=np.vstack([pos, [[0.3, 0.3, 0.3]]]),
+        cell=cell,
+        pbc=True,
+    )
     frame = Frame.from_ase(atoms, select=("O", "Na", "Cl"), bonded="cutoff")
     assert frame.atom_type == 8
     assert frame.n_atoms == len(pos)
