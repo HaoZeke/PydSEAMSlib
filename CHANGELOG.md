@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.7.0 (2026-09-02)
+
+- `Frame.seeded_affiliation(ring_adjacent=...)` exposes the engine's ring
+  completion.
+- `pydseams.features`: `IceFeaturizer` (per-frame feature vector and
+  per-molecule states), `discretize_nmax`, `to_deeptime`,
+  `to_pyemma_featurizer`.
+- Ions: `ion_environment`, `ion_features`, `IceFeaturizer(ion_types=...)`;
+  `Frame.from_ase(select=("O", "Na", "Cl"))` keeps listed species in the
+  cloud as their atomic numbers.
+- How-to `docs/source/howto/features.rst`. Engine pinned at seams-core
+  v2.7.0; the test environment stays on CPython 3.12 or 3.13.
+
 ## Unreleased
 
 ASE hydrogen-bond adapters preserve an explicit ``mol-id`` array. Without
