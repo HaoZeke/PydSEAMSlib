@@ -207,3 +207,20 @@ def test_topology_library_names_a_permuted_lattice_and_not_a_vacancy():
     miss = vacancy.classify_topology(lib)
     assert miss.matched < len(pos) - 1
     assert miss.counts[""] > 0
+
+
+def test_frame_ion_environment_matches_the_feature_path():
+    from pydseams import yoda
+    from pydseams.frame import Frame
+
+    if not hasattr(yoda, "ionEnvironment"):
+        pytest.skip("engine without ionEnvironment")
+    pos, cell = _cubic_diamond(4)
+    numbers = [1] * len(pos)
+    numbers[0] = 3
+    frame = Frame.from_arrays(pos, cell, numbers=numbers, cutoff=3.5)
+    env = frame.ion_environment((3,))
+    assert list(env.ion) == [0]
+    assert list(env.shell) == [4]
+    assert env.nIce == 1 and env.nFront == 0 and env.nLiquid == 0
+    assert env.state[0] == yoda.IonState.ice

@@ -951,6 +951,37 @@ class Frame:
         )
         return yoda.topologyFingerprint(rows, int(hops), int(max_ring_size), colours)
 
+    def ion_environment(self, ion_types, k=4, ring_adjacent=True, cutoff=None):
+        """Class every ion by its first water shell against the seeded cages.
+
+        Parameters
+        ----------
+        ion_types : iterable of int
+            ``c_type`` codes of the ions (LAMMPS types, or atomic numbers
+            for frames built through ASE).
+        k, ring_adjacent : passed to :meth:`seeded_affiliation`.
+        cutoff : float, optional
+            First-shell radius in Angstrom. Default ``self.cutoff``.
+
+        Returns
+        -------
+        pydseams.yoda.IonEnvironment
+            ``ion`` (cloud indices), ``shell``, ``iceFraction``, ``state``
+            (:class:`pydseams.yoda.IonState`) and the counts ``nIce``,
+            ``nFront``, ``nLiquid``.
+        """
+        score = self.seeded_affiliation(k=k, ring_adjacent=ring_adjacent)
+        ice = [bool(h or d) for h, d in zip(score.hc, score.ddc)]
+        wanted = set(int(t) for t in ion_types)
+        ions = [i for i, p in enumerate(self.cloud.pts) if p.c_type in wanted]
+        return yoda.ionEnvironment(
+            self.cloud,
+            ice,
+            ions,
+            int(self.atom_type),
+            float(self.cutoff if cutoff is None else cutoff),
+        )
+
     def topology_library(
         self, label, hops=2, max_ring_size=7, colour_types=False, library=None
     ):
