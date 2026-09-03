@@ -17,6 +17,10 @@ Lua/Fennel is `dseams` in [`yodaStruct`](https://github.com/d-SEAMS/yodaStruct).
 Neighbour search is [`linkcell`](https://github.com/d-SEAMS/linkcell).
 Do not grow a second engine here. `import pydseamslib` still works.
 
+Released versions live in [CHANGELOG.md](CHANGELOG.md) (Keep a Changelog).
+Unreleased notes are files under `changelog.d/`. The cut is
+`towncrier build --version X.Y.Z`.
+
 ```bash
 pip install pydseamslib
 pip install 'pydseamslib[ase]'      # ASE Atoms
