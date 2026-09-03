@@ -1219,6 +1219,20 @@ NB_MODULE(yoda, m) {
           nb::arg("rings"),
           nb::arg("shell"),
           nb::arg("maxRingSize") = 7);
+    nb::class_<site::ShellRings>(
+        m, "ShellRings",
+        "Census, capped (wholly in the shell) and broken (through a virtual ion).")
+        .def_ro("census", &site::ShellRings::census)
+        .def_ro("capped", &site::ShellRings::capped)
+        .def_ro("broken", &site::ShellRings::broken);
+    m.def("shellRings",
+          &site::shellRings,
+          "Census, capped and broken rings for one ion shell.",
+          nb::arg("waterRings"),
+          nb::arg("nList"),
+          nb::arg("ion"),
+          nb::arg("shell"),
+          nb::arg("maxRingSize") = 7);
     nb::class_<topo::LocalKey>(m, "LocalKey", "Key of one atom's rooted bonded neighbourhood.")
         .def_ro("key", &topo::LocalKey::key)
         .def_ro("method", &topo::LocalKey::method)
@@ -1283,6 +1297,25 @@ NB_MODULE(yoda, m) {
           "vertex index lists into the cloud.",
           nb::arg("yCloud"),
           nb::arg("cages"),
+          nb::arg("guestIndices"),
+          nb::arg("radius"));
+    m.def("guestOccupancyInside",
+          &site::guestOccupancyInside,
+          "Assign each guest by ray-parity inside the triangulated faces.",
+          nb::arg("yCloud"),
+          nb::arg("cages"),
+          nb::arg("faces"),
+          nb::arg("guestIndices"));
+    nb::class_<site::DualOccupancy>(
+        m, "DualOccupancy", "Radius occupancy and inside occupancy on the same cages.")
+        .def_ro("radius", &site::DualOccupancy::radius)
+        .def_ro("inside", &site::DualOccupancy::inside);
+    m.def("guestOccupancyBoth",
+          &site::guestOccupancyBoth,
+          "Radius and inside occupancy on the same cages and guests.",
+          nb::arg("yCloud"),
+          nb::arg("cages"),
+          nb::arg("faces"),
           nb::arg("guestIndices"),
           nb::arg("radius"));
     m.def("periodicCentroid",

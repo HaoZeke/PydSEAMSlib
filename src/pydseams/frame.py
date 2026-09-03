@@ -1123,6 +1123,26 @@ class Frame:
             self.cloud, [list(map(int, c)) for c in cages], guests, float(radius)
         )
 
+    def guest_occupancy_both(self, signature, guest_types, radius=4.0,
+                             max_ring_size=None):
+        """Radius and ray-parity occupancy of guests in signature cages.
+
+        Returns
+        -------
+        pydseams.yoda.DualOccupancy
+            ``radius`` and ``inside``, each a ``GuestOccupancy``.
+        """
+        depth = 8 if max_ring_size is None else int(max_ring_size)
+        rings = yoda.ringNetwork(self.bonds_by_index, depth)
+        found = yoda.findBySignature(rings, self.bonds_by_index, str(signature))
+        cages = [list(map(int, c["vertices"])) for c in found]
+        faces = [[list(map(int, rings[int(i)])) for i in c["faces"]] for c in found]
+        wanted = set(int(t) for t in guest_types)
+        guests = [i for i, p in enumerate(self.cloud.pts) if p.c_type in wanted]
+        return yoda.guestOccupancyBoth(
+            self.cloud, cages, faces, guests, float(radius)
+        )
+
     def find_prisms(self, output_dir="output/", max_depth=6, shape_matching=False):
         """Identify prism blocks and write engine output under ``output_dir``.
 
