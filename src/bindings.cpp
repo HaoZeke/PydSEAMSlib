@@ -528,9 +528,9 @@ NB_MODULE(yoda, m) {
           nb::arg("nPerfectPrisms"),
           nb::arg("nImperfectPrisms"),
           nb::arg("nList"),
+          nb::arg("yCloud"),
           nb::arg("rmsdPerAtom"),
-          nb::arg("doShapeMatching"),
-          nb::arg("yCloud"));
+          nb::arg("doShapeMatching"));
     m.def("findsCommonElements",
           &ring::findsCommonElements,
           "Return the common elements shared by two rings.",
@@ -722,9 +722,9 @@ NB_MODULE(yoda, m) {
           nb::arg("rings"),
           nb::arg("oCloud"),
           nb::arg("yCloud"),
-          nb::arg("identicalCloud"),
           nb::arg("coordLow"),
-          nb::arg("coordHigh"));
+          nb::arg("coordHigh"),
+          nb::arg("identicalCloud"));
     m.def("printSliceGetEdgeMoleculesInRings",
           &ring::printSliceGetEdgeMoleculesInRings,
           "Select edge molecules in rings and write slice output files.",
